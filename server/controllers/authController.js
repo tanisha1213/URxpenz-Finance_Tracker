@@ -10,7 +10,7 @@ const generateToken = (id) => {
   const secret = process.env.JWT_SECRET || 'xpenz_default_jwt_secret_key_2026';
 
   return jwt.sign({ id }, secret, {
-    expiresIn: process.env.JWT_EXPIRE || '7d'
+    expiresIn: process.env.JWT_EXPIRE || '365d'
   });
 };
 

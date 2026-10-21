@@ -172,6 +172,21 @@ function Transactions() {
     dispatch(fetchTransactions(query))
   }, [dispatch, query])
 
+  // Auto-sync custom categories from cloud transactions so they persist across devices
+  useEffect(() => {
+    if (transactions && transactions.length > 0) {
+      const existingCats = transactions.map(t => t.category).filter(Boolean)
+      const uniqueCats = [...new Set(existingCats)].filter(c => !categories.includes(c) && c !== 'Other')
+      if (uniqueCats.length > 0) {
+        setCustomCategories(prev => {
+          const merged = [...new Set([...prev, ...uniqueCats])]
+          localStorage.setItem('xpenz_custom_categories', JSON.stringify(merged))
+          return merged
+        })
+      }
+    }
+  }, [transactions])
+
   useEffect(() => {
     fetchLoansAndAccounts()
   }, [showForm])
