@@ -4,6 +4,7 @@ import User from '../models/User.js';
 import Transaction from '../models/Transaction.js';
 import Budget from '../models/Budget.js';
 import { summarizeTransactions } from '../services/financeAnalyzer.js';
+import { sendPasswordResetEmail } from '../utils/sendEmail.js';
 
 const generateToken = (id) => {
   const secret = process.env.JWT_SECRET || 'xpenz_default_jwt_secret_key_2026';
@@ -249,12 +250,12 @@ export const forgotPassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'There is no user with that email address'
+        message: 'There is no user registered with that email address'
       });
     }
 
-    // Generate token
-    const resetToken = crypto.randomBytes(20).toString('hex');
+    // Generate cryptographically secure random token
+    const resetToken = crypto.randomBytes(32).toString('hex');
 
     // Hash token and set to resetPasswordToken field
     const hashedToken = crypto
@@ -262,7 +263,7 @@ export const forgotPassword = async (req, res) => {
       .update(resetToken)
       .digest('hex');
 
-    // Set expire (10 minutes)
+    // Set expire (10 minutes from now)
     const expireDate = new Date(Date.now() + 10 * 60 * 1000);
 
     user.resetPasswordToken = hashedToken;
@@ -270,23 +271,41 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    // Dev/Test simulation response: log reset URL and return it in payload
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/auth/reset-password/${resetToken}`;
+    // Frontend reset password link
     const frontendResetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
 
-    console.log(`\n=== PASSWORD RESET SIMULATION ===`);
-    console.log(`User: ${normalizedEmail}`);
-    console.log(`Reset Token: ${resetToken}`);
-    console.log(`Reset API Link: ${resetUrl}`);
-    console.log(`Reset Frontend Link: ${frontendResetUrl}`);
-    console.log(`=================================\n`);
+    // Attempt to deliver the reset email
+    try {
+      await sendPasswordResetEmail(normalizedEmail, user.name, frontendResetUrl);
+      console.log(`[Auth] Password reset email successfully delivered to ${normalizedEmail}`);
 
-    res.status(200).json({
-      success: true,
-      message: 'Password reset link generated successfully',
-      resetToken, // return to frontend for testing
-      resetUrl: frontendResetUrl // return frontend link so user can click it in simulator
-    });
+      return res.status(200).json({
+        success: true,
+        message: `A password reset link has been sent to ${normalizedEmail}. Please check your email inbox (and spam folder).`
+      });
+    } catch (mailError) {
+      console.error(`[Auth Error] Failed to send password reset email:`, mailError.message);
+
+      if (mailError.code === 'SMTP_NOT_CONFIGURED') {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`\n======================================================`);
+          console.warn(`[DEVELOPMENT ONLY] SMTP is not yet configured in server/.env.`);
+          console.warn(`Add EMAIL_USER and EMAIL_PASS to server/.env to enable live email delivery.`);
+          console.warn(`Direct Reset Link for dev testing: ${frontendResetUrl}`);
+          console.warn(`======================================================\n`);
+        }
+
+        return res.status(503).json({
+          success: false,
+          message: 'Email service is not yet configured on this server. Please check your server SMTP settings.'
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: 'Unable to send password reset email. Please try again later.'
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
