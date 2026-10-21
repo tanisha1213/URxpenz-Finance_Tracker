@@ -15,11 +15,8 @@ function Navbar() {
   const { language, setLanguage } = useLanguage()
   const { triggerPopup } = useNotification()
   const [showNotifications, setShowNotifications] = useState(false)
-  const [hasUnread, setHasUnread] = useState(true)
-  const [notifications, setNotifications] = useState([
-    { id: 1, title: 'Welcome to Xpenz', message: 'Smart AI spending forecasts and budget trackers are active.', time: 'Just now' },
-    { id: 2, title: 'Budget Setup Complete', message: 'You have utilized 18% of your housing category limit.', time: '2 hours ago' }
-  ])
+  const [hasUnread, setHasUnread] = useState(false)
+  const [notifications, setNotifications] = useState([])
 
   useEffect(() => {
     if (!user) return

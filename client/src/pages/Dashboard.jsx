@@ -505,16 +505,7 @@ function Dashboard() {
                 🇮🇳 INR
               </span>
             </div>
-            
-            {/* Money hold pill */}
-            <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-550 dark:text-dark-text-muted">
-              <span className="px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
-                Money hold: {summary ? formatCurrency(summary.totalIncome * 0.12) : '₹0'}
-              </span>
-              <span className="px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
-                Daily Limit: {formatCurrency(25000)}
-              </span>
-            </div>
+
           </div>
 
           <div className="flex items-center flex-shrink-0">

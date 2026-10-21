@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { logout, updateProfileThunk } from '../redux/slices/authSlice'
 import { changePassword, getAccountStats } from '../services/authService'
 import { formatCurrency } from '../utils/format'
-import { FiUser, FiKey, FiCheck, FiPieChart, FiLogOut, FiBell, FiSmartphone, FiSend, FiAlertCircle } from 'react-icons/fi'
+import { FiUser, FiKey, FiCheck, FiPieChart, FiLogOut, FiBell, FiSmartphone, FiAlertCircle } from 'react-icons/fi'
 import { useLanguage } from '../context/LanguageContext'
 import { useNotification } from '../context/NotificationContext'
 
@@ -20,8 +20,7 @@ function Profile() {
     isPushSubscribed,
     pushLoading,
     enablePushNotifications,
-    disablePushNotifications,
-    triggerTestPush
+    disablePushNotifications
   } = useNotification()
   const { user } = useSelector(state => state.auth)
   const [profile, setProfile] = useState({ name: '', email: '' })
@@ -83,25 +82,6 @@ function Profile() {
     } catch (err) {
       setPushSuccess(false)
       const errorMsg = err.response?.data?.message || err.message || 'Failed to update push notification settings.'
-      setPushStatusMsg(errorMsg)
-    }
-  }
-
-  const handleTestPush = async () => {
-    setPushStatusMsg('')
-    setPushSuccess(false)
-    try {
-      const res = await triggerTestPush()
-      if (res && res.success === false) {
-        setPushSuccess(false)
-        setPushStatusMsg(res.message || 'Please enable screen alerts first.')
-      } else {
-        setPushSuccess(true)
-        setPushStatusMsg(res?.message || 'Test notification sent! Check your system screen or notification tray.')
-      }
-    } catch (err) {
-      setPushSuccess(false)
-      const errorMsg = err.response?.data?.message || err.message || 'Failed to dispatch test notification.'
       setPushStatusMsg(errorMsg)
     }
   }
@@ -261,19 +241,6 @@ function Profile() {
               </div>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
-                {isPushSubscribed && (
-                  <button
-                    type="button"
-                    onClick={handleTestPush}
-                    disabled={pushLoading}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-secondary dark:text-purple-400 bg-white dark:bg-dark-card border border-secondary/20 dark:border-purple-500/20 rounded-xl hover:bg-indigo-50 dark:hover:bg-purple-950/30 transition-all shadow-sm cursor-pointer disabled:opacity-50"
-                    title="Send a live test notification to verify OS-level popup"
-                  >
-                    <FiSend className="w-3.5 h-3.5" />
-                    <span>Test Notification</span>
-                  </button>
-                )}
-
                 <button
                   type="button"
                   onClick={handleTogglePush}

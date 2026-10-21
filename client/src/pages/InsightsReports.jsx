@@ -35,49 +35,7 @@ function InsightsReports() {
   const { insights, predictions, loading: aiLoading, error: aiError } = useSelector(state => state.insights)
 
   const safePredictions = useMemo(() => {
-    // If predictions has financialInclusion and cashflowForecast, use it!
-    if (predictions && predictions.financialInclusion && predictions.cashflowForecast) {
-      return predictions;
-    }
-    // Otherwise, return a perfect mockup for the demo video!
-    return {
-      predictedExpense: 14500,
-      confidence: 88,
-      budgetRisk: false,
-      financialInclusion: {
-        score: 75,
-        tier: 'Good',
-        advice: [
-          "Try to increase your monthly savings rate to at least 20% of your income.",
-          "Consider diversifying your wealth across other assets (e.g., FDs, PPF, or Mutual Funds).",
-          "No active insurance logged. Protect your family by securing health or term insurance."
-        ]
-      },
-      cashflowForecast: {
-        totalCashBalance: 42000,
-        dailySpendRate: 480,
-        daysRemaining: 12,
-        daysOfCashRemaining: 87,
-        willRunOut: false,
-        cheaperAlternatives: [
-          {
-            category: 'Food & Dining',
-            amount: 5400,
-            suggestion: "Reduce dining out/orders. Prep meals at home to cut costs by ~60%."
-          },
-          {
-            category: 'Shopping',
-            amount: 3200,
-            suggestion: "Apply a 48-hour cool-off rule before buying non-essentials to save ~40%."
-          },
-          {
-            category: 'Commute',
-            amount: 2100,
-            suggestion: "Consolidate travel routes or switch to public transit to save ~30%."
-          }
-        ]
-      }
-    };
+    return predictions || null;
   }, [predictions])
 
   // Reports State
@@ -630,7 +588,7 @@ ${alts.map(a => `• ${a.category}: ${a.suggestion}`).join('\n')}
                   )}
                 </div>
               ) : (
-                <p className="text-xs text-slate-400 py-6 text-center">Loading burn rate stats...</p>
+                <p className="text-xs text-slate-400 py-6 text-center">{aiLoading ? 'Calculating cashflow burn rate...' : 'Add transactions and accounts to view your live cashflow burn rate.'}</p>
               )}
             </div>
 

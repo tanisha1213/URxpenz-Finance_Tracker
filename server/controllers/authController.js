@@ -288,11 +288,7 @@ export const forgotPassword = async (req, res) => {
 
       if (mailError.code === 'SMTP_NOT_CONFIGURED') {
         if (process.env.NODE_ENV === 'development') {
-          console.warn(`\n======================================================`);
-          console.warn(`[DEVELOPMENT ONLY] SMTP is not yet configured in server/.env.`);
-          console.warn(`Add EMAIL_USER and EMAIL_PASS to server/.env to enable live email delivery.`);
-          console.warn(`Direct Reset Link for dev testing: ${frontendResetUrl}`);
-          console.warn(`======================================================\n`);
+          console.warn(`[SMTP Warning] SMTP is not configured in server/.env. Add EMAIL_USER and EMAIL_PASS to enable live email delivery.`);
         }
 
         return res.status(503).json({
