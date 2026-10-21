@@ -112,3 +112,15 @@ CREATE INDEX IF NOT EXISTS idx_transactions_user_date ON transactions("userId", 
 CREATE INDEX IF NOT EXISTS idx_transactions_user_type ON transactions("userId", type);
 CREATE INDEX IF NOT EXISTS idx_transactions_user_cat ON transactions("userId", category);
 CREATE INDEX IF NOT EXISTS idx_budgets_user ON budgets("userId");
+
+-- Disable RLS for server-side REST API access
+ALTER TABLE users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE accounts DISABLE ROW LEVEL SECURITY;
+ALTER TABLE loans DISABLE ROW LEVEL SECURITY;
+ALTER TABLE loan_installments DISABLE ROW LEVEL SECURITY;
+ALTER TABLE transactions DISABLE ROW LEVEL SECURITY;
+ALTER TABLE budgets DISABLE ROW LEVEL SECURITY;
+
+-- Explicit Grants for Supabase Data API (required for post-Oct 30 Data API access)
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO anon, authenticated, service_role;

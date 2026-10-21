@@ -41,3 +41,7 @@ CREATE INDEX IF NOT EXISTS idx_insurances_user ON insurances("userId");
 -- Disable RLS to allow backend queries (consistent with other tables in this dev/test database setup)
 ALTER TABLE investments DISABLE ROW LEVEL SECURITY;
 ALTER TABLE insurances DISABLE ROW LEVEL SECURITY;
+
+-- Explicit Grants for Supabase Data API (required for post-Oct 30 Data API access)
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.investments TO anon, authenticated, service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.insurances TO anon, authenticated, service_role;

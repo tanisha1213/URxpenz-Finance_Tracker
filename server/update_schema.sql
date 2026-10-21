@@ -39,3 +39,7 @@ CREATE TABLE IF NOT EXISTS loan_installments (
 -- Indices for performance
 CREATE INDEX IF NOT EXISTS idx_loan_installments_loan ON loan_installments("loanId");
 CREATE INDEX IF NOT EXISTS idx_loan_installments_user ON loan_installments("userId", status);
+
+-- Disable RLS and add explicit grants for loan_installments
+ALTER TABLE loan_installments DISABLE ROW LEVEL SECURITY;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.loan_installments TO anon, authenticated, service_role;

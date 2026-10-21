@@ -22,3 +22,6 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_next_billing ON subscriptions("next
 
 -- Disable RLS to match server-side REST backend queries
 ALTER TABLE subscriptions DISABLE ROW LEVEL SECURITY;
+
+-- Explicit Grants for Supabase Data API (required for post-Oct 30 Data API access)
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.subscriptions TO anon, authenticated, service_role;
