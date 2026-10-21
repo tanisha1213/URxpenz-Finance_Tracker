@@ -35,6 +35,10 @@
       "dest": "/client/sw.js"
     },
     {
+      "src": "/push-sw.js",
+      "dest": "/client/push-sw.js"
+    },
+    {
       "src": "/registerSW.js",
       "dest": "/client/registerSW.js"
     },

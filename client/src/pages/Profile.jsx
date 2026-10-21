@@ -82,7 +82,8 @@ function Profile() {
       }
     } catch (err) {
       setPushSuccess(false)
-      setPushStatusMsg(err.message || 'Failed to update push notification settings.')
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to update push notification settings.'
+      setPushStatusMsg(errorMsg)
     }
   }
 
@@ -91,11 +92,17 @@ function Profile() {
     setPushSuccess(false)
     try {
       const res = await triggerTestPush()
-      setPushSuccess(true)
-      setPushStatusMsg(res.message || 'Test notification sent! Check your system screen or notification tray.')
+      if (res && res.success === false) {
+        setPushSuccess(false)
+        setPushStatusMsg(res.message || 'Please enable screen alerts first.')
+      } else {
+        setPushSuccess(true)
+        setPushStatusMsg(res?.message || 'Test notification sent! Check your system screen or notification tray.')
+      }
     } catch (err) {
       setPushSuccess(false)
-      setPushStatusMsg(err.message || 'Failed to dispatch test notification.')
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to dispatch test notification.'
+      setPushStatusMsg(errorMsg)
     }
   }
 

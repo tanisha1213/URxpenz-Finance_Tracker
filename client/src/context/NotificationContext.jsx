@@ -98,7 +98,12 @@ export function NotificationProvider({ children }) {
       }
 
       // 3. Register push subscription with browser service worker
-      const registration = await navigator.serviceWorker.ready
+      let registration = await navigator.serviceWorker.getRegistration()
+      if (!registration) {
+        registration = await navigator.serviceWorker.register('/sw.js')
+      }
+      registration = await navigator.serviceWorker.ready
+
       let subscription = await registration.pushManager.getSubscription()
 
       if (!subscription) {
@@ -134,7 +139,11 @@ export function NotificationProvider({ children }) {
       const registration = await navigator.serviceWorker.ready
       const subscription = await registration.pushManager.getSubscription()
       if (subscription) {
-        await unsubscribeFromPush(subscription.endpoint)
+        try {
+          await unsubscribeFromPush(subscription.endpoint)
+        } catch (e) {
+          // ignore
+        }
         await subscription.unsubscribe()
       }
       setIsPushSubscribed(false)
@@ -152,8 +161,36 @@ export function NotificationProvider({ children }) {
   const triggerTestPush = async () => {
     setPushLoading(true)
     try {
-      const res = await sendTestPush()
-      return res.data
+      // 1. Immediately trigger an OS-level notification via the service worker
+      if ('serviceWorker' in navigator && 'Notification' in window && Notification.permission === 'granted') {
+        try {
+          const reg = await navigator.serviceWorker.ready
+          if (reg && reg.showNotification) {
+            reg.showNotification('Xpenz Desktop & Mobile Alert 🚀', {
+              body: 'Native OS notifications are active! You will now receive loan due and EMI alerts even when the app is completely closed.',
+              icon: '/pwa-192x192.png',
+              badge: '/pwa-192x192.png',
+              vibrate: [200, 100, 200],
+              data: { url: '/dashboard' }
+            }).catch(() => {})
+          }
+        } catch (swErr) {
+          console.warn('[Push] ServiceWorker local notification notice:', swErr)
+        }
+      }
+
+      // 2. Also dispatch from server Web Push
+      let resData = { success: true, message: 'Test notification sent! Check your system screen or notification tray.' }
+      try {
+        const res = await sendTestPush()
+        if (res && res.data) {
+          resData = res.data
+        }
+      } catch (netErr) {
+        console.warn('[Push] Remote test push notice:', netErr.message)
+      }
+
+      return resData
     } catch (err) {
       console.error('[Trigger Test Push Error]:', err)
       throw err

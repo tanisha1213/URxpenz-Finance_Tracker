@@ -58,9 +58,9 @@ export const sendTestNotification = async (req, res) => {
     const subscriptions = await PushSubscriptionModel.getSubscriptionsByUser(userId);
 
     if (!subscriptions || subscriptions.length === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: false,
-        message: 'No active push subscription found for this device. Please enable notifications first.'
+        message: 'No active push subscription registered on the server yet. Please click "Enable Screen Alerts" first.'
       });
     }
 
