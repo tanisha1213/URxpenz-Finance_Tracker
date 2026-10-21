@@ -7,6 +7,10 @@ import store from './redux/store.js'
 import { ThemeProvider } from './context/ThemeContext.jsx'
 import { LanguageProvider } from './context/LanguageContext.jsx'
 import { NotificationProvider } from './context/NotificationContext.jsx'
+import { registerSW } from 'virtual:pwa-register'
+
+// Register Service Worker immediately for background push notifications
+registerSW({ immediate: true })
 
 // Automatically reload page if a dynamic import fails due to a new deployment update
 window.addEventListener('vite:preloadError', () => {
