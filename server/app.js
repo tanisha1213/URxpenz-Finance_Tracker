@@ -16,6 +16,8 @@ import loanRoutes from './routes/loanRoutes.js';
 import investmentRoutes from './routes/investmentRoutes.js';
 import insuranceRoutes from './routes/insuranceRoutes.js';
 import subscriptionRoutes from './routes/subscriptionRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import { initNotificationScheduler } from './services/notificationScheduler.js';
 
 dotenv.config();
 
@@ -98,6 +100,10 @@ app.use('/api/loans', loanRoutes);
 app.use('/api/investments', investmentRoutes);
 app.use('/api/insurances', insuranceRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/notifications', notificationRoutes);
+
+// Initialize background loan & EMI reminder scheduler
+initNotificationScheduler();
 
 // Health check
 app.get('/health', (req, res) => {

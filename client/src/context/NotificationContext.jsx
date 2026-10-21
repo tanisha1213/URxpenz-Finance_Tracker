@@ -1,6 +1,25 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react'
+import {
+  getVapidPublicKey,
+  subscribeToPush,
+  unsubscribeFromPush,
+  sendTestPush,
+  checkReminders
+} from '../services/notificationService'
 
 const NotificationContext = createContext()
+
+// Helper to convert VAPID base64 string to Uint8Array for PushManager
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = window.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
+}
 
 export function NotificationProvider({ children }) {
   const [popupEnabled, setPopupEnabledState] = useState(() => {
@@ -9,7 +28,34 @@ export function NotificationProvider({ children }) {
   })
 
   const [popups, setPopups] = useState([])
+  const [isPushSupported, setIsPushSupported] = useState(false)
+  const [pushPermission, setPushPermission] = useState('default')
+  const [isPushSubscribed, setIsPushSubscribed] = useState(false)
+  const [pushLoading, setPushLoading] = useState(false)
   const seenIdsRef = useRef(new Set())
+
+  // Check initial push support and permission
+  useEffect(() => {
+    const supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
+    setIsPushSupported(supported)
+
+    if (supported) {
+      setPushPermission(Notification.permission)
+      checkExistingPushSubscription()
+    }
+  }, [])
+
+  // Check if browser is already subscribed to push
+  const checkExistingPushSubscription = async () => {
+    try {
+      if (!('serviceWorker' in navigator)) return
+      const registration = await navigator.serviceWorker.ready
+      const subscription = await registration.pushManager.getSubscription()
+      setIsPushSubscribed(!!subscription)
+    } catch (err) {
+      console.warn('[Push] Error checking subscription:', err)
+    }
+  }
 
   const setPopupEnabled = (enabled) => {
     setPopupEnabledState(enabled)
@@ -20,32 +66,125 @@ export function NotificationProvider({ children }) {
     setPopups((prev) => prev.filter((p) => p.id !== id))
   }
 
+  /**
+   * Subscribe user device to OS-level Web Push notifications (works even when app is closed)
+   */
+  const enablePushNotifications = async () => {
+    if (!isPushSupported) {
+      throw new Error('Push notifications are not supported by this browser.')
+    }
+
+    setPushLoading(true)
+    try {
+      // 1. Request notification permission
+      const permission = await Notification.requestPermission()
+      setPushPermission(permission)
+
+      if (permission !== 'granted') {
+        throw new Error('Notification permission was not granted. Please allow notifications in your browser settings.')
+      }
+
+      // 2. Fetch server VAPID public key
+      const keyRes = await getVapidPublicKey()
+      const publicKey = keyRes.data.publicKey
+      if (!publicKey) {
+        throw new Error('VAPID public key could not be retrieved from server.')
+      }
+
+      // 3. Register push subscription with browser service worker
+      const registration = await navigator.serviceWorker.ready
+      let subscription = await registration.pushManager.getSubscription()
+
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicKey)
+        })
+      }
+
+      // 4. Send subscription to server
+      await subscribeToPush(subscription, navigator.userAgent)
+      setIsPushSubscribed(true)
+      return subscription
+    } catch (err) {
+      console.error('[Push Subscription Error]:', err)
+      throw err
+    } finally {
+      setPushLoading(false)
+    }
+  }
+
+  /**
+   * Unsubscribe from OS-level push notifications
+   */
+  const disablePushNotifications = async () => {
+    setPushLoading(true)
+    try {
+      const registration = await navigator.serviceWorker.ready
+      const subscription = await registration.pushManager.getSubscription()
+      if (subscription) {
+        await unsubscribeFromPush(subscription.endpoint)
+        await subscription.unsubscribe()
+      }
+      setIsPushSubscribed(false)
+    } catch (err) {
+      console.error('[Push Unsubscribe Error]:', err)
+      throw err
+    } finally {
+      setPushLoading(false)
+    }
+  }
+
+  /**
+   * Send a test push notification to verify OS-level notification pops up on screen
+   */
+  const triggerTestPush = async () => {
+    setPushLoading(true)
+    try {
+      const res = await sendTestPush()
+      return res.data
+    } catch (err) {
+      console.error('[Trigger Test Push Error]:', err)
+      throw err
+    } finally {
+      setPushLoading(false)
+    }
+  }
+
   const triggerPopup = ({ id, title, message, time = 'Just now', type = 'info' }) => {
-    // If pop-ups are turned off in settings, do not show floating banner
     if (!popupEnabled) return
 
     const popupId = id || `popup-${title}-${message}`
     
-    // Deduplicate: prevent firing the exact same notification multiple times
+    // Deduplicate: prevent firing the exact same notification multiple times in one session
     if (seenIdsRef.current.has(popupId)) return
     seenIdsRef.current.add(popupId)
 
-    // Keep max 2 visible floating banners to prevent full-screen stacking
+    // Keep max 2 visible floating banners inside app
     setPopups((prev) => {
       if (prev.some((p) => p.id === popupId)) return prev
       const updated = [...prev, { id: popupId, title, message, time, type }]
       return updated.slice(-2)
     })
 
-    // Browser Notification API (if permission is granted)
+    // If ServiceWorker is ready and permission granted, also fire persistent notification
     if ('Notification' in window && Notification.permission === 'granted') {
-      try {
-        new Notification(title, {
-          body: message,
-          icon: '/pwa-192x192.png'
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then((reg) => {
+          reg.showNotification(title, {
+            body: message,
+            icon: '/pwa-192x192.png',
+            badge: '/pwa-192x192.png',
+            vibrate: [200, 100, 200]
+          }).catch(() => {
+            // Fallback to window Notification
+            new Notification(title, { body: message, icon: '/pwa-192x192.png' })
+          })
+        }).catch(() => {
+          new Notification(title, { body: message, icon: '/pwa-192x192.png' })
         })
-      } catch (err) {
-        console.warn('Browser Notification trigger failed:', err)
+      } else {
+        new Notification(title, { body: message, icon: '/pwa-192x192.png' })
       }
     }
 
@@ -55,13 +194,6 @@ export function NotificationProvider({ children }) {
     }, 5000)
   }
 
-  // Request browser notification permission if popups are enabled
-  useEffect(() => {
-    if (popupEnabled && 'Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission().catch(() => {})
-    }
-  }, [popupEnabled])
-
   return (
     <NotificationContext.Provider
       value={{
@@ -69,7 +201,15 @@ export function NotificationProvider({ children }) {
         setPopupEnabled,
         popups,
         triggerPopup,
-        dismissPopup
+        dismissPopup,
+        isPushSupported,
+        pushPermission,
+        isPushSubscribed,
+        pushLoading,
+        enablePushNotifications,
+        disablePushNotifications,
+        triggerTestPush,
+        checkReminders
       }}
     >
       {children}
@@ -85,3 +225,5 @@ export const useNotification = () => {
   }
   return context
 }
+
+export default NotificationContext
