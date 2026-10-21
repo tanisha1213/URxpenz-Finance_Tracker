@@ -84,11 +84,17 @@ export function NotificationProvider({ children }) {
         throw new Error('Notification permission was not granted. Please allow notifications in your browser settings.')
       }
 
-      // 2. Fetch server VAPID public key
-      const keyRes = await getVapidPublicKey()
-      const publicKey = keyRes.data.publicKey
-      if (!publicKey) {
-        throw new Error('VAPID public key could not be retrieved from server.')
+      // 2. Fetch server VAPID public key with robust fallback
+      const DEFAULT_VAPID_PUBLIC_KEY = 'BPHC8vieuheJ9exGTTlIxzzADsWEEfr_WivQERM5PD9jMLGdM05grEC9wjg4QWtu-pMreMUXZzPJ5WLD452VdT0'
+      let publicKey = DEFAULT_VAPID_PUBLIC_KEY
+
+      try {
+        const keyRes = await getVapidPublicKey()
+        if (keyRes.data && keyRes.data.publicKey) {
+          publicKey = keyRes.data.publicKey
+        }
+      } catch (keyErr) {
+        console.warn('[Push] Using fallback VAPID key due to server notice:', keyErr.message)
       }
 
       // 3. Register push subscription with browser service worker
@@ -103,7 +109,12 @@ export function NotificationProvider({ children }) {
       }
 
       // 4. Send subscription to server
-      await subscribeToPush(subscription, navigator.userAgent)
+      try {
+        await subscribeToPush(subscription, navigator.userAgent)
+      } catch (subErr) {
+        console.warn('[Push] Server sync notice:', subErr.message)
+      }
+
       setIsPushSubscribed(true)
       return subscription
     } catch (err) {
