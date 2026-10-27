@@ -172,6 +172,14 @@ function Transactions() {
     dispatch(fetchTransactions(query))
   }, [dispatch, query])
 
+  useEffect(() => {
+    const handleSyncComplete = () => {
+      dispatch(fetchTransactions(query))
+    }
+    window.addEventListener('xpenz-offline-synced', handleSyncComplete)
+    return () => window.removeEventListener('xpenz-offline-synced', handleSyncComplete)
+  }, [dispatch, query])
+
   // Auto-sync custom categories from cloud transactions so they persist across devices
   useEffect(() => {
     if (transactions && transactions.length > 0) {
@@ -645,7 +653,14 @@ function Transactions() {
                       <tr key={item._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors">
                         <td className="px-6 py-4">
                           <div>
-                            <p className="font-bold text-slate-800 dark:text-white">{item.title}</p>
+                            <p className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                              {item.title}
+                              {item.isOfflinePending && (
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                                  ⚡ Pending Sync
+                                </span>
+                              )}
+                            </p>
                             {item.loanId && (
                               <div className="mt-1">
                                 <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-bold rounded bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-950/10">
@@ -751,7 +766,14 @@ function Transactions() {
                 <div key={item._id} className="bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border p-4 rounded-2xl shadow-sm space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-bold text-slate-800 dark:text-white text-sm leading-snug">{item.title}</h4>
+                      <h4 className="font-bold text-slate-800 dark:text-white text-sm leading-snug flex items-center gap-1.5">
+                        {item.title}
+                        {item.isOfflinePending && (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-bold rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                            ⚡ Offline
+                          </span>
+                        )}
+                      </h4>
                       {item.loanId && (
                         <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold rounded bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-950/10 mt-1">
                           Linked: {item.loanId.title || 'Loan'}

@@ -3,9 +3,17 @@ import crypto from 'crypto';
 import User from '../models/User.js';
 import Transaction from '../models/Transaction.js';
 import Budget from '../models/Budget.js';
+import Account from '../models/Account.js';
+import Loan from '../models/Loan.js';
+import Investment from '../models/Investment.js';
+import Insurance from '../models/Insurance.js';
+import Subscription from '../models/Subscription.js';
+import PushSubscriptionModel from '../models/PushSubscription.js';
 import { summarizeTransactions } from '../services/financeAnalyzer.js';
 import { sendPasswordResetEmail } from '../utils/sendEmail.js';
 import { getUserSubscription } from '../utils/subscriptionHelper.js';
+import { saveUserSettings } from '../utils/userSettings.js';
+import { saveStoredSubscription } from '../utils/subscriptionStore.js';
 
 const generateToken = (id) => {
   const secret = process.env.JWT_SECRET || 'xpenz_default_jwt_secret_key_2026';
@@ -380,6 +388,46 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message
+    });
+  }
+};
+
+/**
+ * Permanently delete user account and cascade delete all personal records
+ * Required for Google Play Store User Data Compliance
+ */
+export const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+
+    // Cascade delete across all tables
+    await Promise.allSettled([
+      Transaction.deleteMany({ userId }),
+      Budget.deleteMany({ userId }),
+      Account.deleteMany({ userId }),
+      Loan.deleteMany({ userId }),
+      Investment.deleteMany({ userId }),
+      Insurance.deleteMany({ userId }),
+      Subscription.deleteMany({ userId }),
+      PushSubscriptionModel.deleteMany({ userId }),
+      User.deleteOne({ _id: userId })
+    ]);
+
+    // Clean up local fallback files
+    saveUserSettings(userId, null);
+    saveStoredSubscription(userId, null);
+
+    res.status(200).json({
+      success: true,
+      message: 'Your account and all associated financial records have been permanently deleted.'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to delete account'
     });
   }
 };

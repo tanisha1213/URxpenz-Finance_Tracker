@@ -123,6 +123,14 @@ function Sidebar() {
           <FiLogOut className="w-5 h-5" />
           {t('logout')}
         </button>
+        <div className="pt-2 text-center">
+          <Link
+            to="/privacy"
+            className="text-[10px] text-slate-500 hover:text-purple-400 transition-colors underline font-medium"
+          >
+            Privacy Policy & Data Safety
+          </Link>
+        </div>
       </div>
     </aside>
   )

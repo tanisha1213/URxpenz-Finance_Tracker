@@ -7,7 +7,8 @@ import {
   changePassword,
   getAccountStats,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  deleteAccount
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -21,5 +22,6 @@ router.get('/me', protect, getMe);
 router.put('/profile', protect, updateProfile);
 router.put('/password', protect, changePassword);
 router.get('/stats', protect, getAccountStats);
+router.delete('/delete-account', protect, deleteAccount);
 
 export default router;

@@ -9,9 +9,13 @@ import { LanguageProvider } from './context/LanguageContext.jsx'
 import { NotificationProvider } from './context/NotificationContext.jsx'
 import { SubscriptionProvider } from './context/SubscriptionContext.jsx'
 import { registerSW } from 'virtual:pwa-register'
+import { initOfflineSyncListener } from './services/offlineSyncService.js'
 
 // Register Service Worker immediately for background push notifications
 registerSW({ immediate: true })
+
+// Initialize offline transaction sync listeners
+initOfflineSyncListener()
 
 // Automatically reload page if a dynamic import fails due to a new deployment update
 window.addEventListener('vite:preloadError', () => {

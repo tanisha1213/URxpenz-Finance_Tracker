@@ -8,6 +8,7 @@ import logoDark from '../../assets/logo-dark.png'
 import { getLoans } from '../../services/loanService'
 import { useLanguage } from '../../context/LanguageContext'
 import { useNotification } from '../../context/NotificationContext'
+import { getOfflineQueue, syncOfflineQueue } from '../../services/offlineSyncService'
 
 function Navbar() {
   const { user } = useSelector(state => state.auth)
@@ -17,6 +18,36 @@ function Navbar() {
   const [showNotifications, setShowNotifications] = useState(false)
   const [hasUnread, setHasUnread] = useState(false)
   const [notifications, setNotifications] = useState([])
+  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true)
+  const [pendingOfflineCount, setPendingOfflineCount] = useState(0)
+  const [isSyncing, setIsSyncing] = useState(false)
+
+  useEffect(() => {
+    setPendingOfflineCount(getOfflineQueue().length)
+
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+    const handleQueueChange = (e) => setPendingOfflineCount(e.detail?.count ?? getOfflineQueue().length)
+    const handleSyncStart = () => setIsSyncing(true)
+    const handleSyncEnd = () => {
+      setIsSyncing(false)
+      setPendingOfflineCount(getOfflineQueue().length)
+    }
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    window.addEventListener('xpenz-offline-queue-updated', handleQueueChange)
+    window.addEventListener('xpenz-sync-started', handleSyncStart)
+    window.addEventListener('xpenz-offline-synced', handleSyncEnd)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+      window.removeEventListener('xpenz-offline-queue-updated', handleQueueChange)
+      window.removeEventListener('xpenz-sync-started', handleSyncStart)
+      window.removeEventListener('xpenz-offline-synced', handleSyncEnd)
+    }
+  }, [])
 
   useEffect(() => {
     if (!user) return
@@ -118,6 +149,49 @@ function Navbar() {
         
         {/* Right Header Actions */}
         <div className="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0 flex-nowrap">
+          {/* Offline / Sync Status Pill */}
+          {(!isOnline || pendingOfflineCount > 0 || isSyncing) && (
+            <button
+              type="button"
+              onClick={() => {
+                if (isOnline && !isSyncing && pendingOfflineCount > 0) {
+                  syncOfflineQueue()
+                }
+              }}
+              title={
+                !isOnline
+                  ? 'Offline Mode: Transactions are queued locally and will auto-sync when online'
+                  : isSyncing
+                  ? 'Syncing offline transactions with cloud...'
+                  : `${pendingOfflineCount} offline item(s) pending sync. Click to sync now.`
+              }
+              className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold border transition-all ${
+                !isOnline
+                  ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                  : isSyncing
+                  ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
+                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 cursor-pointer shadow-sm'
+              }`}
+            >
+              {isSyncing ? (
+                <>
+                  <span className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <span className="hidden sm:inline">Syncing</span>
+                </>
+              ) : !isOnline ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span>Offline{pendingOfflineCount > 0 ? ` (${pendingOfflineCount})` : ''}</span>
+                </>
+              ) : (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>Sync ({pendingOfflineCount})</span>
+                </>
+              )}
+            </button>
+          )}
+
           {/* Language Switcher */}
           <div id="language-switcher-tour" className="relative flex items-center">
             <select

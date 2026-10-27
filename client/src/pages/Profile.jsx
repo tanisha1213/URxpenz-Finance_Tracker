@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { logout, updateProfileThunk } from '../redux/slices/authSlice'
-import { changePassword, getAccountStats } from '../services/authService'
+import { changePassword, getAccountStats, deleteUserAccount } from '../services/authService'
 import { formatCurrency } from '../utils/format'
-import { FiUser, FiKey, FiCheck, FiPieChart, FiLogOut, FiBell, FiSmartphone, FiAlertCircle } from 'react-icons/fi'
+import {
+  FiUser, FiKey, FiCheck, FiPieChart, FiLogOut, FiBell,
+  FiSmartphone, FiAlertCircle, FiTrash2, FiAlertTriangle, FiShield
+} from 'react-icons/fi'
 import { useLanguage } from '../context/LanguageContext'
 import { useNotification } from '../context/NotificationContext'
 
@@ -30,6 +33,10 @@ function Profile() {
   const [error, setError] = useState('')
   const [pushStatusMsg, setPushStatusMsg] = useState('')
   const [pushSuccess, setPushSuccess] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     if (user) setProfile({ name: user.name, email: user.email })
@@ -64,6 +71,25 @@ function Profile() {
   const handleLogout = () => {
     dispatch(logout())
     navigate('/login')
+  }
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText.trim().toUpperCase() !== 'DELETE') {
+      setDeleteError('Please type DELETE to confirm.')
+      return
+    }
+    setDeleteLoading(true)
+    setDeleteError('')
+    try {
+      await deleteUserAccount()
+      localStorage.clear()
+      sessionStorage.clear()
+      dispatch(logout())
+      navigate('/signup')
+    } catch (err) {
+      setDeleteLoading(false)
+      setDeleteError(err.response?.data?.message || err.message || 'Failed to delete account. Please try again.')
+    }
   }
 
   const handleTogglePush = async () => {
@@ -292,22 +318,128 @@ function Profile() {
           </section>
 
           {/* Exit Session / Logout Option */}
-          <section className="rounded-2xl border border-rose-100 dark:border-rose-950/20 bg-rose-50/20 dark:bg-rose-950/5 p-6 shadow-premium h-fit space-y-4">
-            <div className="flex items-center gap-2 pb-4 border-b border-rose-100 dark:border-rose-950/20">
-              <FiLogOut className="w-5 h-5 text-rose-500" />
-              <h3 className="font-bold text-rose-800 dark:text-rose-400 text-lg">Exit Account</h3>
+          <section className="rounded-2xl border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card p-6 shadow-premium h-fit space-y-4">
+            <div className="flex items-center gap-2 pb-4 border-b border-slate-100 dark:border-dark-border">
+              <FiLogOut className="w-5 h-5 text-slate-500" />
+              <h3 className="font-bold text-slate-800 dark:text-white text-lg">Exit Account</h3>
             </div>
-            <p className="text-xs text-rose-600/70 dark:text-rose-400/60 font-medium">Log out of your current session on this device. You will need to input your credentials again to log back in.</p>
+            <p className="text-xs text-slate-500 dark:text-dark-text-muted font-medium">Log out of your current session on this device. You will need to input your credentials again to log back in.</p>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-650 hover:bg-rose-700 text-white rounded-xl font-semibold text-sm transition-all duration-200 shadow-md shadow-rose-600/15 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-700 hover:bg-slate-850 dark:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl font-semibold text-sm transition-all duration-200 shadow-md cursor-pointer"
             >
               <FiLogOut className="w-5 h-5" />
               {t('logout')}
             </button>
           </section>
+
+          {/* Danger Zone: Account & Data Deletion (Google Play Compliance) */}
+          <section className="rounded-2xl border border-rose-200 dark:border-rose-950/40 bg-rose-50/20 dark:bg-rose-950/10 p-6 shadow-premium h-fit space-y-4">
+            <div className="flex items-center gap-2 pb-4 border-b border-rose-100 dark:border-rose-950/30">
+              <FiAlertTriangle className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+              <h3 className="font-bold text-rose-900 dark:text-rose-300 text-lg">Danger Zone</h3>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-rose-800 dark:text-rose-300">Delete Account & Personal Data</h4>
+              <p className="text-xs text-rose-700/70 dark:text-rose-400/60 mt-1 leading-relaxed">
+                Permanently purges your account profile, transaction entries, bank records, and budgets from our database. Meets Google Play Store User Data Compliance.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setDeleteConfirmText('')
+                setDeleteError('')
+                setShowDeleteModal(true)
+              }}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-rose-600/20 cursor-pointer"
+            >
+              <FiTrash2 className="w-4 h-4" />
+              Delete Account & All Data
+            </button>
+
+            <div className="pt-2 border-t border-rose-100 dark:border-rose-950/30 flex justify-center">
+              <Link
+                to="/privacy"
+                className="text-xs text-slate-500 hover:text-secondary dark:text-slate-400 dark:hover:text-purple-400 font-semibold underline transition-colors"
+              >
+                Privacy Policy & Data Retention Policy
+              </Link>
+            </div>
+          </section>
         </div>
       </div>
+
+      {/* Google Play Account Deletion Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-md bg-white dark:bg-[#11131f] border border-rose-200 dark:border-rose-900/40 rounded-3xl p-6 shadow-2xl space-y-5">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/40 flex items-center justify-center text-rose-600 shrink-0">
+                <FiAlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-lg text-slate-900 dark:text-white">Delete Account & Wipe Data?</h3>
+                <p className="text-xs text-rose-600 dark:text-rose-400 font-bold mt-0.5">Google Play Data Erasure Standard</p>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 text-xs text-rose-800 dark:text-rose-300 space-y-1.5 leading-relaxed">
+              <p className="font-bold">This action cannot be undone. It immediately deletes:</p>
+              <ul className="list-disc pl-4 space-y-0.5 text-[11px]">
+                <li>All transaction records and income/expense ledgers</li>
+                <li>Linked bank accounts and balance totals</li>
+                <li>Monthly and daily budget targets</li>
+                <li>Active loans, EMI schedules, and push notification tokens</li>
+                <li>Your credentials and authenticated session</li>
+              </ul>
+            </div>
+
+            {deleteError && (
+              <div className="p-3 rounded-xl bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400 text-xs font-semibold">
+                {deleteError}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Type <span className="font-mono text-rose-600 font-extrabold">DELETE</span> to confirm:
+              </label>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="DELETE"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-bg text-slate-800 dark:text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 uppercase tracking-widest text-center"
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleteLoading}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border text-slate-600 dark:text-slate-400 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirmText.trim().toUpperCase() !== 'DELETE' || deleteLoading}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-rose-600/20"
+              >
+                {deleteLoading ? (
+                  <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <FiTrash2 className="w-3.5 h-3.5" />
+                )}
+                Permanently Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

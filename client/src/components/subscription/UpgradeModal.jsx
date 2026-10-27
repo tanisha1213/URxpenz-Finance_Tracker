@@ -12,7 +12,8 @@ import {
   FiCreditCard,
   FiCalendar,
   FiAward,
-  FiDownload
+  FiDownload,
+  FiWifiOff
 } from 'react-icons/fi';
 
 const PLANS = [
@@ -74,6 +75,10 @@ export default function UpgradeModal() {
   if (!isUpgradeModalOpen) return null;
 
   const handleSubscribe = async () => {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setErrorMsg('Internet connection required. You are currently offline. Please reconnect to purchase or activate a subscription plan.');
+      return;
+    }
     setLoading(true);
     setErrorMsg('');
     setSuccessMsg('');
@@ -237,6 +242,13 @@ export default function UpgradeModal() {
           </div>
         )}
 
+        {typeof navigator !== 'undefined' && !navigator.onLine && (
+          <div className="mt-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs sm:text-sm font-semibold flex items-center gap-2.5">
+            <FiWifiOff className="w-5 h-5 flex-shrink-0 text-amber-500" />
+            <span>You are currently offline. Subscription activations and payment processing require an active internet connection.</span>
+          </div>
+        )}
+
         {/* Plans Selection Grid */}
         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {PLANS.map((plan) => {
@@ -328,8 +340,8 @@ export default function UpgradeModal() {
         <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
           <button
             onClick={handleSubscribe}
-            disabled={loading}
-            className="w-full flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl bg-secondary hover:bg-indigo-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-black text-sm shadow-xl shadow-secondary/25 transition-all duration-200 cursor-pointer disabled:opacity-50"
+            disabled={loading || (typeof navigator !== 'undefined' && !navigator.onLine)}
+            className="w-full flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl bg-secondary hover:bg-indigo-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-black text-sm shadow-xl shadow-secondary/25 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />

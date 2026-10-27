@@ -100,6 +100,12 @@ function Login() {
             Sign up
           </Link>
         </p>
+
+        <p className="text-center mt-3 text-xs text-slate-400 dark:text-dark-text-muted">
+          <Link to="/privacy" className="underline hover:text-secondary dark:hover:text-purple-400 font-medium">
+            Privacy Policy & Data Safety
+          </Link>
+        </p>
       </div>
     </div>
   )
