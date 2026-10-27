@@ -1,5 +1,7 @@
 import Account from '../models/Account.js';
 import Transaction from '../models/Transaction.js';
+import User from '../models/User.js';
+import { getUserSubscription } from '../utils/subscriptionHelper.js';
 
 // Get all accounts (initializes defaults if they don't exist)
 export const getAccounts = async (req, res) => {
@@ -49,6 +51,22 @@ export const addBankAccount = async (req, res) => {
   try {
     const { name, balance } = req.body;
     const userId = req.userId;
+
+    // Check tier limits for Basic users (Max 1 bank account)
+    const user = await User.findById(userId);
+    const subscription = getUserSubscription(user);
+    if (!subscription.isPro) {
+      const currentBankAccounts = await Account.find({ userId, type: 'bank' });
+      if (currentBankAccounts.length >= 1) {
+        return res.status(403).json({
+          success: false,
+          code: 'LIMIT_REACHED',
+          message: 'Basic tier allows 1 bank account. Please upgrade to Pro for unlimited bank accounts.',
+          limit: 1,
+          currentCount: currentBankAccounts.length
+        });
+      }
+    }
 
     if (!name || !name.trim()) {
       return res.status(400).json({

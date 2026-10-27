@@ -4,11 +4,25 @@ import Investment from '../models/Investment.js';
 import Insurance from '../models/Insurance.js';
 import Loan from '../models/Loan.js';
 import Account from '../models/Account.js';
+import User from '../models/User.js';
 import { generateAIInsights, predictExpense } from '../services/aiService.js';
+import { getUserSubscription } from '../utils/subscriptionHelper.js';
 
 export const generateInsights = async (req, res) => {
   try {
     const userId = req.userId;
+
+    // Check Pro subscription
+    const user = await User.findById(userId);
+    const subscription = getUserSubscription(user);
+    if (!subscription.isPro) {
+      return res.status(403).json({
+        success: false,
+        code: 'PRO_REQUIRED',
+        message: 'AI Financial Insights & Advice require an active Pro subscription.'
+      });
+    }
+
     const [transactions, budget] = await Promise.all([
       Transaction.find({ userId }).catch(() => []),
       Budget.findOne({ userId }).catch(() => null)
@@ -35,6 +49,18 @@ export const generateInsights = async (req, res) => {
 export const predictSpending = async (req, res) => {
   try {
     const userId = req.userId;
+
+    // Check Pro subscription
+    const user = await User.findById(userId);
+    const subscription = getUserSubscription(user);
+    if (!subscription.isPro) {
+      return res.status(403).json({
+        success: false,
+        code: 'PRO_REQUIRED',
+        message: 'AI Forecasts, Cashflow Burn Runway, and Alternatives require an active Pro subscription.'
+      });
+    }
+
     const [transactions, budget, investments, insurances, loans, accounts] = await Promise.all([
       Transaction.find({ userId }).catch(() => []),
       Budget.findOne({ userId }).catch(() => null),

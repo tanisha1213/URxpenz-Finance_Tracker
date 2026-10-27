@@ -5,6 +5,7 @@ import Transaction from '../models/Transaction.js';
 import Budget from '../models/Budget.js';
 import { summarizeTransactions } from '../services/financeAnalyzer.js';
 import { sendPasswordResetEmail } from '../utils/sendEmail.js';
+import { getUserSubscription } from '../utils/subscriptionHelper.js';
 
 const generateToken = (id) => {
   const secret = process.env.JWT_SECRET || 'xpenz_default_jwt_secret_key_2026';
@@ -17,7 +18,8 @@ const generateToken = (id) => {
 const sanitizeUser = (user) => ({
   id: user._id,
   name: user.name,
-  email: user.email
+  email: user.email,
+  subscription: getUserSubscription(user)
 });
 
 export const signup = async (req, res) => {
@@ -50,7 +52,22 @@ export const signup = async (req, res) => {
       });
     }
 
-    const user = await User.create({ name: name.trim(), email: normalizedEmail, password });
+    let user;
+    try {
+      const now = new Date();
+      const trialEndDate = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+      user = await User.create({
+        name: name.trim(),
+        email: normalizedEmail,
+        password,
+        subscriptionTier: 'trial',
+        trialStartDate: now.toISOString(),
+        trialEndDate: trialEndDate.toISOString()
+      });
+    } catch (createErr) {
+      user = await User.create({ name: name.trim(), email: normalizedEmail, password });
+    }
+
     const token = generateToken(user._id);
 
     res.status(201).json({

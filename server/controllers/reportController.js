@@ -1,7 +1,9 @@
 import PDFDocument from 'pdfkit';
 import Transaction from '../models/Transaction.js';
 import Budget from '../models/Budget.js';
+import User from '../models/User.js';
 import { summarizeTransactions } from '../services/financeAnalyzer.js';
+import { getUserSubscription } from '../utils/subscriptionHelper.js';
 
 const formatCurrency = (value) => `INR ${Math.round(value || 0).toLocaleString('en-IN')}`;
 
@@ -18,6 +20,19 @@ const safeFormatDate = (dateVal) => {
 
 export const getMonthlyReport = async (req, res) => {
   try {
+    // If requesting PDF format, verify Pro subscription
+    if (req.query.format === 'pdf') {
+      const user = await User.findById(req.userId);
+      const subscription = getUserSubscription(user);
+      if (!subscription.isPro) {
+        return res.status(403).json({
+          success: false,
+          code: 'PRO_REQUIRED',
+          message: 'PDF Statement & Report export requires an active Pro subscription. Please upgrade to Pro.'
+        });
+      }
+    }
+
     const now = new Date();
     const isYearly = req.query.type === 'yearly';
     const isCustom = !!(req.query.startDate && req.query.endDate);

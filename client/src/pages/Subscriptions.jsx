@@ -8,6 +8,7 @@ import {
 } from '../services/subscriptionService'
 import { getAccounts } from '../services/accountService'
 import { formatCurrency, formatDate } from '../utils/format'
+import { useSubscription } from '../context/SubscriptionContext'
 import {
   FiPlus, FiRepeat, FiPlay, FiTrash2, FiEdit2, FiSearch,
   FiClock, FiCheckCircle, FiPauseCircle, FiCalendar,
@@ -44,6 +45,7 @@ const emptyForm = {
 }
 
 export default function Subscriptions() {
+  const { isPro, openUpgradeModal } = useSubscription()
   const [subscriptions, setSubscriptions] = useState([])
   const [stats, setStats] = useState({
     totalCount: 0,
@@ -95,6 +97,11 @@ export default function Subscriptions() {
   }, [])
 
   const handleOpenAdd = () => {
+    const activeSubs = subscriptions.filter(s => s.status === 'active')
+    if (!isPro && activeSubs.length >= 2) {
+      openUpgradeModal('subscriptions')
+      return
+    }
     setEditingId(null)
     const firstAccId = accounts.length > 0 ? (accounts[0]._id || accounts[0].id) : ''
     setForm({
@@ -137,7 +144,12 @@ export default function Subscriptions() {
       setShowModal(false)
       loadData()
     } catch (err) {
-      setModalMessage(err.response?.data?.message || 'Failed to save subscription')
+      if (err.response?.data?.code === 'LIMIT_REACHED') {
+        setShowModal(false)
+        openUpgradeModal('subscriptions')
+      } else {
+        setModalMessage(err.response?.data?.message || 'Failed to save subscription')
+      }
     } finally {
       setFormLoading(false)
     }

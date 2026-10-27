@@ -18,16 +18,19 @@ import {
   FiDollarSign,
   FiActivity,
   FiPercent,
-  FiShield
+  FiShield,
+  FiZap
 } from 'react-icons/fi'
 import { useTheme } from '../context/ThemeContext'
 import { useLanguage } from '../context/LanguageContext'
+import { useSubscription } from '../context/SubscriptionContext'
 import API from '../services/api' // To allow posting subsidy receipts directly
 
 function InsightsReports() {
   const dispatch = useDispatch()
   const { theme } = useTheme()
   const { t } = useLanguage()
+  const { isPro, openUpgradeModal } = useSubscription()
   const isDark = theme === 'dark'
   const [activeTab, setActiveTab] = useState('insights') // 'insights', 'reports', or 'welfare'
 
@@ -103,6 +106,10 @@ function InsightsReports() {
   }, [reportParams, activeTab])
 
   const exportPdf = async () => {
+    if (!isPro) {
+      openUpgradeModal('reports')
+      return
+    }
     try {
       const response = await downloadMonthlyReport(reportParams)
       const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
@@ -120,7 +127,11 @@ function InsightsReports() {
       link.remove()
       window.URL.revokeObjectURL(url)
     } catch (err) {
-      alert('Failed to export PDF statement')
+      if (err.response?.data?.code === 'PRO_REQUIRED' || err.response?.status === 403) {
+        openUpgradeModal('reports')
+      } else {
+        alert('Failed to export PDF statement')
+      }
     }
   }
   const logSubsidyReceipt = async (e) => {
@@ -229,6 +240,27 @@ ${alts.map(a => `• ${a.category}: ${a.suggestion}`).join('\n')}
 
       {/* AI INSIGHTS VIEW */}
       {activeTab === 'insights' && (
+        !isPro ? (
+          <div className="rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/20 via-slate-900 to-indigo-950/20 p-8 sm:p-12 text-center flex flex-col items-center justify-center shadow-xl animate-fadeIn">
+            <div className="w-16 h-16 rounded-3xl bg-secondary/20 dark:bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-secondary dark:text-purple-400 mb-5">
+              <FiCpu className="w-8 h-8" />
+            </div>
+            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-3">
+              Xpenz Pro Feature
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">AI Financial Intelligence & Forecasts</h2>
+            <p className="text-sm text-slate-300 max-w-lg mt-2 leading-relaxed">
+              Unlock AI Cashflow Runway, predictive month-end outlays, burn rate analysis, and smart cheaper alternative recommendations.
+            </p>
+            <button
+              onClick={() => openUpgradeModal('ai')}
+              className="mt-6 flex items-center gap-2 py-3.5 px-8 rounded-2xl bg-secondary hover:bg-indigo-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-black text-sm shadow-xl shadow-secondary/30 transition-all hover:scale-105 cursor-pointer"
+            >
+              <FiZap className="w-4 h-4 fill-current" />
+              <span>Unlock AI Insights (Starts at ₹45)</span>
+            </button>
+          </div>
+        ) : (
         <div className="space-y-6 animate-fadeIn">
           {aiError && <div className="rounded-xl border border-rose-100 dark:border-rose-950/30 bg-rose-50/50 dark:bg-rose-950/10 p-4 text-sm text-rose-700 dark:text-rose-400">{aiError}</div>}
 
@@ -343,6 +375,7 @@ ${alts.map(a => `• ${a.category}: ${a.suggestion}`).join('\n')}
             </section>
           </div>
         </div>
+        )
       )}
 
       {/* STATEMENTS & PDF REPORTS VIEW */}

@@ -10,6 +10,7 @@ import {
 } from '../services/loanService'
 import { getAccounts } from '../services/accountService'
 import { formatCurrency } from '../utils/format'
+import { useSubscription } from '../context/SubscriptionContext'
 import {
   FiPlus, FiEdit2, FiTrash2, FiSearch, FiChevronLeft,
   FiChevronRight, FiPercent,
@@ -56,6 +57,7 @@ const emptyForm = {
 }
 
 function Loans() {
+  const { isPro, openUpgradeModal } = useSubscription()
   // States
   const [loans, setLoans] = useState([])
   const [isCustomBank, setIsCustomBank] = useState(false)
@@ -239,7 +241,12 @@ function Loans() {
       setEditingLoanId(null)
       loadData()
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save loan.')
+      if (err.response?.data?.code === 'LIMIT_REACHED') {
+        setShowAddModal(false)
+        openUpgradeModal('loans')
+      } else {
+        setError(err.response?.data?.message || 'Failed to save loan.')
+      }
     } finally {
       setSubmitting(false)
     }
@@ -410,6 +417,11 @@ function Loans() {
         <button
           id="loans-add-btn-tour"
           onClick={() => {
+            const activeLoans = loans.filter(l => l.status === 'active')
+            if (!isPro && activeLoans.length >= 1) {
+              openUpgradeModal('loans')
+              return
+            }
             setForm({
               ...emptyForm,
               paymentSourceId: accounts[0]?._id || ''

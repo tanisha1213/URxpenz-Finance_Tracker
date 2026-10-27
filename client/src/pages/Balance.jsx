@@ -3,6 +3,7 @@ import { getAccounts, addBankAccount, updateAccount, deleteBankAccount } from '.
 import { formatCurrency } from '../utils/format'
 import { FiPlus, FiEdit2, FiTrash2, FiCreditCard, FiDollarSign, FiCheck, FiX, FiInfo } from 'react-icons/fi'
 import { useLanguage } from '../context/LanguageContext'
+import { useSubscription } from '../context/SubscriptionContext'
 
 const POPULAR_BANKS = [
   'State Bank of India (SBI)',
@@ -29,6 +30,7 @@ const POPULAR_BANKS = [
 
 function Balance() {
   const { t } = useLanguage()
+  const { isPro, openUpgradeModal } = useSubscription()
   const [accounts, setAccounts] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
@@ -59,6 +61,11 @@ function Balance() {
   }, [])
 
   const handleOpenAdd = () => {
+    const bankAccounts = accounts.filter(a => a.type === 'bank')
+    if (!isPro && bankAccounts.length >= 1) {
+      openUpgradeModal('accounts')
+      return
+    }
     setFormData({ name: '', balance: '0' })
     setModalType('add')
   }
@@ -96,7 +103,12 @@ function Balance() {
       fetchAccounts()
       handleCloseModal()
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to add bank account.')
+      if (err.response?.data?.code === 'LIMIT_REACHED') {
+        handleCloseModal()
+        openUpgradeModal('accounts')
+      } else {
+        setError(err.response?.data?.message || 'Failed to add bank account.')
+      }
     }
   }
 

@@ -1,8 +1,10 @@
 import Loan from '../models/Loan.js';
 import Transaction from '../models/Transaction.js';
 import Account from '../models/Account.js';
+import User from '../models/User.js';
 import { supabase } from '../config/supabase.js';
 import { mapDoc } from '../models/adapter.js';
+import { getUserSubscription } from '../utils/subscriptionHelper.js';
 
 // Helper to calculate due date based on payment frequency
 const calculateDueDate = (baseDate, index, frequency) => {
@@ -57,6 +59,23 @@ export const getLoans = async (req, res) => {
 export const addLoan = async (req, res) => {
   try {
     const userId = req.userId;
+
+    // Check tier limits for Basic users (Max 1 active loan)
+    const user = await User.findById(userId);
+    const subscription = getUserSubscription(user);
+    if (!subscription.isPro) {
+      const activeLoans = await Loan.find({ userId, status: 'active' });
+      if (activeLoans.length >= 1) {
+        return res.status(403).json({
+          success: false,
+          code: 'LIMIT_REACHED',
+          message: 'Basic tier allows 1 active loan. Please upgrade to Pro for unlimited loans.',
+          limit: 1,
+          currentCount: activeLoans.length
+        });
+      }
+    }
+
     const {
       title,
       type,

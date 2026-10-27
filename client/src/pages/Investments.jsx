@@ -6,8 +6,9 @@ import {
   deleteInvestment
 } from '../services/investmentService'
 import { formatCurrency, formatDate } from '../utils/format'
+import { useSubscription } from '../context/SubscriptionContext'
 import {
-  FiPlus, FiEdit2, FiTrash2, FiSearch, FiRefreshCw, FiBriefcase, FiCalendar, FiChevronLeft, FiChevronRight
+  FiPlus, FiEdit2, FiTrash2, FiSearch, FiRefreshCw, FiBriefcase, FiCalendar, FiChevronLeft, FiChevronRight, FiZap
 } from 'react-icons/fi'
 
 const INVESTMENT_TYPES = [
@@ -82,6 +83,7 @@ const SUGGESTIONS_BY_TYPE = {
 }
 
 export default function Investments() {
+  const { isPro, openUpgradeModal } = useSubscription()
   const [investments, setInvestments] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -277,6 +279,32 @@ export default function Investments() {
     } catch (err) {
       console.error('Save failed:', err)
     }
+  }
+
+  if (!isPro) {
+    return (
+      <div className="space-y-6 text-slate-800 dark:text-slate-100 animate-fadeIn">
+        <div className="rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/20 via-slate-900 to-indigo-950/20 p-8 sm:p-12 text-center flex flex-col items-center justify-center shadow-xl">
+          <div className="w-16 h-16 rounded-3xl bg-secondary/20 dark:bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-secondary dark:text-purple-400 mb-5">
+            <FiBriefcase className="w-8 h-8" />
+          </div>
+          <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-3">
+            Xpenz Pro Feature
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Investments Portfolio Tracker</h2>
+          <p className="text-sm text-slate-300 max-w-lg mt-2 leading-relaxed">
+            Track your Mutual Funds, Stocks, Fixed Deposits, Gold, and Crypto in one unified dashboard with returns analytics and SIP schedules.
+          </p>
+          <button
+            onClick={() => openUpgradeModal('investments')}
+            className="mt-6 flex items-center gap-2 py-3.5 px-8 rounded-2xl bg-secondary hover:bg-indigo-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-black text-sm shadow-xl shadow-secondary/30 transition-all hover:scale-105 cursor-pointer"
+          >
+            <FiZap className="w-4 h-4 fill-current" />
+            <span>Unlock Investments (Starts at ₹45)</span>
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

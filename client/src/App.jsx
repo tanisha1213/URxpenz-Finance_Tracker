@@ -36,6 +36,7 @@ const Subscriptions = lazyWithRetry(() => import('./pages/Subscriptions'))
 
 // Layout
 import Layout from './components/layout/Layout'
+import UpgradeModal from './components/subscription/UpgradeModal'
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux'
@@ -92,6 +93,7 @@ function App() {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Suspense>
+      <UpgradeModal />
     </Router>
   )
 }

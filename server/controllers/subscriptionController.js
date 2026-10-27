@@ -1,6 +1,8 @@
 import Subscription from '../models/Subscription.js';
 import Account from '../models/Account.js';
 import Transaction from '../models/Transaction.js';
+import User from '../models/User.js';
+import { getUserSubscription } from '../utils/subscriptionHelper.js';
 
 // Auto-process pending subscriptions where billing date is due and autoDeduct is enabled
 export const processAutoDeductions = async (userId) => {
@@ -144,6 +146,22 @@ export const getSubscriptions = async (req, res) => {
 export const createSubscription = async (req, res) => {
   try {
     const { title, category, planType, amount, startDate, accountId, autoDeduct, description } = req.body;
+
+    // Check tier limits for Basic users (Max 2 active subscriptions)
+    const user = await User.findById(req.userId);
+    const subscriptionInfo = getUserSubscription(user);
+    if (!subscriptionInfo.isPro) {
+      const currentSubs = await Subscription.find({ userId: req.userId, status: 'active' });
+      if (currentSubs.length >= 2) {
+        return res.status(403).json({
+          success: false,
+          code: 'LIMIT_REACHED',
+          message: 'Basic tier allows up to 2 active subscriptions. Please upgrade to Pro for unlimited subscriptions.',
+          limit: 2,
+          currentCount: currentSubs.length
+        });
+      }
+    }
 
     if (!title?.trim() || !amount || Number(amount) <= 0) {
       return res.status(400).json({
