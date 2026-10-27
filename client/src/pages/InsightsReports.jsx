@@ -44,7 +44,8 @@ function InsightsReports() {
   // Reports State
   const now = new Date()
   const [period, setPeriod] = useState({ month: now.getMonth() + 1, year: now.getFullYear() })
-  const [periodType, setPeriodType] = useState('monthly') // 'monthly', 'yearly', 'custom'
+  const [periodType, setPeriodType] = useState('monthly') // 'monthly', 'weekly', 'yearly', 'custom'
+  const [weekOffset, setWeekOffset] = useState(0)
   const [startDate, setStartDate] = useState(() => {
     return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
   })
@@ -61,10 +62,12 @@ function InsightsReports() {
       return { startDate, endDate }
     } else if (periodType === 'yearly') {
       return { type: 'yearly', year: period.year }
+    } else if (periodType === 'weekly') {
+      return { type: 'weekly', weekOffset }
     } else {
       return { month: period.month, year: period.year }
     }
-  }, [periodType, period, startDate, endDate])
+  }, [periodType, period, startDate, endDate, weekOffset])
 
   // Welfare & AI Coach Interactive States
   const [schemeAge, setSchemeAge] = useState(25)
@@ -126,6 +129,8 @@ function InsightsReports() {
       let filename = `finance-report-${period.year}-${String(period.month).padStart(2, '0')}.pdf`
       if (periodType === 'custom') {
         filename = `finance-report-custom-${startDate}-to-${endDate}.pdf`
+      } else if (periodType === 'weekly') {
+        filename = `finance-report-weekly-offset-${weekOffset}.pdf`
       } else if (periodType === 'yearly') {
         filename = `finance-report-${period.year}-yearly.pdf`
       }
@@ -408,10 +413,25 @@ ${alts.map(a => `• ${a.category}: ${a.suggestion}`).join('\n')}
                 }}
                 className="rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
               >
-                <option value="monthly">Monthly (Basic)</option>
+                <option value="monthly">Monthly Report (Basic)</option>
+                <option value="weekly">Weekly Report (Basic)</option>
+                <option value="custom">{!isPro ? '🔒 Custom Dates / Range - Anytime (Pro)' : 'Custom Range / Specific Dates (Anytime)'}</option>
                 <option value="yearly">{!isPro ? '🔒 Yearly (Pro)' : 'Yearly'}</option>
-                <option value="custom">{!isPro ? '🔒 Custom Dates / Range (Pro)' : 'Custom Range / Specific Dates'}</option>
               </select>
+
+              {periodType === 'weekly' && (
+                <select
+                  value={weekOffset}
+                  onChange={(e) => setWeekOffset(Number(e.target.value))}
+                  className="rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
+                >
+                  <option value={0}>This Week (Current)</option>
+                  <option value={-1}>Last Week</option>
+                  <option value={-2}>2 Weeks Ago</option>
+                  <option value={-3}>3 Weeks Ago</option>
+                  <option value={-4}>4 Weeks Ago</option>
+                </select>
+              )}
 
               {periodType === 'monthly' && (
                 <div className="flex gap-2">

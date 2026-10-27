@@ -1,5 +1,7 @@
 import { VAPID_PUBLIC_KEY, sendPushNotification } from '../config/webPush.js';
 import PushSubscriptionModel from '../models/PushSubscription.js';
+import User from '../models/User.js';
+import { getUserSubscription } from '../utils/subscriptionHelper.js';
 import { checkAndDispatchReminders, checkAndDispatchDailyBudgetSummaries } from '../services/notificationScheduler.js';
 
 export const getVapidPublicKey = (req, res) => {
@@ -110,6 +112,16 @@ export const triggerReminderCheck = async (req, res) => {
 
 export const triggerDailyBudgetCheck = async (req, res) => {
   try {
+    const user = await User.findById(req.user.id);
+    const subscription = getUserSubscription(user);
+    if (!subscription.isPro) {
+      return res.status(403).json({
+        success: false,
+        code: 'PRO_REQUIRED',
+        message: 'Daily budget calculation and end-of-day prompts are an exclusive Pro feature. Basic tier includes monthly budgeting.'
+      });
+    }
+
     const userId = req.user.id;
     const dispatched = await checkAndDispatchDailyBudgetSummaries(userId, true);
     res.status(200).json({

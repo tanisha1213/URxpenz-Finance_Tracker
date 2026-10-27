@@ -104,8 +104,10 @@ export default function UpgradeModal() {
         return 'Unlock Insurance Policies & Reminders';
       case 'ai':
         return 'Unlock AI Forecasts & Cashflow Runway';
+      case 'daily_budget':
+        return 'Unlock Daily Budget & End-of-Day Alerts';
       case 'reports':
-        return 'Unlock Custom Date Range & PDF Reports';
+        return 'Unlock Anytime Reports & Custom Dates';
       default:
         return 'Upgrade to Xpenz Pro';
     }
@@ -140,7 +142,7 @@ export default function UpgradeModal() {
         <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
           {isTrial
             ? 'Your 60-day full-access trial is active! Upgrade anytime to ensure uninterrupted access to all advanced tools.'
-            : 'Basic tier includes 1 bank account, 1 loan, 2 subscriptions, and free cloud logging. Upgrade for unlimited power.'}
+            : 'Basic tier includes monthly budget, monthly/weekly reports, 1 bank account, 1 loan, 2 subscriptions, and permanent cloud sync. Upgrade for daily budgets, anytime reports & unlimited tracking.'}
         </p>
 
         {/* Success or Error Banner */}
@@ -231,7 +233,11 @@ export default function UpgradeModal() {
             </div>
             <div className="flex items-center gap-2">
               <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>Custom Date Range Reports & PDF Export</strong> (Monthly basic free)</span>
+              <span><strong>Daily Budget & End-of-Day Alerts</strong> (Basic: monthly only)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+              <span><strong>Anytime Reports & PDF Statements</strong> (Basic: monthly/weekly)</span>
             </div>
             <div className="flex items-center gap-2">
               <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />

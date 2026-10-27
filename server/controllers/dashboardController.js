@@ -5,6 +5,8 @@ import Loan from '../models/Loan.js';
 import Investment from '../models/Investment.js';
 import Insurance from '../models/Insurance.js';
 import Subscription from '../models/Subscription.js';
+import User from '../models/User.js';
+import { getUserSubscription } from '../utils/subscriptionHelper.js';
 import { processAutoDeductions } from './subscriptionController.js';
 import { summarizeTransactions } from '../services/financeAnalyzer.js';
 
@@ -168,21 +170,35 @@ export const getDashboardSummary = async (req, res) => {
     // Sort by due date ascending
     upcomingPayments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
-    // Compute Daily Budget & Today's Outflow
+    // User Subscription verification
+    const user = await User.findById(req.userId);
+    const subscription = getUserSubscription(user);
+    const isPro = !!subscription.isPro;
+
+    // Compute Daily Budget & Today's Outflow (Pro & 60-Day Trial only)
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const monthlyLimit = Number(budget?.monthlyBudget || 0);
-    const dailyBudget = Number(budget?.dailyBudget) || (monthlyLimit > 0 ? Math.round(monthlyLimit / daysInMonth) : 0);
+    const dailyBudget = isPro
+      ? (Number(budget?.dailyBudget) || (monthlyLimit > 0 ? Math.round(monthlyLimit / daysInMonth) : 0))
+      : 0;
 
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const todayExpenses = (currentMonthTransactions || []).filter(t => {
-      const d = new Date(t.transactionDate);
-      return t.type === 'expense' && d >= startOfToday && d < endOfToday;
-    });
-    const todaySpent = todayExpenses.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-    const todayRemaining = dailyBudget - todaySpent;
-    const todaySaved = todaySpent <= dailyBudget ? Math.max(0, dailyBudget - todaySpent) : 0;
-    const isOverspentToday = todaySpent > dailyBudget && dailyBudget > 0;
+    let todaySpent = 0;
+    let todayRemaining = 0;
+    let todaySaved = 0;
+    let isOverspentToday = false;
+
+    if (isPro && dailyBudget > 0) {
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      const todayExpenses = (currentMonthTransactions || []).filter(t => {
+        const d = new Date(t.transactionDate);
+        return t.type === 'expense' && d >= startOfToday && d < endOfToday;
+      });
+      todaySpent = todayExpenses.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+      todayRemaining = dailyBudget - todaySpent;
+      todaySaved = todaySpent <= dailyBudget ? Math.max(0, dailyBudget - todaySpent) : 0;
+      isOverspentToday = todaySpent > dailyBudget;
+    }
 
     res.status(200).json({
       success: true,
@@ -202,6 +218,7 @@ export const getDashboardSummary = async (req, res) => {
         todaySaved,
         isOverspentToday,
         daysInMonth,
+        isDailyBudgetLocked: !isPro,
         monthlyTrend: trendSummary.monthlyTrend,
         categoryBreakdown: summary.categoryBreakdown,
         recentTransactions,

@@ -521,8 +521,8 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Daily Budget Tracker Banner */}
-      {summary && summary.dailyBudget > 0 && (
+      {/* Daily Budget Tracker Banner (Pro & 60-Day Trial) */}
+      {summary && !summary.isDailyBudgetLocked && summary.dailyBudget > 0 && (
         <div className="rounded-2xl border border-purple-100 dark:border-purple-900/30 bg-gradient-to-r from-purple-50/60 via-indigo-50/40 to-white dark:from-slate-900/40 dark:via-purple-950/20 dark:to-slate-900/40 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-purple-600 text-white shadow-md flex-shrink-0">

@@ -3,8 +3,10 @@ import Subscription from '../models/Subscription.js';
 import Insurance from '../models/Insurance.js';
 import Budget from '../models/Budget.js';
 import Transaction from '../models/Transaction.js';
+import User from '../models/User.js';
 import PushSubscriptionModel from '../models/PushSubscription.js';
 import { sendPushNotification } from '../config/webPush.js';
+import { getUserSubscription } from '../utils/subscriptionHelper.js';
 
 // Cache to prevent duplicate push notifications on the same day
 const dispatchedToday = new Set();
@@ -153,6 +155,12 @@ export const checkAndDispatchDailyBudgetSummaries = async (targetUserId = null, 
     const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 
     for (const budget of budgets) {
+      // Daily budget prompts and end-of-day alerts are an exclusive Pro & 60-day trial feature
+      const user = await User.findById(budget.userId);
+      if (!user) continue;
+      const subscription = getUserSubscription(user);
+      if (!subscription.isPro) continue;
+
       const monthlyBudget = Number(budget.monthlyBudget || 0);
       const dailyBudget = Number(budget.dailyBudget) || (monthlyBudget > 0 ? Math.round(monthlyBudget / daysInMonth) : 0);
 

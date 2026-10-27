@@ -40,7 +40,7 @@ export const getMonthlyReport = async (req, res) => {
           return res.status(403).json({
             success: false,
             code: 'PRO_REQUIRED',
-            message: 'Custom date range reports and specific date filters require an active Pro subscription. Monthly reports are included in your Basic plan.'
+            message: 'Report generation at anytime (custom date ranges or specific dates) requires an active Pro subscription or 60-day trial. Basic tier includes monthly and weekly reports.'
           });
         }
       }
@@ -65,6 +65,16 @@ export const getMonthlyReport = async (req, res) => {
       start = new Date(year, 0, 1);
       end = new Date(year + 1, 0, 1);
       periodStr = `${year} (Yearly)`;
+    } else if (req.query.type === 'weekly') {
+      const weekOffset = Number(req.query.weekOffset) || 0;
+      const targetDate = new Date(now);
+      targetDate.setDate(targetDate.getDate() + (weekOffset * 7));
+      const day = targetDate.getDay();
+      const diffToMonday = targetDate.getDate() - day + (day === 0 ? -6 : 1);
+      start = new Date(targetDate.getFullYear(), targetDate.getMonth(), diffToMonday);
+      end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 7);
+      const weekLabel = weekOffset === 0 ? 'This Week' : weekOffset === -1 ? 'Last Week' : `${Math.abs(weekOffset)} Weeks Ago`;
+      periodStr = `${weekLabel} (${safeFormatDate(start)} to ${safeFormatDate(new Date(end.getTime() - 1))})`;
     } else {
       const year = Number(req.query.year) || now.getFullYear();
       const month = Number(req.query.month) || now.getMonth() + 1;
