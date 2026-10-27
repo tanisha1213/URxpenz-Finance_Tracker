@@ -179,6 +179,13 @@ function Dashboard() {
   useEffect(() => {
     loadDashboard()
     fetchLoans()
+
+    const handleSyncComplete = () => {
+      loadDashboard()
+      fetchLoans()
+    }
+    window.addEventListener('xpenz-offline-synced', handleSyncComplete)
+    return () => window.removeEventListener('xpenz-offline-synced', handleSyncComplete)
   }, [])
 
   const openCreate = (type = 'expense') => {

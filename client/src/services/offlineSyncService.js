@@ -181,30 +181,50 @@ export const syncOfflineQueue = async (onProgress = null) => {
 }
 
 /**
- * Initialize automatic sync listeners on window online events
+ * Initialize fully automatic sync listeners
+ * Triggers seamlessly on:
+ * 1. Network 'online' events
+ * 2. Tab/screen refocus (visibilitychange)
+ * 3. 10-second background polling whenever items are pending
+ * 4. App launch
  */
 export const initOfflineSyncListener = () => {
   if (typeof window === 'undefined') return
 
-  // Automatically trigger sync when back online
+  const triggerAutoSync = () => {
+    if (isOnline() && getOfflineQueue().length > 0) {
+      syncOfflineQueue()
+    }
+  }
+
+  // 1. Trigger immediately when internet connectivity is restored
   window.addEventListener('online', () => {
-    console.log('[OfflineSync] Connection restored. Synchronizing pending transactions...')
+    console.log('[OfflineSync] Connection restored. Automatically syncing pending transactions...')
     window.dispatchEvent(new CustomEvent('xpenz-connection-restored'))
-    syncOfflineQueue()
+    triggerAutoSync()
   })
 
   window.addEventListener('offline', () => {
-    console.log('[OfflineSync] App is offline. Offline queue activated.')
+    console.log('[OfflineSync] App is offline. Offline queue active.')
     window.dispatchEvent(new CustomEvent('xpenz-connection-lost'))
   })
 
-  // Check immediately on startup if online and pending items exist
-  if (isOnline()) {
-    const queue = getOfflineQueue()
-    if (queue.length > 0) {
-      setTimeout(() => {
-        syncOfflineQueue()
-      }, 1500)
+  // 2. Trigger when user returns to app / unlocks screen
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      triggerAutoSync()
     }
+  })
+
+  // 3. Background heartbeat: automatically checks every 10 seconds for any unsynced records
+  setInterval(() => {
+    triggerAutoSync()
+  }, 10000)
+
+  // 4. Initial check on startup
+  if (isOnline()) {
+    setTimeout(() => {
+      triggerAutoSync()
+    }, 1500)
   }
 }

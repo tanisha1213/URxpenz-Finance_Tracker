@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { FiBell, FiSun, FiMoon, FiHelpCircle } from 'react-icons/fi'
+import { FiBell, FiSun, FiMoon, FiHelpCircle, FiCheck } from 'react-icons/fi'
 import { useTheme } from '../../context/ThemeContext'
 import logoLight from '../../assets/logo-light.png'
 import logoDark from '../../assets/logo-dark.png'
 import { getLoans } from '../../services/loanService'
 import { useLanguage } from '../../context/LanguageContext'
 import { useNotification } from '../../context/NotificationContext'
-import { getOfflineQueue, syncOfflineQueue } from '../../services/offlineSyncService'
+import { getOfflineQueue } from '../../services/offlineSyncService'
 
 function Navbar() {
   const { user } = useSelector(state => state.auth)
@@ -21,6 +21,7 @@ function Navbar() {
   const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true)
   const [pendingOfflineCount, setPendingOfflineCount] = useState(0)
   const [isSyncing, setIsSyncing] = useState(false)
+  const [recentlySynced, setRecentlySynced] = useState(false)
 
   useEffect(() => {
     setPendingOfflineCount(getOfflineQueue().length)
@@ -29,9 +30,14 @@ function Navbar() {
     const handleOffline = () => setIsOnline(false)
     const handleQueueChange = (e) => setPendingOfflineCount(e.detail?.count ?? getOfflineQueue().length)
     const handleSyncStart = () => setIsSyncing(true)
-    const handleSyncEnd = () => {
+    const handleSyncEnd = (e) => {
       setIsSyncing(false)
-      setPendingOfflineCount(getOfflineQueue().length)
+      const remaining = getOfflineQueue().length
+      setPendingOfflineCount(remaining)
+      if (e?.detail?.synced > 0) {
+        setRecentlySynced(true)
+        setTimeout(() => setRecentlySynced(false), 3500)
+      }
     }
 
     window.addEventListener('online', handleOnline)
@@ -149,47 +155,48 @@ function Navbar() {
         
         {/* Right Header Actions */}
         <div className="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0 flex-nowrap">
-          {/* Offline / Sync Status Pill */}
-          {(!isOnline || pendingOfflineCount > 0 || isSyncing) && (
-            <button
-              type="button"
-              onClick={() => {
-                if (isOnline && !isSyncing && pendingOfflineCount > 0) {
-                  syncOfflineQueue()
-                }
-              }}
+          {/* Automatic Offline & Sync Status Indicator */}
+          {(!isOnline || pendingOfflineCount > 0 || isSyncing || recentlySynced) && (
+            <div
               title={
                 !isOnline
-                  ? 'Offline Mode: Transactions are queued locally and will auto-sync when online'
+                  ? 'Offline Mode: Transactions are safely queued and will automatically sync the moment connection returns'
                   : isSyncing
-                  ? 'Syncing offline transactions with cloud...'
-                  : `${pendingOfflineCount} offline item(s) pending sync. Click to sync now.`
+                  ? 'Auto-syncing offline transactions with cloud database...'
+                  : recentlySynced
+                  ? 'All offline transactions synced successfully!'
+                  : 'Auto-sync active'
               }
               className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold border transition-all ${
                 !isOnline
                   ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                   : isSyncing
                   ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
-                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 cursor-pointer shadow-sm'
+                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 shadow-sm animate-fadeIn'
               }`}
             >
               {isSyncing ? (
                 <>
                   <span className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  <span className="hidden sm:inline">Syncing</span>
+                  <span className="hidden sm:inline">Auto-Syncing...</span>
                 </>
               ) : !isOnline ? (
                 <>
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   <span>Offline{pendingOfflineCount > 0 ? ` (${pendingOfflineCount})` : ''}</span>
                 </>
+              ) : recentlySynced ? (
+                <>
+                  <FiCheck className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Synced</span>
+                </>
               ) : (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span>Sync ({pendingOfflineCount})</span>
+                  <span className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <span className="hidden sm:inline">Syncing...</span>
                 </>
               )}
-            </button>
+            </div>
           )}
 
           {/* Language Switcher */}

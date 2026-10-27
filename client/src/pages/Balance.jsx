@@ -58,6 +58,9 @@ function Balance() {
 
   useEffect(() => {
     fetchAccounts()
+    const handleSyncComplete = () => fetchAccounts()
+    window.addEventListener('xpenz-offline-synced', handleSyncComplete)
+    return () => window.removeEventListener('xpenz-offline-synced', handleSyncComplete)
   }, [])
 
   const handleOpenAdd = () => {

@@ -174,7 +174,7 @@ export default function PrivacyPolicy() {
                   If you have uninstalled the app and wish to delete your account and all associated data, you may submit a request by sending an email from your registered address to:
                 </p>
                 <p className="font-mono text-xs text-indigo-650 dark:text-purple-400 font-bold">
-                  privacy@xpenz.app / tanishtandel@gmail.com
+                  privacy@xpenz.app
                 </p>
                 <p className="text-[11px] text-slate-500">
                   All requests submitted via email are verified and executed within 48 business hours.
@@ -221,8 +221,8 @@ export default function PrivacyPolicy() {
               <p>If you have any questions, feedback, or data requests regarding this Privacy Policy, please contact our Data Protection Officer:</p>
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-dark-border text-xs space-y-1">
                 <p><strong>Entity:</strong> Xpenz Personal Finance</p>
-                <p><strong>Email:</strong> tanishtandel@gmail.com</p>
-                <p><strong>Website:</strong> https://xpenz-finance.web.app (or custom domain)</p>
+                <p><strong>Email:</strong> support@xpenz.app / privacy@xpenz.app</p>
+                <p><strong>Website:</strong> https://xpenz-finance.web.app</p>
                 <p><strong>Response SLA:</strong> Within 48 hours for data requests</p>
               </div>
             </div>
