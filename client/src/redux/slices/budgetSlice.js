@@ -12,9 +12,10 @@ export const fetchBudget = createAsyncThunk('budget/fetch', async (_, { rejectWi
   }
 })
 
-export const saveBudget = createAsyncThunk('budget/save', async (data, { rejectWithValue }) => {
+export const saveBudget = createAsyncThunk('budget/save', async (data, { rejectWithValue, dispatch }) => {
   try {
     const response = await budgetService.setBudget(data)
+    dispatch(fetchBudget())
     return response.data.data
   } catch (error) {
     return rejectWithValue(getError(error))
@@ -23,6 +24,12 @@ export const saveBudget = createAsyncThunk('budget/save', async (data, { rejectW
 
 const initialState = {
   monthlyBudget: 0,
+  dailyBudget: 0,
+  todaySpent: 0,
+  todayRemaining: 0,
+  todaySaved: 0,
+  isOverspentToday: false,
+  daysInMonth: 30,
   categories: [],
   remaining: 0,
   loading: false,
@@ -35,6 +42,12 @@ const budgetSlice = createSlice({
   reducers: {
     setBudget: (state, action) => {
       state.monthlyBudget = action.payload.monthlyBudget
+      state.dailyBudget = action.payload.dailyBudget || 0
+      state.todaySpent = action.payload.todaySpent || 0
+      state.todayRemaining = action.payload.todayRemaining || 0
+      state.todaySaved = action.payload.todaySaved || 0
+      state.isOverspentToday = !!action.payload.isOverspentToday
+      state.daysInMonth = action.payload.daysInMonth || 30
       state.categories = action.payload.categoryBudgets || []
       state.remaining = action.payload.monthlyBudget
     },
@@ -54,15 +67,22 @@ const budgetSlice = createSlice({
       .addCase(fetchBudget.fulfilled, (state, action) => {
         state.loading = false
         state.monthlyBudget = action.payload.monthlyBudget || 0
+        state.dailyBudget = action.payload.dailyBudget || 0
+        state.todaySpent = action.payload.todaySpent || 0
+        state.todayRemaining = action.payload.todayRemaining || 0
+        state.todaySaved = action.payload.todaySaved || 0
+        state.isOverspentToday = !!action.payload.isOverspentToday
+        state.daysInMonth = action.payload.daysInMonth || 30
         state.categories = action.payload.categoryBudgets || []
         state.remaining = action.payload.monthlyBudget || 0
       })
-      .addCase(fetchBudget.rejected, (state, action) => {
+      .addCase(fetchBudget.rejected, (state) => {
         state.loading = false
         state.error = action.payload
       })
       .addCase(saveBudget.fulfilled, (state, action) => {
         state.monthlyBudget = action.payload.monthlyBudget || 0
+        state.dailyBudget = action.payload.dailyBudget || 0
         state.categories = action.payload.categoryBudgets || []
         state.remaining = action.payload.monthlyBudget || 0
       })

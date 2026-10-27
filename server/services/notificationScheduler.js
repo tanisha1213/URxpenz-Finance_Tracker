@@ -1,6 +1,8 @@
 import Loan from '../models/Loan.js';
 import Subscription from '../models/Subscription.js';
 import Insurance from '../models/Insurance.js';
+import Budget from '../models/Budget.js';
+import Transaction from '../models/Transaction.js';
 import PushSubscriptionModel from '../models/PushSubscription.js';
 import { sendPushNotification } from '../config/webPush.js';
 
@@ -133,23 +135,108 @@ export const checkAndDispatchReminders = async (targetUserId = null) => {
 };
 
 /**
+ * End-of-Day Daily Budget Notification Check.
+ * Dispatches an OS screen alert summarizing today's budget, amount spent, and saved or overspent status.
+ */
+export const checkAndDispatchDailyBudgetSummaries = async (targetUserId = null, force = false) => {
+  const now = new Date();
+  const todayKey = now.toISOString().split('T')[0];
+  let dispatchedCount = 0;
+
+  try {
+    const budgetQuery = {};
+    if (targetUserId) budgetQuery.userId = targetUserId;
+    const budgets = await Budget.find(budgetQuery);
+
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+
+    for (const budget of budgets) {
+      const monthlyBudget = Number(budget.monthlyBudget || 0);
+      const dailyBudget = Number(budget.dailyBudget) || (monthlyBudget > 0 ? Math.round(monthlyBudget / daysInMonth) : 0);
+
+      // Skip users without a configured budget
+      if (dailyBudget <= 0) continue;
+
+      const dedupeKey = `${todayKey}-daily-budget-${budget.userId}`;
+      if (!force && dispatchedToday.has(dedupeKey)) continue;
+
+      // Calculate today's spending for this user
+      const todayExpenses = await Transaction.find({
+        userId: budget.userId,
+        type: 'expense',
+        transactionDate: { $gte: startOfToday, $lt: endOfToday }
+      }).catch(() => []);
+
+      const todaySpent = todayExpenses.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+      const isOverspent = todaySpent > dailyBudget;
+      const difference = Math.abs(todaySpent - dailyBudget);
+
+      let title = '';
+      let body = '';
+
+      if (isOverspent) {
+        title = 'Daily Budget Alert ⚠️';
+        body = `Today's budget was ₹${dailyBudget.toLocaleString('en-IN')}, and you spent ₹${todaySpent.toLocaleString('en-IN')}. You overspent by ₹${difference.toLocaleString('en-IN')} today.`;
+      } else {
+        title = 'Daily Budget Summary 🎯';
+        body = `Today's budget was ₹${dailyBudget.toLocaleString('en-IN')}, and you spent ₹${todaySpent.toLocaleString('en-IN')}. You saved ₹${difference.toLocaleString('en-IN')} today! 🎉`;
+      }
+
+      const subscriptions = await PushSubscriptionModel.getSubscriptionsByUser(budget.userId);
+      for (const sub of subscriptions) {
+        try {
+          await sendPushNotification(sub, {
+            title,
+            body,
+            url: '/budget',
+            tag: `daily-budget-${todayKey}`
+          });
+          dispatchedCount++;
+        } catch (pushErr) {
+          if (pushErr.statusCode === 410 || pushErr.statusCode === 404) {
+            await PushSubscriptionModel.removeSubscription(sub.endpoint);
+          }
+        }
+      }
+
+      dispatchedToday.add(dedupeKey);
+    }
+  } catch (err) {
+    console.error('[DailyBudgetScheduler Error]:', err.message);
+  }
+
+  return dispatchedCount;
+};
+
+/**
  * Initializes a background timer to check reminders every 30 minutes
  */
 export const initNotificationScheduler = () => {
-  console.log('[NotificationScheduler] Background loan/bill reminder scheduler initialized.');
+  console.log('[NotificationScheduler] Background loan/bill reminder & daily budget scheduler initialized.');
 
   // Run initial check after 5 seconds
   setTimeout(() => {
     checkAndDispatchReminders();
+    const currentHour = new Date().getHours();
+    if (currentHour >= 20) {
+      checkAndDispatchDailyBudgetSummaries();
+    }
   }, 5000);
 
   // Repeat every 30 minutes
   setInterval(() => {
     checkAndDispatchReminders();
+    const currentHour = new Date().getHours();
+    if (currentHour >= 20) {
+      checkAndDispatchDailyBudgetSummaries();
+    }
   }, 30 * 60 * 1000);
 };
 
 export default {
   checkAndDispatchReminders,
+  checkAndDispatchDailyBudgetSummaries,
   initNotificationScheduler
 };

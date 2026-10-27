@@ -1,8 +1,9 @@
 import Budget from '../models/Budget.js';
+import Transaction from '../models/Transaction.js';
 
 export const setBudget = async (req, res) => {
   try {
-    const { monthlyBudget, categoryBudgets } = req.body;
+    const { monthlyBudget, dailyBudget, categoryBudgets } = req.body;
 
     if (monthlyBudget === undefined || monthlyBudget === null || monthlyBudget === '' || Number(monthlyBudget) < 0) {
       return res.status(400).json({
@@ -11,10 +12,17 @@ export const setBudget = async (req, res) => {
       });
     }
 
+    const now = new Date();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const computedDailyBudget = dailyBudget !== undefined && dailyBudget !== null && dailyBudget !== ''
+      ? Number(dailyBudget)
+      : Math.round(Number(monthlyBudget) / daysInMonth);
+
     const budget = await Budget.findOneAndUpdate(
       { userId: req.userId },
       {
         monthlyBudget: Number(monthlyBudget),
+        dailyBudget: computedDailyBudget,
         categoryBudgets: categoryBudgets || [],
         updatedAt: new Date()
       },
@@ -38,19 +46,38 @@ export const getBudget = async (req, res) => {
   try {
     const budget = await Budget.findOne({ userId: req.userId });
 
-    if (!budget) {
-      return res.status(200).json({
-        success: true,
-        data: {
-          monthlyBudget: 0,
-          categoryBudgets: []
-        }
-      });
-    }
+    const now = new Date();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const monthlyLimit = Number(budget?.monthlyBudget || 0);
+    const dailyTarget = Number(budget?.dailyBudget) || (monthlyLimit > 0 ? Math.round(monthlyLimit / daysInMonth) : 0);
+
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+
+    const todayExpenses = await Transaction.find({
+      userId: req.userId,
+      type: 'expense',
+      transactionDate: { $gte: startOfToday, $lt: endOfToday }
+    }).catch(() => []);
+
+    const todaySpent = todayExpenses.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
+    const todayRemaining = dailyTarget - todaySpent;
+    const isOverspentToday = todaySpent > dailyTarget && dailyTarget > 0;
+    const todaySaved = todaySpent <= dailyTarget ? Math.max(0, dailyTarget - todaySpent) : 0;
 
     res.status(200).json({
       success: true,
-      data: budget
+      data: {
+        ...(budget ? (budget._doc || budget) : {}),
+        monthlyBudget: monthlyLimit,
+        categoryBudgets: budget?.categoryBudgets || [],
+        dailyBudget: dailyTarget,
+        todaySpent,
+        todayRemaining,
+        todaySaved,
+        isOverspentToday,
+        daysInMonth
+      }
     });
   } catch (error) {
     res.status(500).json({
@@ -71,10 +98,17 @@ export const updateBudget = async (req, res) => {
       });
     }
 
+    const now = new Date();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const computedDailyBudget = req.body.dailyBudget !== undefined && req.body.dailyBudget !== null && req.body.dailyBudget !== ''
+      ? Number(req.body.dailyBudget)
+      : Math.round(Number(monthlyBudget) / daysInMonth);
+
     const budget = await Budget.findOneAndUpdate(
       { userId: req.userId },
       {
         monthlyBudget: Number(monthlyBudget),
+        dailyBudget: computedDailyBudget,
         categoryBudgets,
         updatedAt: new Date()
       },

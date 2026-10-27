@@ -521,6 +521,41 @@ function Dashboard() {
         </div>
       </div>
 
+      {/* Daily Budget Tracker Banner */}
+      {summary && summary.dailyBudget > 0 && (
+        <div className="rounded-2xl border border-purple-100 dark:border-purple-900/30 bg-gradient-to-r from-purple-50/60 via-indigo-50/40 to-white dark:from-slate-900/40 dark:via-purple-950/20 dark:to-slate-900/40 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-purple-600 text-white shadow-md flex-shrink-0">
+              <span className="text-sm">🎯</span>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-500 dark:text-dark-text-muted uppercase tracking-wider">Today's Daily Budget</span>
+                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                  summary.isOverspentToday
+                    ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                }`}>
+                  {summary.isOverspentToday ? 'Overspent' : 'On Track'}
+                </span>
+              </div>
+              <p className="text-xs text-slate-650 dark:text-slate-350 mt-0.5">
+                Daily Allowance: <strong>{formatCurrency(summary.dailyBudget)}</strong> | Spent today: <strong>{formatCurrency(summary.todaySpent || 0)}</strong>
+                {summary.isOverspentToday
+                  ? ` (Overspent by ${formatCurrency(summary.todaySpent - summary.dailyBudget)})`
+                  : ` (Saved ${formatCurrency(summary.todaySaved || 0)} today)`}
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/budget"
+            className="self-start sm:self-center px-3.5 py-1.5 rounded-xl bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm flex-shrink-0"
+          >
+            Manage Daily Budget →
+          </Link>
+        </div>
+      )}
+
       {/* Summary Stats Grid */}
       {summary && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

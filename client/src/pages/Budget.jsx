@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchBudget, saveBudget } from '../redux/slices/budgetSlice'
 import { getDashboardSummary } from '../services/dashboardService'
 import { categories, formatCurrency } from '../utils/format'
-import { FiPlus, FiTrash2, FiActivity, FiCheck, FiInbox } from 'react-icons/fi'
+import { FiPlus, FiTrash2, FiActivity, FiCheck, FiInbox, FiZap, FiBell, FiAlertTriangle } from 'react-icons/fi'
 import { useLanguage } from '../context/LanguageContext'
+import API from '../services/api'
 
 function Budget() {
   const dispatch = useDispatch()
@@ -14,6 +15,8 @@ function Budget() {
   const [categoryBudgets, setCategoryBudgets] = useState([])
   const [summary, setSummary] = useState(null)
   const [message, setMessage] = useState('')
+  const [testAlertLoading, setTestAlertLoading] = useState(false)
+  const [testAlertMsg, setTestAlertMsg] = useState('')
 
   useEffect(() => {
     dispatch(fetchBudget())
@@ -24,6 +27,21 @@ function Budget() {
     setMonthlyBudget(budget.monthlyBudget)
     setCategoryBudgets(budget.categories)
   }, [budget.monthlyBudget, budget.categories])
+
+  const sendTestDailyBudgetAlert = async () => {
+    try {
+      setTestAlertLoading(true)
+      setTestAlertMsg('')
+      const res = await API.post('/notifications/test-daily-budget')
+      setTestAlertMsg(res.data.message || 'Daily budget alert dispatched!')
+      setTimeout(() => setTestAlertMsg(''), 5000)
+    } catch (err) {
+      setTestAlertMsg('Failed to dispatch alert. Ensure browser screen notifications are allowed.')
+      setTimeout(() => setTestAlertMsg(''), 5000)
+    } finally {
+      setTestAlertLoading(false)
+    }
+  }
 
   const addCategory = () => {
     setCategoryBudgets([...categoryBudgets, { category: 'Food', limit: 0 }])
@@ -52,6 +70,16 @@ function Budget() {
   const remaining = Number(monthlyBudget || 0) - totalExpense
   const usedPercent = monthlyBudget > 0 ? Math.min(100, Math.round((totalExpense / monthlyBudget) * 100)) : 0
 
+  const now = new Date()
+  const daysInMonth = budget.daysInMonth || new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+  const computedDailyBudget = monthlyBudget > 0 ? Math.round(Number(monthlyBudget) / daysInMonth) : 0
+  const dailyLimit = budget.dailyBudget || computedDailyBudget
+  const todaySpent = budget.todaySpent || 0
+  const todayRemaining = dailyLimit - todaySpent
+  const todaySaved = todaySpent <= dailyLimit ? Math.max(0, dailyLimit - todaySpent) : 0
+  const isOverspentToday = todaySpent > dailyLimit && dailyLimit > 0
+  const todayPercent = dailyLimit > 0 ? Math.min(100, Math.round((todaySpent / dailyLimit) * 100)) : 0
+
   return (
     <div className="space-y-6 text-slate-800 dark:text-slate-100">
       <div>
@@ -61,6 +89,80 @@ function Budget() {
 
       {message && <div className="rounded-xl border border-emerald-100 dark:border-emerald-950/20 bg-emerald-50/50 dark:bg-emerald-950/5 p-4 text-sm text-emerald-700 dark:text-emerald-400">{message}</div>}
       {budget.error && <div className="rounded-xl border border-rose-100 dark:border-rose-950/20 bg-rose-50/50 dark:bg-rose-950/5 p-4 text-sm text-rose-700 dark:text-rose-400">{budget.error}</div>}
+
+      {/* Daily Budget & End-of-Day Alert Hero Banner */}
+      <div className="rounded-3xl border border-purple-100 dark:border-purple-900/40 bg-gradient-to-br from-white via-purple-50/30 to-indigo-50/20 dark:from-dark-card dark:via-[#151329] dark:to-dark-card p-5 sm:p-6 shadow-premium relative overflow-hidden">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-3 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-extrabold uppercase tracking-wider text-purple-600 dark:text-purple-400">Today's Daily Target</span>
+            </div>
+            <div className="flex flex-wrap items-baseline gap-3">
+              <span className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight">
+                {formatCurrency(dailyLimit)}
+              </span>
+              <span className="text-sm font-semibold text-slate-400">/ day allowance</span>
+              
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black ${
+                isOverspentToday
+                  ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40'
+                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40'
+              }`}>
+                {isOverspentToday ? `⚠️ Overspent by ₹${(todaySpent - dailyLimit).toLocaleString('en-IN')}` : `🎉 Saved ₹${todaySaved.toLocaleString('en-IN')} today`}
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-500 dark:text-dark-text-muted leading-relaxed">
+              Spent so far today: <strong className="text-slate-700 dark:text-slate-200">{formatCurrency(todaySpent)}</strong>. 
+              {isOverspentToday
+                ? ' You have exceeded your daily target for today. Try to cut back tomorrow.'
+                : ` You still have ${formatCurrency(Math.max(0, todayRemaining))} left for today.`}
+            </p>
+
+            {/* Daily progress bar */}
+            <div className="pt-1 max-w-xl">
+              <div className="flex justify-between text-[11px] font-bold text-slate-500 dark:text-dark-text-muted mb-1">
+                <span>Today's Spending: {todayPercent}%</span>
+                <span>Allowance: {formatCurrency(dailyLimit)}</span>
+              </div>
+              <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-500 ${
+                    isOverspentToday ? 'bg-rose-500' : 'bg-gradient-to-r from-purple-500 to-emerald-500'
+                  }`}
+                  style={{ width: `${todayPercent}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* End-of-Day Notification Alert Card */}
+          <div className="lg:w-80 flex-shrink-0 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-purple-100 dark:border-purple-900/30 p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <FiBell className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+              <h4 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">End-of-Day Screen Alert</h4>
+            </div>
+            <p className="text-[11px] text-slate-500 dark:text-dark-text-muted leading-relaxed">
+              Every day at 8:00 PM, Xpenz sends a native OS alert prompting: <em>"Today's budget was ₹{dailyLimit}, you spent ₹{todaySpent}. You {isOverspentToday ? `overspent by ₹${todaySpent - dailyLimit}` : `saved ₹${todaySaved}`}!"</em>
+            </p>
+            <button
+              type="button"
+              onClick={sendTestDailyBudgetAlert}
+              disabled={testAlertLoading}
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-md cursor-pointer disabled:opacity-50"
+            >
+              <FiBell className="w-3.5 h-3.5" />
+              {testAlertLoading ? 'Dispatching...' : '🔔 Test Daily Screen Alert'}
+            </button>
+            {testAlertMsg && (
+              <p className="text-[10px] text-center font-medium text-purple-600 dark:text-purple-300">
+                {testAlertMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-3 w-full overflow-hidden">
         {/* Budget Editor Panel */}
@@ -77,6 +179,25 @@ function Budget() {
                   onChange={(e) => setMonthlyBudget(e.target.value)}
                   className="w-full rounded-xl border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 pl-8 pr-4 py-3 text-sm font-semibold focus:outline-none focus:border-secondary"
                 />
+              </div>
+
+              {/* Real-time Calculated Daily Budget Prompt */}
+              <div className="mt-3 flex items-start sm:items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-blue-500/10 dark:from-purple-900/20 dark:via-indigo-900/20 dark:to-blue-900/20 border border-purple-200/60 dark:border-purple-800/40 p-3.5">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-purple-600 text-white shadow-md">
+                    <FiZap className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-xs font-bold text-slate-500 dark:text-dark-text-muted uppercase tracking-wider">Calculated Daily Allowance:</span>
+                      <span className="text-lg font-black text-purple-700 dark:text-purple-300">₹{computedDailyBudget.toLocaleString('en-IN')}</span>
+                      <span className="text-xs text-slate-400">/ day</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-dark-text-muted">
+                      Auto-calculated from your ₹{Number(monthlyBudget || 0).toLocaleString('en-IN')} monthly budget across {daysInMonth} days this month.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 

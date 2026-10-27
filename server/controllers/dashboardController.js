@@ -168,6 +168,22 @@ export const getDashboardSummary = async (req, res) => {
     // Sort by due date ascending
     upcomingPayments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
+    // Compute Daily Budget & Today's Outflow
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const monthlyLimit = Number(budget?.monthlyBudget || 0);
+    const dailyBudget = Number(budget?.dailyBudget) || (monthlyLimit > 0 ? Math.round(monthlyLimit / daysInMonth) : 0);
+
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const todayExpenses = (currentMonthTransactions || []).filter(t => {
+      const d = new Date(t.transactionDate);
+      return t.type === 'expense' && d >= startOfToday && d < endOfToday;
+    });
+    const todaySpent = todayExpenses.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const todayRemaining = dailyBudget - todaySpent;
+    const todaySaved = todaySpent <= dailyBudget ? Math.max(0, dailyBudget - todaySpent) : 0;
+    const isOverspentToday = todaySpent > dailyBudget && dailyBudget > 0;
+
     res.status(200).json({
       success: true,
       data: {
@@ -180,6 +196,12 @@ export const getDashboardSummary = async (req, res) => {
         accounts,
         monthlyBudget: summary.monthlyBudget || budget?.monthlyBudget || 0,
         budgetRemaining: summary.budgetRemaining,
+        dailyBudget,
+        todaySpent,
+        todayRemaining,
+        todaySaved,
+        isOverspentToday,
+        daysInMonth,
         monthlyTrend: trendSummary.monthlyTrend,
         categoryBreakdown: summary.categoryBreakdown,
         recentTransactions,

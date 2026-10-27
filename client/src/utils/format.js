@@ -12,6 +12,7 @@ export const categories = [
   'Salary',
   'Freelance',
   'Food',
+  'Clothes',
   'Rent',
   'Transport',
   'Shopping',

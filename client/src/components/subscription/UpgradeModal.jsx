@@ -105,7 +105,7 @@ export default function UpgradeModal() {
       case 'ai':
         return 'Unlock AI Forecasts & Cashflow Runway';
       case 'reports':
-        return 'Unlock PDF Financial Statement Export';
+        return 'Unlock Custom Date Range & PDF Reports';
       default:
         return 'Upgrade to Xpenz Pro';
     }
@@ -231,7 +231,7 @@ export default function UpgradeModal() {
             </div>
             <div className="flex items-center gap-2">
               <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>PDF Financial Reports</strong> (Monthly & Yearly)</span>
+              <span><strong>Custom Date Range Reports & PDF Export</strong> (Monthly basic free)</span>
             </div>
             <div className="flex items-center gap-2">
               <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />

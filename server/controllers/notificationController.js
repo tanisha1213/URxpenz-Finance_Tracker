@@ -1,6 +1,6 @@
 import { VAPID_PUBLIC_KEY, sendPushNotification } from '../config/webPush.js';
 import PushSubscriptionModel from '../models/PushSubscription.js';
-import { checkAndDispatchReminders } from '../services/notificationScheduler.js';
+import { checkAndDispatchReminders, checkAndDispatchDailyBudgetSummaries } from '../services/notificationScheduler.js';
 
 export const getVapidPublicKey = (req, res) => {
   res.status(200).json({
@@ -99,6 +99,24 @@ export const triggerReminderCheck = async (req, res) => {
     res.status(200).json({
       success: true,
       message: `Loan and EMI reminder check completed. Dispatched: ${dispatched}`
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+export const triggerDailyBudgetCheck = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const dispatched = await checkAndDispatchDailyBudgetSummaries(userId, true);
+    res.status(200).json({
+      success: true,
+      message: dispatched > 0
+        ? `Daily budget notification dispatched to your device!`
+        : `Daily budget checked. Ensure your browser screen alerts are enabled and budget is configured.`
     });
   } catch (error) {
     res.status(500).json({

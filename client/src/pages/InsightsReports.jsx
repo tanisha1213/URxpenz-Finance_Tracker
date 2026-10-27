@@ -98,9 +98,17 @@ function InsightsReports() {
   useEffect(() => {
     if (activeTab === 'reports') {
       setReportLoading(true)
+      setReportError('')
       getMonthlyReport(reportParams)
         .then((response) => setReport(response.data.data))
-        .catch((err) => setReportError(err.response?.data?.message || 'Unable to load report'))
+        .catch((err) => {
+          const errMsg = err.response?.data?.message || 'Unable to load report'
+          setReportError(errMsg)
+          if (err.response?.data?.code === 'PRO_REQUIRED' || err.response?.status === 403) {
+            setPeriodType('monthly')
+            openUpgradeModal('reports')
+          }
+        })
         .finally(() => setReportLoading(false))
     }
   }, [reportParams, activeTab])
@@ -390,12 +398,19 @@ ${alts.map(a => `• ${a.category}: ${a.suggestion}`).join('\n')}
               
               <select
                 value={periodType}
-                onChange={(e) => setPeriodType(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if ((val === 'custom' || val === 'yearly') && !isPro) {
+                    openUpgradeModal('reports');
+                    return;
+                  }
+                  setPeriodType(val);
+                }}
                 className="rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
               >
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-                <option value="custom">Custom Range</option>
+                <option value="monthly">Monthly (Basic)</option>
+                <option value="yearly">{!isPro ? '🔒 Yearly (Pro)' : 'Yearly'}</option>
+                <option value="custom">{!isPro ? '🔒 Custom Dates / Range (Pro)' : 'Custom Range / Specific Dates'}</option>
               </select>
 
               {periodType === 'monthly' && (

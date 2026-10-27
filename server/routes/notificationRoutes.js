@@ -4,7 +4,8 @@ import {
   subscribe,
   unsubscribe,
   sendTestNotification,
-  triggerReminderCheck
+  triggerReminderCheck,
+  triggerDailyBudgetCheck
 } from '../controllers/notificationController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -15,5 +16,6 @@ router.post('/subscribe', protect, subscribe);
 router.post('/unsubscribe', protect, unsubscribe);
 router.post('/send-test', protect, sendTestNotification);
 router.post('/check-reminders', protect, triggerReminderCheck);
+router.post('/test-daily-budget', protect, triggerDailyBudgetCheck);
 
 export default router;

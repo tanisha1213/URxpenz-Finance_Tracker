@@ -20,22 +20,33 @@ const safeFormatDate = (dateVal) => {
 
 export const getMonthlyReport = async (req, res) => {
   try {
-    // If requesting PDF format, verify Pro subscription
-    if (req.query.format === 'pdf') {
+    const isYearly = req.query.type === 'yearly';
+    const isCustom = !!(req.query.startDate && req.query.endDate);
+
+    // PDF export, custom date range reports, and yearly reports require Pro subscription
+    // Monthly reports are available for all users including Basic tier
+    if (req.query.format === 'pdf' || isCustom || isYearly) {
       const user = await User.findById(req.userId);
       const subscription = getUserSubscription(user);
       if (!subscription.isPro) {
-        return res.status(403).json({
-          success: false,
-          code: 'PRO_REQUIRED',
-          message: 'PDF Statement & Report export requires an active Pro subscription. Please upgrade to Pro.'
-        });
+        if (req.query.format === 'pdf') {
+          return res.status(403).json({
+            success: false,
+            code: 'PRO_REQUIRED',
+            message: 'PDF Statement & Report export requires an active Pro subscription. Please upgrade to Pro.'
+          });
+        }
+        if (isCustom || isYearly) {
+          return res.status(403).json({
+            success: false,
+            code: 'PRO_REQUIRED',
+            message: 'Custom date range reports and specific date filters require an active Pro subscription. Monthly reports are included in your Basic plan.'
+          });
+        }
       }
     }
 
     const now = new Date();
-    const isYearly = req.query.type === 'yearly';
-    const isCustom = !!(req.query.startDate && req.query.endDate);
     let start, end, periodStr;
 
     if (isCustom) {
