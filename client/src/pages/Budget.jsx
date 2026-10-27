@@ -6,7 +6,7 @@ import { categories, formatCurrency } from '../utils/format'
 import { FiPlus, FiTrash2, FiActivity, FiCheck, FiInbox, FiZap, FiBell, FiAlertTriangle, FiLock } from 'react-icons/fi'
 import { useLanguage } from '../context/LanguageContext'
 import { useSubscription } from '../context/SubscriptionContext'
-import API from '../services/api'
+import DailyAlertTimeCard from '../components/budget/DailyAlertTimeCard'
 
 function Budget() {
   const dispatch = useDispatch()
@@ -17,8 +17,6 @@ function Budget() {
   const [categoryBudgets, setCategoryBudgets] = useState([])
   const [summary, setSummary] = useState(null)
   const [message, setMessage] = useState('')
-  const [testAlertLoading, setTestAlertLoading] = useState(false)
-  const [testAlertMsg, setTestAlertMsg] = useState('')
 
   useEffect(() => {
     dispatch(fetchBudget())
@@ -29,29 +27,6 @@ function Budget() {
     setMonthlyBudget(budget.monthlyBudget)
     setCategoryBudgets(budget.categories)
   }, [budget.monthlyBudget, budget.categories])
-
-  const sendTestDailyBudgetAlert = async () => {
-    if (!isPro) {
-      openUpgradeModal('daily_budget')
-      return
-    }
-    try {
-      setTestAlertLoading(true)
-      setTestAlertMsg('')
-      const res = await API.post('/notifications/test-daily-budget')
-      setTestAlertMsg(res.data.message || 'Daily budget alert dispatched!')
-      setTimeout(() => setTestAlertMsg(''), 5000)
-    } catch (err) {
-      if (err.response?.data?.code === 'PRO_REQUIRED') {
-        openUpgradeModal('daily_budget')
-      } else {
-        setTestAlertMsg('Failed to dispatch alert. Ensure browser screen notifications are allowed.')
-        setTimeout(() => setTestAlertMsg(''), 5000)
-      }
-    } finally {
-      setTestAlertLoading(false)
-    }
-  }
 
   const addCategory = () => {
     setCategoryBudgets([...categoryBudgets, { category: 'Food', limit: 0 }])
@@ -149,29 +124,15 @@ function Budget() {
             </div>
 
             {/* End-of-Day Notification Alert Card */}
-            <div className="lg:w-80 flex-shrink-0 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-purple-100 dark:border-purple-900/30 p-4 space-y-3">
-              <div className="flex items-center gap-2">
-                <FiBell className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0" />
-                <h4 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">End-of-Day Screen Alert</h4>
-              </div>
-              <p className="text-[11px] text-slate-500 dark:text-dark-text-muted leading-relaxed">
-                Every day at 8:00 PM, Xpenz sends a native OS alert prompting: <em>"Today's budget was ₹{dailyLimit}, you spent ₹{todaySpent}. You {isOverspentToday ? `overspent by ₹${todaySpent - dailyLimit}` : `saved ₹${todaySaved}`}!"</em>
-              </p>
-              <button
-                type="button"
-                onClick={sendTestDailyBudgetAlert}
-                disabled={testAlertLoading}
-                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-md cursor-pointer disabled:opacity-50"
-              >
-                <FiBell className="w-3.5 h-3.5" />
-                {testAlertLoading ? 'Dispatching...' : '🔔 Test Daily Screen Alert'}
-              </button>
-              {testAlertMsg && (
-                <p className="text-[10px] text-center font-medium text-purple-600 dark:text-purple-300">
-                  {testAlertMsg}
-                </p>
-              )}
-            </div>
+            <DailyAlertTimeCard
+              initialTime={budget.dailyAlertTime || '20:00'}
+              dailyLimit={dailyLimit}
+              todaySpent={todaySpent}
+              todaySaved={todaySaved}
+              isOverspentToday={isOverspentToday}
+              isPro={isPro}
+              onUpgradeModal={openUpgradeModal}
+            />
           </div>
         </div>
       ) : (

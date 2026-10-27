@@ -7,6 +7,7 @@ import User from '../models/User.js';
 import PushSubscriptionModel from '../models/PushSubscription.js';
 import { sendPushNotification } from '../config/webPush.js';
 import { getUserSubscription } from '../utils/subscriptionHelper.js';
+import { getUserSettings } from '../utils/userSettings.js';
 
 // Cache to prevent duplicate push notifications on the same day
 const dispatchedToday = new Set();
@@ -138,7 +139,8 @@ export const checkAndDispatchReminders = async (targetUserId = null) => {
 
 /**
  * End-of-Day Daily Budget Notification Check.
- * Dispatches an OS screen alert summarizing today's budget, amount spent, and saved or overspent status.
+ * Dispatches an OS screen alert summarizing today's budget, amount spent, and saved or overspent status
+ * at each user's customized alert time (defaults to 20:00).
  */
 export const checkAndDispatchDailyBudgetSummaries = async (targetUserId = null, force = false) => {
   const now = new Date();
@@ -160,6 +162,16 @@ export const checkAndDispatchDailyBudgetSummaries = async (targetUserId = null, 
       if (!user) continue;
       const subscription = getUserSubscription(user);
       if (!subscription.isPro) continue;
+
+      // Check user's preferred alert time
+      const settings = getUserSettings(budget.userId);
+      const alertTime = settings.dailyAlertTime || '20:00';
+      const [targetHour, targetMinute] = alertTime.split(':').map(Number);
+      const targetMinutes = targetHour * 60 + (targetMinute || 0);
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      // If scheduled time has not arrived yet for today, skip unless forced
+      if (!force && currentMinutes < targetMinutes) continue;
 
       const monthlyBudget = Number(budget.monthlyBudget || 0);
       const dailyBudget = Number(budget.dailyBudget) || (monthlyBudget > 0 ? Math.round(monthlyBudget / daysInMonth) : 0);
@@ -219,28 +231,22 @@ export const checkAndDispatchDailyBudgetSummaries = async (targetUserId = null, 
 };
 
 /**
- * Initializes a background timer to check reminders every 30 minutes
+ * Initializes a background timer to check reminders and customized daily budget alerts
  */
 export const initNotificationScheduler = () => {
-  console.log('[NotificationScheduler] Background loan/bill reminder & daily budget scheduler initialized.');
+  console.log('[NotificationScheduler] Background loan/bill reminder & customized daily budget scheduler initialized.');
 
   // Run initial check after 5 seconds
   setTimeout(() => {
     checkAndDispatchReminders();
-    const currentHour = new Date().getHours();
-    if (currentHour >= 20) {
-      checkAndDispatchDailyBudgetSummaries();
-    }
+    checkAndDispatchDailyBudgetSummaries();
   }, 5000);
 
-  // Repeat every 30 minutes
+  // Check every 15 minutes to accurately catch users' customized alert times
   setInterval(() => {
     checkAndDispatchReminders();
-    const currentHour = new Date().getHours();
-    if (currentHour >= 20) {
-      checkAndDispatchDailyBudgetSummaries();
-    }
-  }, 30 * 60 * 1000);
+    checkAndDispatchDailyBudgetSummaries();
+  }, 15 * 60 * 1000);
 };
 
 export default {

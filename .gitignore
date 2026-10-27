@@ -5,12 +5,33 @@ server/node_modules/
 
 # Production build outputs
 client/dist/
+dist/
+build/
 
 # Local env files containing secrets
 .env
-server/.env
+.env.*
+*.env
+client/.env*
+server/.env*
+!server/.env.example
 
-# Editor files
+# Secrets, certificates, and credentials
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+
+# Logs and runtime data
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+server/data/
+
+# Editor and IDE files
 .vscode/
 .idea/
 *.suo
@@ -22,3 +43,4 @@ server/.env
 # OS files
 .DS_Store
 Thumbs.db
+

@@ -3,15 +3,19 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || 'BPHC8vieuheJ9exGTTlIxzzADsWEEfr_WivQERM5PD9jMLGdM05grEC9wjg4QWtu-pMreMUXZzPJ5WLD452VdT0';
-export const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || '-G5KRfkRB2RmlYVgPO7SjEAjD3Q235jVYDacmTTg_1Q';
+export const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || '';
+export const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || '';
 export const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:admin@xpenz.app';
 
-try {
-  webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
-  console.log('[WebPush] VAPID keys initialized successfully.');
-} catch (err) {
-  console.error('[WebPush Init Error]:', err.message);
+if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
+  try {
+    webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+    console.log('[WebPush] VAPID keys initialized successfully.');
+  } catch (err) {
+    console.error('[WebPush Init Error]:', err.message);
+  }
+} else {
+  console.warn('[WebPush Security Warning] VAPID_PUBLIC_KEY or VAPID_PRIVATE_KEY not set in environment variables.');
 }
 
 /**

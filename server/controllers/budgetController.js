@@ -2,10 +2,11 @@ import Budget from '../models/Budget.js';
 import Transaction from '../models/Transaction.js';
 import User from '../models/User.js';
 import { getUserSubscription } from '../utils/subscriptionHelper.js';
+import { getUserSettings, saveUserSettings } from '../utils/userSettings.js';
 
 export const setBudget = async (req, res) => {
   try {
-    const { monthlyBudget, dailyBudget, categoryBudgets } = req.body;
+    const { monthlyBudget, dailyBudget, categoryBudgets, dailyAlertTime } = req.body;
 
     if (monthlyBudget === undefined || monthlyBudget === null || monthlyBudget === '' || Number(monthlyBudget) < 0) {
       return res.status(400).json({
@@ -26,6 +27,10 @@ export const setBudget = async (req, res) => {
           : Math.round(Number(monthlyBudget) / daysInMonth))
       : 0;
 
+    if (dailyAlertTime && /^([01]\d|2[0-3]):([0-5]\d)$/.test(dailyAlertTime)) {
+      saveUserSettings(req.userId, { dailyAlertTime });
+    }
+
     const budget = await Budget.findOneAndUpdate(
       { userId: req.userId },
       {
@@ -37,10 +42,15 @@ export const setBudget = async (req, res) => {
       { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
     );
 
+    const settings = getUserSettings(req.userId);
+
     res.status(200).json({
       success: true,
       message: 'Budget saved successfully',
-      data: budget
+      data: {
+        ...(budget ? (budget._doc || budget) : {}),
+        dailyAlertTime: settings.dailyAlertTime || '20:00'
+      }
     });
   } catch (error) {
     res.status(500).json({
@@ -57,6 +67,7 @@ export const getBudget = async (req, res) => {
     const isPro = !!subscription.isPro;
 
     const budget = await Budget.findOne({ userId: req.userId });
+    const settings = getUserSettings(req.userId);
 
     const now = new Date();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
@@ -93,6 +104,7 @@ export const getBudget = async (req, res) => {
         monthlyBudget: monthlyLimit,
         categoryBudgets: budget?.categoryBudgets || [],
         dailyBudget: isPro ? dailyTarget : 0,
+        dailyAlertTime: settings.dailyAlertTime || '20:00',
         todaySpent,
         todayRemaining,
         todaySaved,
@@ -111,7 +123,7 @@ export const getBudget = async (req, res) => {
 
 export const updateBudget = async (req, res) => {
   try {
-    const { monthlyBudget, categoryBudgets } = req.body;
+    const { monthlyBudget, categoryBudgets, dailyAlertTime } = req.body;
 
     if (monthlyBudget === undefined || monthlyBudget === null || monthlyBudget === '' || Number(monthlyBudget) < 0) {
       return res.status(400).json({
@@ -132,6 +144,10 @@ export const updateBudget = async (req, res) => {
           : Math.round(Number(monthlyBudget) / daysInMonth))
       : 0;
 
+    if (dailyAlertTime && /^([01]\d|2[0-3]):([0-5]\d)$/.test(dailyAlertTime)) {
+      saveUserSettings(req.userId, { dailyAlertTime });
+    }
+
     const budget = await Budget.findOneAndUpdate(
       { userId: req.userId },
       {
@@ -150,10 +166,43 @@ export const updateBudget = async (req, res) => {
       });
     }
 
+    const settings = getUserSettings(req.userId);
+
     res.status(200).json({
       success: true,
       message: 'Budget updated successfully',
-      data: budget
+      data: {
+        ...(budget ? (budget._doc || budget) : {}),
+        dailyAlertTime: settings.dailyAlertTime || '20:00'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+export const updateDailyAlertTime = async (req, res) => {
+  try {
+    const { dailyAlertTime } = req.body;
+
+    if (!dailyAlertTime || !/^([01]\d|2[0-3]):([0-5]\d)$/.test(dailyAlertTime)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid time in 24-hour HH:mm format (e.g. 20:00, 21:30)'
+      });
+    }
+
+    const settings = saveUserSettings(req.userId, { dailyAlertTime });
+
+    res.status(200).json({
+      success: true,
+      message: `Daily alert time saved. You will receive end-of-day summary notifications at ${dailyAlertTime}.`,
+      data: {
+        dailyAlertTime: settings.dailyAlertTime
+      }
     });
   } catch (error) {
     res.status(500).json({

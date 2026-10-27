@@ -44,6 +44,8 @@ export const BASIC_TIER_LIMITS = {
   maxSubscriptions: 2
 };
 
+import { getStoredSubscription } from './subscriptionStore.js';
+
 export const getUserSubscription = (user) => {
   if (!user) {
     return {
@@ -55,6 +57,13 @@ export const getUserSubscription = (user) => {
     };
   }
 
+  const userId = user._id || user.id;
+  const stored = getStoredSubscription(userId);
+
+  const effectiveSubscriptionExpiresAt = user.subscriptionExpiresAt || stored?.subscriptionExpiresAt;
+  const effectiveSubscriptionPlan = user.subscriptionPlan || stored?.subscriptionPlan;
+  const effectiveSubscriptionTier = user.subscriptionTier || stored?.subscriptionTier;
+
   const now = new Date();
   const createdAt = user.createdAt ? new Date(user.createdAt) : now;
 
@@ -65,7 +74,7 @@ export const getUserSubscription = (user) => {
 
   // Check paid subscription
   const hasActivePaidPlan = !!(
-    user.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) > now
+    effectiveSubscriptionExpiresAt && new Date(effectiveSubscriptionExpiresAt) > now
   );
 
   // Check trial validity
@@ -77,7 +86,7 @@ export const getUserSubscription = (user) => {
     : 0;
 
   const isPro = hasActivePaidPlan || isTrialActive;
-  const tier = hasActivePaidPlan ? 'pro' : (isTrialActive ? 'trial' : 'basic');
+  const tier = hasActivePaidPlan ? (effectiveSubscriptionTier || 'pro') : (isTrialActive ? 'trial' : 'basic');
 
   return {
     tier, // 'trial' | 'pro' | 'basic'
@@ -85,8 +94,8 @@ export const getUserSubscription = (user) => {
     isTrial: isTrialActive,
     trialDaysRemaining,
     trialEndDate: trialEnd.toISOString(),
-    plan: user.subscriptionPlan || (isTrialActive ? '60_day_trial' : 'basic'),
-    expiresAt: hasActivePaidPlan ? user.subscriptionExpiresAt : (isTrialActive ? trialEnd.toISOString() : null),
+    plan: effectiveSubscriptionPlan || (isTrialActive ? '60_day_trial' : 'basic'),
+    expiresAt: hasActivePaidPlan ? effectiveSubscriptionExpiresAt : (isTrialActive ? trialEnd.toISOString() : null),
     limits: isPro ? { maxAccounts: 9999, maxLoans: 9999, maxSubscriptions: 9999 } : BASIC_TIER_LIMITS
   };
 };

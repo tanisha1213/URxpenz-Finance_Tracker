@@ -25,6 +25,7 @@ export const saveBudget = createAsyncThunk('budget/save', async (data, { rejectW
 const initialState = {
   monthlyBudget: 0,
   dailyBudget: 0,
+  dailyAlertTime: '20:00',
   todaySpent: 0,
   todayRemaining: 0,
   todaySaved: 0,
@@ -43,6 +44,7 @@ const budgetSlice = createSlice({
     setBudget: (state, action) => {
       state.monthlyBudget = action.payload.monthlyBudget
       state.dailyBudget = action.payload.dailyBudget || 0
+      state.dailyAlertTime = action.payload.dailyAlertTime || '20:00'
       state.todaySpent = action.payload.todaySpent || 0
       state.todayRemaining = action.payload.todayRemaining || 0
       state.todaySaved = action.payload.todaySaved || 0
@@ -68,6 +70,7 @@ const budgetSlice = createSlice({
         state.loading = false
         state.monthlyBudget = action.payload.monthlyBudget || 0
         state.dailyBudget = action.payload.dailyBudget || 0
+        state.dailyAlertTime = action.payload.dailyAlertTime || '20:00'
         state.todaySpent = action.payload.todaySpent || 0
         state.todayRemaining = action.payload.todayRemaining || 0
         state.todaySaved = action.payload.todaySaved || 0
@@ -83,6 +86,7 @@ const budgetSlice = createSlice({
       .addCase(saveBudget.fulfilled, (state, action) => {
         state.monthlyBudget = action.payload.monthlyBudget || 0
         state.dailyBudget = action.payload.dailyBudget || 0
+        state.dailyAlertTime = action.payload.dailyAlertTime || state.dailyAlertTime || '20:00'
         state.categories = action.payload.categoryBudgets || []
         state.remaining = action.payload.monthlyBudget || 0
       })

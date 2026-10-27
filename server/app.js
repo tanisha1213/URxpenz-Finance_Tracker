@@ -89,8 +89,48 @@ app.use(async (req, res, next) => {
   }
 });
 
+// Auth-specific rate limiter (strict protection against brute-force attacks)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many authentication attempts from this IP. Please wait 15 minutes before trying again.'
+  }
+});
+
+// Deep sanitize request body and query to prevent XSS and prototype pollution
+const sanitizeInput = (obj) => {
+  if (!obj || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(sanitizeInput);
+
+  const clean = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+
+    if (typeof value === 'string') {
+      clean[key] = value
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/javascript:/gi, '');
+    } else if (typeof value === 'object' && value !== null) {
+      clean[key] = sanitizeInput(value);
+    } else {
+      clean[key] = value;
+    }
+  }
+  return clean;
+};
+
+app.use((req, res, next) => {
+  if (req.body) req.body = sanitizeInput(req.body);
+  if (req.query) req.query = sanitizeInput(req.query);
+  next();
+});
+
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/budget', budgetRoutes);
 app.use('/api/ai', aiRoutes);
@@ -109,15 +149,22 @@ initNotificationScheduler();
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'Server is running' });
+  res.json({ status: 'Server is running', env: process.env.NODE_ENV || 'development' });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
+  const isProd = process.env.NODE_ENV === 'production';
+  if (!isProd) {
+    console.error(err.stack);
+  } else {
+    console.error('[Server Error]:', err.message);
+  }
+
+  const statusCode = err.statusCode || (res.statusCode >= 400 ? res.statusCode : 500);
+  res.status(statusCode).json({
     success: false,
-    message: err.message || 'Something went wrong'
+    message: isProd && statusCode === 500 ? 'Internal Server Error' : (err.message || 'Something went wrong')
   });
 });
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSubscription } from '../../context/SubscriptionContext';
+import { createPaymentOrder, verifyPaymentSignature } from '../../services/billingService';
 import { formatCurrency } from '../../utils/format';
 import {
   FiCheck,
@@ -59,6 +60,7 @@ export default function UpgradeModal() {
     upgradeFeature,
     closeUpgradeModal,
     activatePlan,
+    refreshSubscription,
     tier,
     isTrial,
     trialDaysRemaining
@@ -76,17 +78,93 @@ export default function UpgradeModal() {
     setErrorMsg('');
     setSuccessMsg('');
 
-    const res = await activatePlan(selectedPlanId);
-    setLoading(false);
+    try {
+      // 1. Try to initiate Razorpay order
+      const orderRes = await createPaymentOrder(selectedPlanId);
 
-    if (res.success) {
-      setSuccessMsg(res.message || 'Pro Membership activated successfully!');
-      setTimeout(() => {
-        setSuccessMsg('');
-        closeUpgradeModal();
-      }, 1800);
-    } else {
-      setErrorMsg(res.message || 'Payment processing failed. Please try again.');
+      if (orderRes.data?.isDemoMode || !orderRes.data?.order) {
+        // Direct / demo activation mode
+        const res = await activatePlan(selectedPlanId);
+        setLoading(false);
+        if (res.success) {
+          setSuccessMsg(res.message || 'Pro Membership activated successfully!');
+          setTimeout(() => {
+            setSuccessMsg('');
+            closeUpgradeModal();
+          }, 1800);
+        } else {
+          setErrorMsg(res.message || 'Activation failed. Please try again.');
+        }
+        return;
+      }
+
+      // 2. Load Razorpay script if needed
+      if (!window.Razorpay) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.onload = resolve;
+          script.onerror = () => reject(new Error('Failed to load Razorpay payment script'));
+          document.body.appendChild(script);
+        });
+      }
+
+      const order = orderRes.data.order;
+      const keyId = orderRes.data.keyId;
+
+      const options = {
+        key: keyId,
+        amount: order.amount,
+        currency: 'INR',
+        name: 'Xpenz Finance',
+        description: `Upgrade to ${orderRes.data.plan?.name || 'Pro Plan'}`,
+        order_id: order.id,
+        handler: async (response) => {
+          try {
+            setLoading(true);
+            const verifyRes = await verifyPaymentSignature({
+              planId: selectedPlanId,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            await refreshSubscription();
+            setSuccessMsg(verifyRes.data?.message || 'Pro Membership activated successfully!');
+            setTimeout(() => {
+              setSuccessMsg('');
+              closeUpgradeModal();
+            }, 1800);
+          } catch (vErr) {
+            setErrorMsg(vErr.response?.data?.message || 'Payment verification failed');
+          } finally {
+            setLoading(false);
+          }
+        },
+        theme: {
+          color: '#6366f1'
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (resp) {
+        setErrorMsg(resp.error?.description || 'Payment was unsuccessful. Please try again.');
+        setLoading(false);
+      });
+      rzp.open();
+      setLoading(false);
+    } catch (err) {
+      // Fallback direct activation
+      const res = await activatePlan(selectedPlanId);
+      setLoading(false);
+      if (res.success) {
+        setSuccessMsg(res.message || 'Pro Membership activated successfully!');
+        setTimeout(() => {
+          setSuccessMsg('');
+          closeUpgradeModal();
+        }, 1800);
+      } else {
+        setErrorMsg(res.message || 'Payment processing failed. Please try again.');
+      }
     }
   };
 

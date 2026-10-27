@@ -69,29 +69,15 @@ function InsightsReports() {
     }
   }, [periodType, period, startDate, endDate, weekOffset])
 
-  // Welfare & AI Coach Interactive States
+  // Welfare Schemes Filter States
   const [schemeAge, setSchemeAge] = useState(25)
   const [schemeGender, setSchemeGender] = useState('any')
   const [schemeIncome, setSchemeIncome] = useState(300000)
   const [schemeCategory, setSchemeCategory] = useState('any')
-  const [subsidyMessage, setSubsidyMessage] = useState('')
-  const [subsidyAmt, setSubsidyAmt] = useState(2000)
-  const [subsidyName, setSubsidyName] = useState('PM Kisan')
 
-  const [pensionAge, setPensionAge] = useState(25)
-  const [pensionTarget, setPensionTarget] = useState(3000) // target payout
-
-  const [loanAmount, setLoanAmount] = useState(500000)
-  const [loanInterest, setLoanInterest] = useState(9.5)
-  const [loanTenure, setLoanTenure] = useState(5)
-
-  const [chatQuestion, setChatQuestion] = useState('')
-  const [chatResponse, setChatResponse] = useState('')
-  const [chatLoading, setChatLoading] = useState(false)
-
-  // Fetch AI insights
+  // Fetch financial insights
   useEffect(() => {
-    if (activeTab === 'insights' || activeTab === 'welfare') {
+    if (activeTab === 'insights') {
       dispatch(fetchInsights())
       dispatch(fetchPrediction())
     }
@@ -147,63 +133,7 @@ function InsightsReports() {
       }
     }
   }
-  const logSubsidyReceipt = async (e) => {
-    e.preventDefault()
-    try {
-      setSubsidyMessage('Logging subsidy...')
-      await API.post('/transactions', {
-        title: `Subsidy: ${subsidyName}`,
-        amount: Number(subsidyAmt),
-        type: 'income',
-        category: 'Subsidy',
-        paymentMethod: 'bank',
-        transactionDate: new Date().toISOString().slice(0, 10)
-      })
-      setSubsidyMessage('Success: Subsidy transaction logged successfully!')
-      setTimeout(() => setSubsidyMessage(''), 4000)
-    } catch (err) {
-      setSubsidyMessage('Error: Failed to log subsidy.')
-    }
-  }
 
-  const askAIFinancialCoach = (questionTopic) => {
-    setChatLoading(true)
-    setChatQuestion(
-      questionTopic === 'retirement' ? 'How should I plan my pension & retirement?' :
-      questionTopic === 'savings' ? 'How can I start saving at least 20%?' :
-      questionTopic === 'loans' ? 'Am I ready to take a bank loan?' :
-      'Where can I reduce spending and find cheaper alternatives?'
-    )
-    
-    setTimeout(() => {
-      let ans = ''
-      if (questionTopic === 'retirement') {
-        ans = `To secure a monthly pension of INR ${pensionTarget.toLocaleString('en-IN')}/month through Atal Pension Yojana (APY) starting at age 60:
-• Since you are current age ${pensionAge}, your estimated monthly premium contribution is around INR ${Math.round(pensionTarget * 0.08)}/month.
-• Action: We recommend setting up auto-debit on your primary bank account before age 30 to lock in the lowest contribution slabs.`
-      } else if (questionTopic === 'savings') {
-        ans = `To reach a healthy 20% savings rate:
-• Setup an automatic transfer on your salary day to move 20% of income directly into a high-yield savings or fixed deposit account.
-• Avoid 'saving what is left after spending'; instead, 'spend what is left after saving'.`
-      } else if (questionTopic === 'loans') {
-        const emi = Math.round((loanAmount * (loanInterest / 100 / 12) * Math.pow(1 + (loanInterest / 100 / 12), loanTenure * 12)) / (Math.pow(1 + (loanInterest / 100 / 12), loanTenure * 12) - 1))
-        const income = safePredictions?.financialInclusion?.totalIncome || 35000
-        const ratio = emi / income
-        
-        ans = `Loan Affordability Analysis:
-• Estimated EMI: INR ${emi.toLocaleString('en-IN')}/month.
-• Debt-to-Income impact: This EMI consumes ${Math.round(ratio * 100)}% of your estimated monthly income.
-• Verdict: ${ratio < 0.3 ? 'Affordable and safe (below 30% threshold).' : 'High Risk! This exceeds 30% of your income. Consider lowering the loan amount or extending the tenure.'}`
-      } else {
-        const alts = safePredictions?.cashflowForecast?.cheaperAlternatives || []
-        ans = `Top Spending Reduction Strategies based on your profile:
-${alts.map(a => `• ${a.category}: ${a.suggestion}`).join('\n')}
-• Action: Set category limits in your Budget tab to restrict excess outlays.`
-      }
-      setChatResponse(ans)
-      setChatLoading(false)
-    }, 800)
-  }
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -246,7 +176,7 @@ ${alts.map(a => `• ${a.category}: ${a.suggestion}`).join('\n')}
             }`}
           >
             <FiUsers className="w-4 h-4" />
-            Welfare & AI Coach
+            Government Schemes & Welfare
           </button>
         </div>
       </div>
@@ -931,120 +861,7 @@ ${alts.map(a => `• ${a.category}: ${a.suggestion}`).join('\n')}
               </div>
             </section>
 
-            {/* Subsidy Tracker Form */}
-            <section className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium space-y-5 flex flex-col justify-between min-w-0 overflow-hidden">
-              <div>
-                <div className="flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-dark-border">
-                  <FiDollarSign className="w-5 h-5 text-secondary dark:text-purple-400" />
-                  <h3 className="font-bold text-slate-800 dark:text-white text-base">Welfare Subsidy Tracker</h3>
-                </div>
-                <p className="text-xs text-slate-450 dark:text-dark-text-muted leading-relaxed mt-3">
-                  Log direct benefit transfers or government subsidies (e.g. gas subsidy, agriculture credit) straight into your transaction book.
-                </p>
-
-                <form onSubmit={logSubsidyReceipt} className="space-y-4 mt-5">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase">Subsidy Name</label>
-                      <input
-                        type="text"
-                        value={subsidyName}
-                        onChange={(e) => setSubsidyName(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
-                        placeholder="e.g. PM Kisan"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase font-bold">Amount (INR)</label>
-                      <input
-                        type="number"
-                        value={subsidyAmt}
-                        onChange={(e) => setSubsidyAmt(Number(e.target.value))}
-                        className="w-full rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
-                        placeholder="2000"
-                      />
-                    </div>
-                  </div>
-
-                  {subsidyMessage && (
-                    <p className={`text-xs font-bold text-center ${subsidyMessage.includes('Success') ? 'text-emerald-500' : 'text-rose-500'}`}>
-                      {subsidyMessage}
-                    </p>
-                  )}
-
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 rounded-xl bg-secondary dark:bg-purple-650 hover:bg-indigo-700 dark:hover:bg-purple-755 text-white font-extrabold text-sm transition-colors cursor-pointer"
-                  >
-                    Log Subsidy Receipt
-                  </button>
-                </form>
-              </div>
-            </section>
           </div>
-
-          {/* AI Financial Coach Chat Panel */}
-          <section className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium space-y-4 overflow-hidden w-full">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-dark-border">
-              <FiCpu className="w-5 h-5 text-secondary dark:text-purple-400 animate-pulse" />
-              <h3 className="font-bold text-slate-800 dark:text-white text-base">AI Financial Coach & Wealth Guide</h3>
-            </div>
-            
-            <div className="grid gap-6 md:grid-cols-3 w-full overflow-hidden">
-              {/* Pre-set Advisory Questions */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Pick a Coaching Topic</span>
-                <button
-                  onClick={() => askAIFinancialCoach('spending')}
-                  className="w-full text-left p-3 rounded-xl border border-slate-100 dark:border-dark-border hover:bg-slate-50 dark:hover:bg-slate-900/30 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer block"
-                >
-                  🔍 Where should I reduce spending?
-                </button>
-                <button
-                  onClick={() => askAIFinancialCoach('retirement')}
-                  className="w-full text-left p-3 rounded-xl border border-slate-100 dark:border-dark-border hover:bg-slate-50 dark:hover:bg-slate-900/30 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer block"
-                >
-                  🛡️ Atal Pension premium check?
-                </button>
-                <button
-                  onClick={() => askAIFinancialCoach('loans')}
-                  className="w-full text-left p-3 rounded-xl border border-slate-100 dark:border-dark-border hover:bg-slate-50 dark:hover:bg-slate-900/30 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer block"
-                >
-                  💸 Can I afford my new loan?
-                </button>
-                <button
-                  onClick={() => askAIFinancialCoach('savings')}
-                  className="w-full text-left p-3 rounded-xl border border-slate-100 dark:border-dark-border hover:bg-slate-50 dark:hover:bg-slate-900/30 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer block"
-                >
-                  📈 How to reach a 20% savings rate?
-                </button>
-              </div>
-
-              {/* Chat Output Frame */}
-              <div className="md:col-span-2 rounded-xl bg-slate-50/30 dark:bg-slate-900/20 border border-slate-100 dark:border-dark-border/40 p-4 min-h-[160px] flex flex-col justify-between">
-                <div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Interactive AI Coach Advice</div>
-                  {chatQuestion && (
-                    <div className="text-xs font-bold text-slate-800 dark:text-white mb-3">
-                      User: <span className="font-semibold text-slate-600 dark:text-slate-350">{chatQuestion}</span>
-                    </div>
-                  )}
-                  {chatLoading ? (
-                    <div className="flex items-center gap-2 text-slate-400 text-xs py-4">
-                      <div className="animate-spin rounded-full h-4 w-4 border-t border-b border-slate-400"></div>
-                      Consulting financial model...
-                    </div>
-                  ) : chatResponse ? (
-                    <div className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed whitespace-pre-line bg-white/40 dark:bg-dark-card/40 p-3.5 rounded-lg border border-slate-100/50 dark:border-dark-border/20 shadow-sm">
-                      {chatResponse}
-                    </div>
-                  ) : (
-                    <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">Click one of the coaching topics on the left to consult your AI Coach.</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </section>
         </div>
       )}
     </div>
