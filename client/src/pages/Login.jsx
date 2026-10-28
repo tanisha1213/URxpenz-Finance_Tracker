@@ -44,8 +44,8 @@ function Login() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-dark-bg dark:to-dark-card flex items-center justify-center p-4 transition-colors duration-200">
       <div className="bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border rounded-2xl shadow-xl p-8 w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-16 h-16 rounded-2xl object-contain shadow-lg mb-3" />
-          <h1 className="text-3xl font-extrabold text-slate-850 dark:text-white tracking-tight">Xpenz</h1>
+          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-16 h-16 rounded-2xl object-contain shadow-lg mb-3" />
+          <h1 className="text-3xl font-extrabold text-slate-850 dark:text-white tracking-tight">URxpenz</h1>
           <p className="text-[10px] text-slate-400 dark:text-dark-text-muted mt-1 uppercase font-bold tracking-wider">AI Personal Finance</p>
         </div>
 

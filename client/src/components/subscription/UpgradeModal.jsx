@@ -26,7 +26,7 @@ import {
 const PLANS = [
   {
     id: 'kickstart',
-    playStoreId: 'xpenz_kickstart_1m',
+    playStoreId: 'urxpenz_kickstart_1m',
     name: 'Kickstart',
     duration: '30 days',
     price: 45,
@@ -36,7 +36,7 @@ const PLANS = [
   },
   {
     id: 'quarterly',
-    playStoreId: 'xpenz_pro_3m',
+    playStoreId: 'urxpenz_pro_3m',
     name: 'Quarterly',
     duration: '90 days',
     price: 119,
@@ -46,7 +46,7 @@ const PLANS = [
   },
   {
     id: 'half_yearly',
-    playStoreId: 'xpenz_pro_6m',
+    playStoreId: 'urxpenz_pro_6m',
     name: 'Half-yearly',
     duration: '180 days',
     price: 199,
@@ -56,7 +56,7 @@ const PLANS = [
   },
   {
     id: 'annual',
-    playStoreId: 'xpenz_annual_1y',
+    playStoreId: 'urxpenz_annual_1y',
     name: 'Annual Pro',
     duration: '365 days',
     price: 349,

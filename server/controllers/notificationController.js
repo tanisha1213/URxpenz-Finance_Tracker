@@ -70,7 +70,7 @@ export const sendTestNotification = async (req, res) => {
     for (const sub of subscriptions) {
       try {
         await sendPushNotification(sub, {
-          title: 'Xpenz Desktop & Mobile Alert 🚀',
+          title: 'URxpenz Desktop & Mobile Alert 🚀',
           body: 'Native OS notifications are active! You will now receive loan due and EMI alerts even when the app is completely closed.',
           url: '/dashboard'
         });

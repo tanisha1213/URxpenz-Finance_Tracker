@@ -483,7 +483,7 @@ function InsightsReports() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={report.categoryBreakdown} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
-                          <linearGradient id="xpenzBarGradient" x1="0" y1="0" x2="0" y2="1">
+                          <linearGradient id="urxpenzBarGradient" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stopColor="#818cf8" />
                             <stop offset="100%" stopColor="#4f46e5" />
                           </linearGradient>
@@ -500,7 +500,7 @@ function InsightsReports() {
                           labelStyle={{ color: isDark ? '#94a3b8' : '#64748b' }}
                           formatter={(value) => formatCurrency(value)}
                         />
-                        <Bar dataKey="amount" fill="url(#xpenzBarGradient)" radius={[8, 8, 0, 0]} />
+                        <Bar dataKey="amount" fill="url(#urxpenzBarGradient)" radius={[8, 8, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>

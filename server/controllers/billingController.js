@@ -297,6 +297,10 @@ export const verifyGooglePlayPurchase = async (req, res) => {
 
     // Map Google Play In-App Product IDs to our internal plan IDs
     const playStoreProductMap = {
+      'urxpenz_kickstart_1m': 'kickstart',
+      'urxpenz_pro_3m': 'quarterly',
+      'urxpenz_pro_6m': 'half_yearly',
+      'urxpenz_annual_1y': 'annual',
       'xpenz_kickstart_1m': 'kickstart',
       'xpenz_pro_3m': 'quarterly',
       'xpenz_pro_6m': 'half_yearly',

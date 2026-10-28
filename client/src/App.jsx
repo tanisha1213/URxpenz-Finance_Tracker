@@ -34,6 +34,7 @@ const Profile = lazyWithRetry(() => import('./pages/Profile'))
 const Balance = lazyWithRetry(() => import('./pages/Balance'))
 const Subscriptions = lazyWithRetry(() => import('./pages/Subscriptions'))
 const PrivacyPolicy = lazyWithRetry(() => import('./pages/PrivacyPolicy'))
+const TermsAndConditions = lazyWithRetry(() => import('./pages/TermsAndConditions'))
 
 // Layout
 import Layout from './components/layout/Layout'
@@ -77,6 +78,8 @@ function App() {
           <Route path="/forgot-password" element={<Forgot />} />
           <Route path="/reset-password/:token" element={<Reset />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>

@@ -58,7 +58,7 @@ function Forgot() {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-indigo-650 dark:from-purple-650 dark:to-pink-650"></div>
 
         <div className="flex flex-col items-center mb-6">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-16 h-16 rounded-2xl object-contain shadow-lg mb-3" />
+          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-16 h-16 rounded-2xl object-contain shadow-lg mb-3" />
           <h1 className="text-3xl font-extrabold text-slate-850 dark:text-white tracking-tight">Forgot Password</h1>
           <p className="text-[10px] text-slate-400 dark:text-dark-text-muted mt-1 uppercase font-bold tracking-wider">AI Personal Finance</p>
         </div>
