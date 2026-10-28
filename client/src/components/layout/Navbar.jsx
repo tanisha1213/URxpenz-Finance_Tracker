@@ -218,15 +218,15 @@ function Navbar() {
             </div>
           </div>
 
-          {/* Refer & Earn Quick Button */}
+          {/* Refer & Earn Quick Link */}
           <Link
-            to="/profile"
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-medium transition-colors cursor-pointer"
+            to="/profile#referral-section"
+            className="flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1 rounded-md border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-medium transition-colors cursor-pointer"
             title="Referral program — up to 25% off"
           >
-            <FiGift className="w-3.5 h-3.5 text-amber-500" />
+            <FiGift className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-amber-500 shrink-0" />
             <span className="hidden sm:inline">Refer & earn</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-white font-semibold leading-none">25% off</span>
+            <span className="hidden md:inline text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-white font-semibold leading-none">25% off</span>
           </Link>
 
           {/* Theme Switcher Button */}

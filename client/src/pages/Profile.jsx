@@ -7,10 +7,11 @@ import { formatCurrency } from '../utils/format'
 import {
   FiUser, FiKey, FiCheck, FiPieChart, FiLogOut, FiBell,
   FiSmartphone, FiAlertCircle, FiTrash2, FiAlertTriangle, FiShield,
-  FiGift, FiCopy, FiShare2, FiUsers
+  FiGift, FiCopy, FiShare2, FiUsers, FiZap, FiAward
 } from 'react-icons/fi'
 import { useLanguage } from '../context/LanguageContext'
 import { useNotification } from '../context/NotificationContext'
+import { useSubscription } from '../context/SubscriptionContext'
 import { getReferralStats } from '../services/referralService'
 
 function Profile() {
@@ -27,6 +28,14 @@ function Profile() {
     enablePushNotifications,
     disablePushNotifications
   } = useNotification()
+  const {
+    tier,
+    isTrial,
+    trialDaysRemaining,
+    isPro,
+    limits,
+    openUpgradeModal
+  } = useSubscription()
   const { user } = useSelector(state => state.auth)
   const [profile, setProfile] = useState({ name: '', email: '' })
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '' })
@@ -42,6 +51,15 @@ function Profile() {
   const [referralData, setReferralData] = useState(null)
   const [copiedCode, setCopiedCode] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
+
+  useEffect(() => {
+    if (window.location.hash === '#referral-section') {
+      const el = document.getElementById('referral-section')
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 150)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (user) setProfile({ name: user.name, email: user.email })
@@ -189,8 +207,88 @@ function Profile() {
       {message && <div className="rounded-lg border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-950/20 p-3 text-xs text-emerald-800 dark:text-emerald-300 font-medium">{message}</div>}
       {error && <div className="rounded-lg border border-rose-200 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/20 p-3 text-xs text-rose-800 dark:text-rose-300 font-medium">{error}</div>}
 
-      {/* Referral program */}
+      {/* Subscription & Membership Plan Card */}
       <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${
+              isTrial
+                ? 'bg-amber-500/10 border-amber-500/20 text-amber-500'
+                : tier === 'basic'
+                ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400'
+                : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
+            }`}>
+              {isTrial ? <FiZap className="w-5 h-5" /> : <FiAward className="w-5 h-5" />}
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  Subscription plan
+                </h3>
+                {isTrial ? (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400">
+                    Free trial ({trialDaysRemaining}d remaining)
+                  </span>
+                ) : tier === 'basic' ? (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                    Basic tier (Free)
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                    Pro member
+                  </span>
+                )}
+                {discountPercent > 0 && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                    {discountPercent}% referral discount ready
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xl">
+                {isTrial
+                  ? 'You have unrestricted access to all Pro features during your trial period. Upgrade anytime to lock in your discounted rate.'
+                  : tier === 'basic'
+                  ? 'Your current free tier is limited to 1 bank account, 1 loan, and 2 recurring subscriptions. Upgrade to unlock unlimited tracking.'
+                  : 'You have full access to unlimited bank accounts, loans, statement exports, and daily budget alerts.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 sm:self-center">
+            <button
+              type="button"
+              onClick={() => openUpgradeModal()}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+            >
+              <FiAward className="w-3.5 h-3.5" />
+              {tier === 'basic' ? 'Upgrade to Pro (from ₹45)' : isTrial ? 'View subscription plans' : 'Manage plan'}
+            </button>
+          </div>
+        </div>
+
+        {/* Feature status strip */}
+        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-[#222634] grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#191c26] border border-slate-200 dark:border-[#222634]">
+            <span className="text-[10px] text-slate-400 block font-medium">Bank accounts</span>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">{isPro ? 'Unlimited' : `${limits.maxAccounts} account`}</span>
+          </div>
+          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#191c26] border border-slate-200 dark:border-[#222634]">
+            <span className="text-[10px] text-slate-400 block font-medium">Active loans & EMIs</span>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">{isPro ? 'Unlimited' : `${limits.maxLoans} loan`}</span>
+          </div>
+          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#191c26] border border-slate-200 dark:border-[#222634]">
+            <span className="text-[10px] text-slate-400 block font-medium">Recurring subs</span>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">{isPro ? 'Unlimited' : `${limits.maxSubscriptions} subs`}</span>
+          </div>
+          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#191c26] border border-slate-200 dark:border-[#222634]">
+            <span className="text-[10px] text-slate-400 block font-medium">Reports & alerts</span>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">{isPro ? 'Full access' : 'Basic only'}</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Referral program */}
+      <section id="referral-section" className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 sm:p-6 scroll-mt-20">
         <div className="space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-3">
