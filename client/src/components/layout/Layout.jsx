@@ -9,6 +9,9 @@ function Layout() {
   return (
     <div className="flex h-screen bg-transparent overflow-hidden text-slate-800 dark:text-slate-100 transition-colors duration-150 relative">
       <PopUpBanner />
+      {/* Background radial line pattern for fintech dark-theme aesthetics */}
+      <div className="fintech-overlay" />
+
       <OnboardingTour />
 
       <div className="hidden md:block z-10">

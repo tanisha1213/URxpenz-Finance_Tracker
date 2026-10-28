@@ -1,605 +1,264 @@
-@import './theme/tokens.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ==========================================================================
-   GLOBAL TYPOGRAPHY & BASE RESET
-   ========================================================================== */
-
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.6;
-  background-color: var(--bg);
-  color: var(--text);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 200ms ease-out, color 200ms ease-out;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
-  letter-spacing: -0.02em;
-  font-weight: 600;
-  color: var(--text);
+/* Premium radial dark background grids */
+.dark body {
+  background-color: #090a0f;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.06) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(99, 102, 241, 0.04) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
-/* Tabular figures for financial numbers & metrics */
-.font-mono,
-table,
-.tabular-nums,
-[data-metric] {
-  font-variant-numeric: tabular-nums;
+/* Premium radial light background grids matching reference */
+.light body {
+  background-color: #f6f8fd;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.04) 0px, transparent 50%),
+    radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.03) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(99, 102, 241, 0.02) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Dynamic curved lines pattern / texture overlay */
+.fintech-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.015) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(ellipse 65% 55% at 50% 0%, #000 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 0%, #000 60%, transparent 100%);
+  z-index: 0;
+  opacity: 0.85;
+}
+
+/* Glassmorphism shortcuts */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Tabular figures for numbers */
+.font-mono {
   font-feature-settings: 'tnum' on, 'zero' on;
 }
 
-/* Links */
-a {
-  transition: color 150ms ease-out;
-}
-.dark a:hover {
-  color: var(--primary-hover);
-}
-.light a:hover {
-  color: var(--primary-hover);
+/* Premium Card and Shadows overriding utility rules */
+.dark .bg-white, .dark .dark\:bg-dark-card {
+  background: linear-gradient(180deg, #131522 0%, #0d0f17 100%) !important;
+  border-color: rgba(168, 85, 247, 0.08) !important;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* Icon Stroke Standardization: 1.5px stroke with rounded caps */
-svg {
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* ==========================================================================
-   PERMANENT DARK SIDEBAR (Remains dark in BOTH light & dark themes)
-   ========================================================================== */
-aside,
-.light aside,
-.dark aside {
-  background-color: #0E0420 !important;
-  border-right: 1px solid rgba(196, 139, 255, 0.14) !important;
-  color: #F4EEFF !important;
-}
-
-aside h1,
-aside h2,
-.light aside h1,
-.light aside h2 {
-  color: #F4EEFF !important;
-}
-
-.sidebar-active,
-.light .sidebar-active,
-.dark .sidebar-active {
-  background: rgba(143, 43, 255, 0.22) !important;
-  color: #F4EEFF !important;
-  border-left: 3px solid #8F2BFF !important;
-  border-radius: 0 10px 10px 0;
-  font-weight: 600;
-}
-
-.sidebar-inactive,
-.light .sidebar-inactive,
-.dark .sidebar-inactive {
-  color: #A99BC4 !important;
-  border-left: 3px solid transparent !important;
-  transition: color 200ms ease-out, background-color 200ms ease-out;
-}
-
-.sidebar-inactive:hover,
-.light .sidebar-inactive:hover,
-.dark .sidebar-inactive:hover {
-  color: #F4EEFF !important;
-  background-color: rgba(196, 139, 255, 0.08) !important;
-}
-
-.sidebar-inactive svg,
-.light .sidebar-inactive svg,
-.dark .sidebar-inactive svg {
-  color: #A99BC4 !important;
-}
-
-.sidebar-inactive:hover svg,
-.light .sidebar-inactive:hover svg,
-.dark .sidebar-inactive:hover svg {
-  color: #F4EEFF !important;
-}
-
-/* Top Navbar & Mobile Bottom Nav */
-nav {
-  transition: background-color 200ms ease-out, border-color 200ms ease-out;
-}
-.dark nav {
-  background-color: var(--surface) !important;
-  border-color: var(--border) !important;
-}
-
-/* ==========================================================================
-   SHAPE & DEPTH: CARDS, CONTAINERS, AND SURFACES
-   - Cards and containers: 16px radius, 1px --border, flat fill from surface tokens
-   - Prefer borders over shadows. Shadows only on menus and modals, soft and violet-tinted
-   - Dark theme depth comes from layered surfaces (bg, surface, surface-raised), not glows
-   ========================================================================== */
-
-.dark .bg-white,
-.dark .dark\:bg-dark-card,
-.dark .dark\:bg-\[\#14161f\],
-.dark .dark\:bg-\[\#11131f\],
-.dark .dark\:bg-\[\#151822\] {
-  background-color: var(--surface) !important;
-  border-color: var(--border) !important;
-  box-shadow: none !important;
-}
-
-.bg-white,
 .light .bg-white {
-  background-color: var(--surface) !important;
-  border-color: var(--border) !important;
-  box-shadow: none !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fcfcff 100%) !important;
+  border-color: rgba(99, 102, 241, 0.08) !important;
+  box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.06) !important;
 }
 
-/* Layered Surface: Raised */
-.dark .dark\:bg-\[\#181a24\],
-.dark .dark\:bg-\[\#191c26\],
-.dark .dark\:bg-\[\#1a1d29\],
-.dark .dark\:bg-\[\#10121a\],
-.dark .dark\:bg-\[\#1C0B36\],
-.dark .dark\:bg-\[\#211A33\] {
-  background-color: var(--surface-raised) !important;
-}
-
-.light .bg-slate-50,
-.light .bg-slate-100 {
-  background-color: var(--surface-raised) !important;
-}
-
-/* Layered Surface: Background Canvas */
-.dark .dark\:bg-\[\#090b11\],
-.dark .dark\:bg-\[\#0c0d12\],
-.dark .dark\:bg-\[\#0b0316\],
-.dark .dark\:bg-\[\#0F0B1A\] {
-  background-color: var(--bg) !important;
-}
-
-/* Strict 16px radius and 1px border for containers and cards */
-.rounded-xl,
+/* Rounded corners overrides to match 24px layout reference */
 .rounded-2xl {
-  border-radius: 16px !important;
+  border-radius: 1.5rem !important; /* 24px */
+}
+.rounded-3xl {
+  border-radius: 1.75rem !important; /* 28px */
 }
 
-/* Border token mappings */
-.border-slate-200,
-.border-slate-300,
-.dark .dark\:border-\[\#222634\],
-.dark .dark\:border-dark-border,
-.dark .dark\:border-\[\#2b3042\],
-.dark .dark\:border-\[\#1e212d\] {
-  border-color: var(--border) !important;
+/* Accent Button Glowing Shadows for Dark theme */
+.dark .bg-secondary, .dark\:bg-purple-600, .dark .btn-primary {
+  box-shadow: 0 8px 20px -3px rgba(139, 92, 246, 0.35) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.dark .bg-secondary:hover, .dark\:bg-purple-600:hover, .dark .btn-primary:hover {
+  box-shadow: 0 12px 25px -4px rgba(139, 92, 246, 0.5) !important;
+  transform: translateY(-1px) !important;
 }
 
-/* Text token mappings */
-.text-slate-900,
-.dark .dark\:text-white,
-.dark .dark\:text-slate-100 {
-  color: var(--text) !important;
+/* Light Theme Premium Purple Accent Button overrides matching reference */
+.light .bg-secondary,
+.light button.bg-secondary,
+.light .bg-indigo-600,
+.light button.bg-indigo-600,
+.light .text-white.bg-secondary,
+.light .btn-primary {
+  background: #743BF7 !important;
+  color: #ffffff !important;
+  box-shadow: 
+    0 12px 30px rgba(116, 59, 247, 0.28), 
+    0 4px 12px rgba(116, 59, 247, 0.18) !important;
+  border-radius: 9999px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: none !important;
 }
 
-.text-slate-500,
-.text-slate-400,
-.dark .dark\:text-slate-400,
-.dark .dark\:text-dark-text-muted {
-  color: var(--text-muted) !important;
+.light .bg-secondary:hover,
+.light button.bg-secondary:hover,
+.light .bg-indigo-600:hover,
+.light button.bg-indigo-600:hover,
+.light .btn-primary:hover {
+  background: #602ee3 !important;
+  box-shadow: 
+    0 14px 35px rgba(116, 59, 247, 0.35), 
+    0 6px 16px rgba(116, 59, 247, 0.24) !important;
+  transform: translateY(-1px) !important;
 }
 
-/* ==========================================================================
-   BUTTON SYSTEM
-   Shared: height 42px, padding 0 20px, radius 12px, font-weight 500, 14px,
-   1.5px border, transition 200ms ease-out for background, border-color, and transform.
-   Hover: translateY(-1px). Pressed: scale(0.98). Focus-visible: 3px ring in violet at 35% opacity.
-   No glow, no bounce, no gradients on buttons.
-   ========================================================================== */
-
-.btn-primary,
-.btn-secondary,
-.btn-ghost,
-.btn-accent,
-button.btn-primary,
-button.btn-secondary,
-button.btn-ghost,
-button.btn-accent,
-button.bg-secondary,
-button.bg-indigo-600,
-button.dark\:bg-purple-650,
-button.dark\:bg-purple-600 {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 42px;
-  min-height: 42px;
-  padding: 0 20px;
-  border-radius: 12px !important;
-  font-weight: 500 !important;
-  font-size: 14px !important;
-  line-height: 1 !important;
-  border-width: 1.5px !important;
-  border-style: solid !important;
-  transition: background-color 200ms ease-out, border-color 200ms ease-out, color 200ms ease-out, transform 200ms ease-out !important;
-  cursor: pointer;
-  box-shadow: none !important;
-  background-image: none !important;
-  text-decoration: none;
-  white-space: nowrap;
-  box-sizing: border-box;
+.light .bg-secondary:active,
+.light button.bg-secondary:active,
+.light .bg-indigo-600:active,
+.light button.bg-indigo-600:active,
+.light .btn-primary:active {
+  filter: brightness(0.9) !important;
+  transform: scale(0.98) !important;
 }
 
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-ghost:hover,
-.btn-accent:hover,
-button.btn-primary:hover,
-button.btn-secondary:hover,
-button.btn-ghost:hover,
-button.btn-accent:hover,
-button.bg-secondary:hover,
-button.bg-indigo-600:hover,
-button.dark\:bg-purple-650:hover,
-button.dark\:bg-purple-600:hover {
-  transform: translateY(-1px);
+/* Light Mode active navigation icons, text links, active tabs & pills */
+.light .text-secondary,
+.light .text-indigo-600,
+.light .text-purple-600 {
+  color: #743BF7 !important;
 }
 
-.btn-primary:active,
-.btn-secondary:active,
-.btn-ghost:active,
-.btn-accent:active,
-button.btn-primary:active,
-button.btn-secondary:active,
-button.btn-ghost:active,
-button.btn-accent:active,
-button.bg-secondary:active,
-button.bg-indigo-600:active,
-button.dark\:bg-purple-650:active,
-button.dark\:bg-purple-600:active {
-  transform: scale(0.98);
+.light .border-secondary,
+.light .border-indigo-600,
+.light .border-purple-600 {
+  border-color: #743BF7 !important;
 }
 
-.btn-primary:focus-visible,
-.btn-secondary:focus-visible,
-.btn-ghost:focus-visible,
-.btn-accent:focus-visible,
-button:focus-visible {
-  outline: none !important;
-  box-shadow: 0 0 0 3px var(--focus-ring) !important;
+/* Selected filters or active tab indicator states */
+.light .bg-secondary\/10,
+.light .bg-indigo-600\/10,
+.light .bg-purple-600\/10,
+.light .bg-primary\/10 {
+  background: rgba(116, 59, 247, 0.08) !important;
+  color: #743BF7 !important;
 }
 
-.btn-primary:disabled,
-.btn-secondary:disabled,
-.btn-ghost:disabled,
-.btn-accent:disabled,
-button:disabled {
-  opacity: 0.55 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
+.light .bg-secondary\/20,
+.light .bg-indigo-600\/20,
+.light .bg-purple-600\/20,
+.light .bg-primary\/20 {
+  background: rgba(116, 59, 247, 0.12) !important;
+  color: #743BF7 !important;
 }
 
-/* --------------------------------------------------------------------------
-   LIGHT THEME BUTTON VARIANTS
-   -------------------------------------------------------------------------- */
-:root {
-  /* Primary Button (Light) */
-  --btn-primary-bg: #7A00FF;
-  --btn-primary-text: #FFFFFF;
-  --btn-primary-border: #7A00FF;
-  --btn-primary-hover-bg: #5A00D6;
-  --btn-primary-hover-border: #5A00D6;
-  --btn-primary-pressed-bg: #3A0A9A;
-  --btn-primary-pressed-border: #3A0A9A;
-
-  /* Secondary Button (Light) */
-  --btn-secondary-bg: #FFFFFF;
-  --btn-secondary-text: #5A00D6;
-  --btn-secondary-border: #7A00FF;
-  --btn-secondary-hover-bg: #F0E4FF;
-  --btn-secondary-hover-text: #3A0A9A;
-  --btn-secondary-hover-border: #5A00D6;
-  --btn-secondary-pressed-bg: #E0CBFF;
-  --btn-secondary-pressed-text: #3A0A9A;
-  --btn-secondary-pressed-border: #5A00D6;
-
-  /* Ghost Button (Light) */
-  --btn-ghost-bg: #EFE4FB;
-  --btn-ghost-text: #2A0E66;
-  --btn-ghost-border: #EFE4FB;
-  --btn-ghost-hover-bg: #E2D0F7;
-  --btn-ghost-hover-border: #E2D0F7;
-  --btn-ghost-pressed-bg: #D3B9F2;
-  --btn-ghost-pressed-border: #D3B9F2;
-
-  /* Accent Button (Light) */
-  --btn-accent-bg: #C026D9;
-  --btn-accent-text: #FFFFFF;
-  --btn-accent-border: #C026D9;
-  --btn-accent-hover-bg: #A71BBF;
-  --btn-accent-hover-border: #A71BBF;
-  --btn-accent-pressed-bg: #8A12A0;
-  --btn-accent-pressed-border: #8A12A0;
+/* Focus outline rings mapping to primary purple */
+.light *:focus {
+  outline-color: rgba(116, 59, 247, 0.4) !important;
 }
 
-.btn-primary,
-button.btn-primary,
-button.bg-secondary,
-button.bg-indigo-600 {
-  background-color: var(--btn-primary-bg) !important;
-  color: var(--btn-primary-text) !important;
-  border-color: var(--btn-primary-border) !important;
-}
-.btn-primary:hover,
-button.btn-primary:hover,
-button.bg-secondary:hover,
-button.bg-indigo-600:hover {
-  background-color: var(--btn-primary-hover-bg) !important;
-  border-color: var(--btn-primary-hover-border) !important;
-}
-.btn-primary:active,
-button.btn-primary:active,
-button.bg-secondary:active,
-button.bg-indigo-600:active {
-  background-color: var(--btn-primary-pressed-bg) !important;
-  border-color: var(--btn-primary-pressed-border) !important;
+/* Premium Sidebar Navy-Purple vertical gradient flow */
+aside {
+  background: linear-gradient(180deg, #0e101f 0%, #150f28 100%) !important;
+  border-right: 1px solid rgba(139, 92, 246, 0.1) !important;
 }
 
-.btn-secondary,
-button.btn-secondary {
-  background-color: var(--btn-secondary-bg) !important;
-  color: var(--btn-secondary-text) !important;
-  border-color: var(--btn-secondary-border) !important;
-}
-.btn-secondary:hover,
-button.btn-secondary:hover {
-  background-color: var(--btn-secondary-hover-bg) !important;
-  color: var(--btn-secondary-hover-text) !important;
-  border-color: var(--btn-secondary-hover-border) !important;
-}
-.btn-secondary:active,
-button.btn-secondary:active {
-  background-color: var(--btn-secondary-pressed-bg) !important;
-  color: var(--btn-secondary-pressed-text) !important;
-  border-color: var(--btn-secondary-pressed-border) !important;
+/* Sidebar navigation item active status glow matching reference */
+.sidebar-active {
+  background: linear-gradient(90deg, rgba(116, 59, 247, 0.18) 0%, rgba(116, 59, 247, 0.06) 100%) !important;
+  border-left: 4px solid #743BF7 !important;
+  color: #a855f7 !important;
+  box-shadow: 0 4px 15px -3px rgba(116, 59, 247, 0.25) !important;
 }
 
-.btn-ghost,
-button.btn-ghost {
-  background-color: var(--btn-ghost-bg) !important;
-  color: var(--btn-ghost-text) !important;
-  border-color: var(--btn-ghost-border) !important;
-}
-.btn-ghost:hover,
-button.btn-ghost:hover {
-  background-color: var(--btn-ghost-hover-bg) !important;
-  border-color: var(--btn-ghost-hover-border) !important;
-}
-.btn-ghost:active,
-button.btn-ghost:active {
-  background-color: var(--btn-ghost-pressed-bg) !important;
-  border-color: var(--btn-ghost-pressed-border) !important;
+.sidebar-inactive {
+  color: #94a3b8 !important;
+  border-left: 4px solid transparent !important;
+  transition: all 0.2s ease !important;
 }
 
-.btn-accent,
-button.btn-accent {
-  background-color: var(--btn-accent-bg) !important;
-  color: var(--btn-accent-text) !important;
-  border-color: var(--btn-accent-border) !important;
-}
-.btn-accent:hover,
-button.btn-accent:hover {
-  background-color: var(--btn-accent-hover-bg) !important;
-  border-color: var(--btn-accent-hover-border) !important;
-}
-.btn-accent:active,
-button.btn-accent:active {
-  background-color: var(--btn-accent-pressed-bg) !important;
-  border-color: var(--btn-accent-pressed-border) !important;
+.sidebar-inactive:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.05) !important;
 }
 
-/* --------------------------------------------------------------------------
-   DARK THEME BUTTON VARIANTS (Soft Dark Theme)
-   -------------------------------------------------------------------------- */
-.dark {
-  /* Primary Button (Dark) */
-  --btn-primary-bg: #7A55E0;
-  --btn-primary-text: #FFFFFF;
-  --btn-primary-border: #7A55E0;
-  --btn-primary-hover-bg: #8760E8;
-  --btn-primary-hover-border: #8760E8;
-  --btn-primary-pressed-bg: #6845CC;
-  --btn-primary-pressed-border: #6845CC;
-
-  /* Secondary Button (Dark) */
-  --btn-secondary-bg: #181226;
-  --btn-secondary-text: #CDBDF5;
-  --btn-secondary-border: #7F65C9;
-  --btn-secondary-hover-bg: #231A3A;
-  --btn-secondary-hover-text: #ECE7F7;
-  --btn-secondary-hover-border: #9B82E0;
-  --btn-secondary-pressed-bg: #1D1530;
-  --btn-secondary-pressed-text: #ECE7F7;
-  --btn-secondary-pressed-border: #7A55E0;
-
-  /* Ghost Button (Dark) */
-  --btn-ghost-bg: #251C3D;
-  --btn-ghost-text: #ECE7F7;
-  --btn-ghost-border: #251C3D;
-  --btn-ghost-hover-bg: #30254D;
-  --btn-ghost-hover-border: #30254D;
-  --btn-ghost-pressed-bg: #3B2E5E;
-  --btn-ghost-pressed-border: #3B2E5E;
-
-  /* Accent Button (Dark) */
-  --btn-accent-bg: #D77BE8;
-  --btn-accent-text: #25102F;
-  --btn-accent-border: #D77BE8;
-  --btn-accent-hover-bg: #E292F0;
-  --btn-accent-hover-border: #E292F0;
-  --btn-accent-pressed-bg: #C464D8;
-  --btn-accent-pressed-border: #C464D8;
-
-  /* Soft Focus Ring */
-  --focus-ring: rgba(122, 85, 224, 0.35);
+/* Light Theme Sidebar and Top Navbar subtle style adjustments */
+.light aside {
+  background: linear-gradient(180deg, #101224 0%, #1c1533 100%) !important;
 }
 
-.dark .btn-primary,
-.dark button.btn-primary,
-.dark button.bg-secondary,
-.dark button.bg-indigo-600,
-.dark button.dark\:bg-purple-650,
-.dark button.dark\:bg-purple-600 {
-  background-color: var(--btn-primary-bg) !important;
-  color: var(--btn-primary-text) !important;
-  border-color: var(--btn-primary-border) !important;
-}
-.dark .btn-primary:hover,
-.dark button.btn-primary:hover,
-.dark button.bg-secondary:hover,
-.dark button.bg-indigo-600:hover,
-.dark button.dark\:bg-purple-650:hover,
-.dark button.dark\:bg-purple-600:hover {
-  background-color: var(--btn-primary-hover-bg) !important;
-  border-color: var(--btn-primary-hover-border) !important;
-}
-.dark .btn-primary:active,
-.dark button.btn-primary:active,
-.dark button.bg-secondary:active,
-.dark button.bg-indigo-600:active,
-.dark button.dark\:bg-purple-650:active,
-.dark button.dark\:bg-purple-600:active {
-  background-color: var(--btn-primary-pressed-bg) !important;
-  border-color: var(--btn-primary-pressed-border) !important;
+/* Soft purple radial glow behind main content blocks */
+.light .fintech-overlay {
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.015) 1px, transparent 1px),
+    radial-gradient(circle at 50% 120px, rgba(168, 85, 247, 0.05), transparent 300px);
 }
 
-.dark .btn-secondary,
-.dark button.btn-secondary {
-  background-color: var(--btn-secondary-bg) !important;
-  color: var(--btn-secondary-text) !important;
-  border-color: var(--btn-secondary-border) !important;
-}
-.dark .btn-secondary:hover,
-.dark button.btn-secondary:hover {
-  background-color: var(--btn-secondary-hover-bg) !important;
-  color: var(--btn-secondary-hover-text) !important;
-  border-color: var(--btn-secondary-hover-border) !important;
-}
-.dark .btn-secondary:active,
-.dark button.btn-secondary:active {
-  background-color: var(--btn-secondary-pressed-bg) !important;
-  color: var(--btn-secondary-pressed-text) !important;
-  border-color: var(--btn-secondary-pressed-border) !important;
+.dark .fintech-overlay {
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.012) 1px, transparent 1px),
+    radial-gradient(circle at 50% 120px, rgba(168, 85, 247, 0.12), transparent 350px);
 }
 
-.dark .btn-ghost,
-.dark button.btn-ghost {
-  background-color: var(--btn-ghost-bg) !important;
-  color: var(--btn-ghost-text) !important;
-  border-color: var(--btn-ghost-border) !important;
-}
-.dark .btn-ghost:hover,
-.dark button.btn-ghost:hover {
-  background-color: var(--btn-ghost-hover-bg) !important;
-  border-color: var(--btn-ghost-hover-border) !important;
-}
-.dark .btn-ghost:active,
-.dark button.btn-ghost:active {
-  background-color: var(--btn-ghost-pressed-bg) !important;
-  border-color: var(--btn-ghost-pressed-border) !important;
+/* Dropdown select options */
+.dark select option,
+.dark select {
+  background-color: #131522 !important;
+  color: #f8fafc !important;
 }
 
-.dark .btn-accent,
-.dark button.btn-accent {
-  background-color: var(--btn-accent-bg) !important;
-  color: var(--btn-accent-text) !important;
-  border-color: var(--btn-accent-border) !important;
-}
-.dark .btn-accent:hover,
-.dark button.btn-accent:hover {
-  background-color: var(--btn-accent-hover-bg) !important;
-  border-color: var(--btn-accent-hover-border) !important;
-}
-.dark .btn-accent:active,
-.dark button.btn-accent:active {
-  background-color: var(--btn-accent-pressed-bg) !important;
-  border-color: var(--btn-accent-pressed-border) !important;
+.light select option,
+.light select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }
 
-/* ==========================================================================
-   FORM INPUTS, SELECTS & TEXTAREAS
-   - Inputs: 12px radius, 1px border, violet focus ring
-   ========================================================================== */
-
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-select,
-textarea {
-  background-color: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  color: var(--text) !important;
-  border-radius: 12px !important;
-  font-size: 14px;
-  line-height: 1.6;
-  transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
+/* Helper button aliases for compatibility */
+.btn-primary {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+.dark .btn-primary {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: var(--primary) !important;
-  outline: none !important;
-  box-shadow: 0 0 0 3px var(--focus-ring) !important;
+.btn-ghost {
+  background-color: transparent;
+  color: inherit;
 }
-
-select option {
-  background-color: var(--surface) !important;
-  color: var(--text) !important;
+.light .btn-ghost {
+  border: 1px solid #e2e8f0;
+  color: #475569;
 }
-
-/* ==========================================================================
-   MENUS, MODALS & POPOVERS
-   - Soft violet-tinted floating shadows strictly on menus and dialogs
-   ========================================================================== */
-
-.shadow-sm,
-.shadow,
-.shadow-md {
-  box-shadow: none !important;
+.light .btn-ghost:hover {
+  background-color: #f1f5f9;
 }
-
-.shadow-lg,
-.shadow-xl,
-.shadow-2xl,
-[role="dialog"] {
-  box-shadow: 0 16px 36px -6px rgba(14, 4, 32, 0.35) !important;
-  border: 1px solid var(--border) !important;
+.dark .btn-ghost {
+  border: 1px solid #334155;
+  color: #cbd5e1;
 }
-
-.light .shadow-lg,
-.light .shadow-xl,
-.light .shadow-2xl,
-.light [role="dialog"] {
-  box-shadow: 0 16px 36px -6px rgba(58, 10, 154, 0.12) !important;
-  border: 1px solid var(--border) !important;
-}
-
-/* ==========================================================================
-   MOTION: 150-250ms, ease-out only. Respect prefers-reduced-motion.
-   ========================================================================== */
-
-* {
-  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+.dark .btn-ghost:hover {
+  background-color: #1e293b;
 }
