@@ -171,12 +171,12 @@ export default function UpgradeModal() {
               receiptId: response.razorpay_payment_id || `RZP_${Date.now().toString(36).toUpperCase()}`,
               planName: selectedPlan.name,
               amount: finalPrice,
-              method: 'Razorpay Gateway (UPI / Card / Netbanking)',
+              method: 'UPI / Card / Net Banking',
               timestamp: new Date().toLocaleString('en-IN')
             });
             setStep('success');
           } catch (vErr) {
-            setErrorMsg(vErr.response?.data?.message || 'Payment signature verification failed.');
+            setErrorMsg(vErr.response?.data?.message || 'Payment verification failed.');
             setStep('checkout');
           }
         },
@@ -239,13 +239,13 @@ export default function UpgradeModal() {
         : `Net Banking (${selectedBank})`;
 
     try {
-      setProcessingStatus('Initiating secure gateway connection...');
+      setProcessingStatus('Connecting...');
       await new Promise((r) => setTimeout(r, 600));
 
-      setProcessingStatus(`Authorizing ₹${finalPrice} via ${paymentMethodLabel}...`);
+      setProcessingStatus(`Processing payment of ₹${finalPrice}...`);
       await new Promise((r) => setTimeout(r, 800));
 
-      setProcessingStatus('Cryptographically validating transaction receipt...');
+      setProcessingStatus('Verifying transaction...');
       const txnRef = `TXN_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
       const res = await activatePlan({
@@ -266,11 +266,11 @@ export default function UpgradeModal() {
         });
         setStep('success');
       } else {
-        setErrorMsg(res.message || 'Payment authorization failed with the issuing bank.');
+        setErrorMsg(res.message || 'Payment failed. Please try again.');
         setStep('checkout');
       }
     } catch (err) {
-      setErrorMsg(err.message || 'Transaction could not be completed.');
+      setErrorMsg(err.message || 'Payment could not be completed.');
       setStep('checkout');
     }
   };
@@ -279,11 +279,11 @@ export default function UpgradeModal() {
   const handlePlayStoreAuthorize = async () => {
     setErrorMsg('');
     setStep('processing');
-    setProcessingStatus('Contacting Google Play Billing API...');
+    setProcessingStatus('Connecting to Google Play...');
 
     try {
       await new Promise((r) => setTimeout(r, 700));
-      setProcessingStatus(`Confirming SKU: ${selectedPlan.playStoreId} with Google Play Store...`);
+      setProcessingStatus('Confirming purchase with Google Play...');
       await new Promise((r) => setTimeout(r, 900));
 
       const playOrderId = `GPA.${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(10000 + Math.random() * 90000)}`;
@@ -301,16 +301,16 @@ export default function UpgradeModal() {
           receiptId: playOrderId,
           planName: selectedPlan.name,
           amount: finalPrice,
-          method: 'Google Play In-App Billing',
+          method: 'Google Play',
           timestamp: new Date().toLocaleString('en-IN')
         });
         setStep('success');
       } else {
-        setErrorMsg(verifyRes.data?.message || 'Google Play Store purchase verification failed.');
+        setErrorMsg(verifyRes.data?.message || 'Google Play purchase verification failed.');
         setStep('play_billing');
       }
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Google Play Billing authorization failed.');
+      setErrorMsg(err.response?.data?.message || 'Google Play purchase failed.');
       setStep('play_billing');
     }
   };
@@ -342,7 +342,7 @@ export default function UpgradeModal() {
       case 'reports':
         return 'Custom date-range reports';
       default:
-        return 'Unlock full financial intelligence';
+        return 'Upgrade to Pro';
     }
   };
 
@@ -564,9 +564,9 @@ export default function UpgradeModal() {
                 <FiArrowLeft className="w-3.5 h-3.5" />
                 <span>Change Plan</span>
               </button>
-              <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                <FiLock className="w-3.5 h-3.5" />
-                <span>256-Bit Encrypted Gateway</span>
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                <FiLock className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Secure Checkout</span>
               </div>
             </div>
 
@@ -577,7 +577,7 @@ export default function UpgradeModal() {
                   {selectedPlan.name} ({selectedPlan.duration})
                 </p>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Full Pro Access & Multi-Device Sync
+                  Full Pro Access
                 </p>
               </div>
               <div className="text-right">
@@ -597,7 +597,7 @@ export default function UpgradeModal() {
             {/* Payment Method Selector */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                Select Payment Channel
+                Payment Method
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <button
@@ -764,7 +764,7 @@ export default function UpgradeModal() {
                     <option value="Bank of Baroda">Bank of Baroda</option>
                   </select>
                   <p className="text-[10px] text-slate-400">
-                    You will be redirected to your bank's secure netbanking authorization portal.
+                    You will be redirected to your bank to complete the payment.
                   </p>
                 </div>
               )}
@@ -776,7 +776,7 @@ export default function UpgradeModal() {
                   className="btn-primary w-full py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <FiLock className="w-3.5 h-3.5" />
-                  <span>Authorize & Pay ₹{finalPrice}</span>
+                  <span>Pay ₹{finalPrice}</span>
                 </button>
               </div>
             </form>
@@ -844,7 +844,7 @@ export default function UpgradeModal() {
             </div>
 
             <p className="text-[10px] text-center text-slate-400">
-              Purchases are authenticated and backed by Google Play Store Purchase Protection.
+              Purchases are processed securely through Google Play.
             </p>
           </div>
         )}
@@ -861,10 +861,10 @@ export default function UpgradeModal() {
 
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Processing Transaction
+                Processing Payment
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm">
-                {processingStatus || 'Contacting secure payment clearinghouse...'}
+                {processingStatus || 'Processing payment...'}
               </p>
             </div>
 
@@ -883,10 +883,10 @@ export default function UpgradeModal() {
 
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                Payment Authorized & Verified!
+                Payment Successful!
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Your transaction has been processed. All Pro features are now unlocked.
+                Your transaction is complete. All Pro features are now unlocked.
               </p>
             </div>
 
@@ -905,8 +905,8 @@ export default function UpgradeModal() {
                 <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">₹{successReceipt?.amount || finalPrice}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-500 dark:text-slate-400">Payment Channel</span>
-                <span className="text-slate-700 dark:text-slate-300">{successReceipt?.method || 'Secure Gateway'}</span>
+                <span className="text-slate-500 dark:text-slate-400">Payment Method</span>
+                <span className="text-slate-700 dark:text-slate-300">{successReceipt?.method || 'Online Payment'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-500 dark:text-slate-400">Timestamp</span>
