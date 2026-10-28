@@ -138,29 +138,59 @@ a {
    COMPONENT STYLES: SIDEBAR, NAVIGATION, CARDS, BUTTONS, INPUTS
    ========================================================================== */
 
-/* Left Sidebar: Sits in the deep violet-950 tile (#0E0420) to match the dark logo squircle */
-aside {
-  background-color: var(--violet-950) !important;
-  border-right: 1px solid var(--border) !important;
+/* ==========================================================================
+   PERMANENT DARK SIDEBAR (Remains dark in BOTH light & dark themes)
+   ========================================================================== */
+aside,
+.light aside,
+.dark aside {
+  background-color: #0E0420 !important;
+  border-right: 1px solid rgba(196, 139, 255, 0.14) !important;
+  color: #F4EEFF !important;
 }
 
-.sidebar-active {
-  background: rgba(143, 43, 255, 0.16) !important;
+aside h1,
+aside h2,
+.light aside h1,
+.light aside h2 {
   color: #F4EEFF !important;
-  border-left: 3px solid var(--primary) !important;
+}
+
+.sidebar-active,
+.light .sidebar-active,
+.dark .sidebar-active {
+  background: rgba(143, 43, 255, 0.22) !important;
+  color: #F4EEFF !important;
+  border-left: 3px solid #8F2BFF !important;
   border-radius: 0 10px 10px 0;
   font-weight: 600;
 }
 
-.sidebar-inactive {
-  color: var(--text-muted) !important;
+.sidebar-inactive,
+.light .sidebar-inactive,
+.dark .sidebar-inactive {
+  color: #A99BC4 !important;
   border-left: 3px solid transparent !important;
   transition: color 150ms ease-out, background-color 150ms ease-out;
 }
 
-.sidebar-inactive:hover {
-  color: var(--text) !important;
+.sidebar-inactive:hover,
+.light .sidebar-inactive:hover,
+.dark .sidebar-inactive:hover {
+  color: #F4EEFF !important;
   background-color: rgba(196, 139, 255, 0.08) !important;
+}
+
+.sidebar-inactive svg,
+.light .sidebar-inactive svg,
+.dark .sidebar-inactive svg {
+  color: #A99BC4 !important;
+}
+
+.sidebar-inactive:hover svg,
+.light .sidebar-inactive:hover svg,
+.dark .sidebar-inactive:hover svg {
+  color: #F4EEFF !important;
 }
 
 /* Top Navbar & Mobile Bottom Nav */

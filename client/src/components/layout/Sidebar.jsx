@@ -42,14 +42,14 @@ function Sidebar() {
   }
 
   return (
-    <aside className="w-60 bg-[#0f1117] text-white flex flex-col transition-all duration-150 border-r border-[#1e2230] h-screen">
-      <div className="p-5 border-b border-[#1e2230] flex items-center justify-between">
+    <aside className="w-60 bg-[#0E0420] text-[#F4EEFF] flex flex-col border-r border-[rgba(196,139,255,0.14)] h-screen shrink-0 select-none">
+      <div className="p-5 border-b border-[rgba(196,139,255,0.14)] flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-2.5">
+          <h1 className="text-lg font-bold tracking-tight text-[#F4EEFF] flex items-center gap-2.5">
             <img src={logoDark} alt="URxpenz" className="w-11 h-11 rounded-lg object-contain" />
             URxpenz
           </h1>
-          <p className="text-[11px] text-slate-400 mt-0.5">Expense & budget manager</p>
+          <p className="text-[11px] text-[#A99BC4] mt-0.5">Expense & budget manager</p>
         </div>
       </div>
 
@@ -68,11 +68,11 @@ function Sidebar() {
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Icon className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-white" />
+                <Icon className={`w-4 h-4 shrink-0 transition-colors ${active ? 'text-[#F4EEFF]' : 'text-[#A99BC4] group-hover:text-[#F4EEFF]'}`} />
                 <span className="font-medium">{t(item.labelKey)}</span>
               </div>
               {item.badge && (
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#D93CF5]/15 border border-[#D93CF5]/30 text-[#F25CFF]">
                   {item.badge}
                 </span>
               )}
@@ -81,56 +81,56 @@ function Sidebar() {
         })}
       </nav>
 
-      <div className="p-3 border-t border-[#1e2230]">
+      <div className="p-3 border-t border-[rgba(196,139,255,0.14)]">
         {isTrial ? (
-          <div className="p-3 rounded-lg bg-[#151822] border border-[#232736] text-slate-200">
-            <div className="flex items-center justify-between text-xs font-semibold text-slate-300">
+          <div className="p-3 rounded-xl bg-[#140727] border border-[rgba(196,139,255,0.14)] text-[#F4EEFF]">
+            <div className="flex items-center justify-between text-xs font-semibold text-[#F4EEFF]">
               <span className="flex items-center gap-1.5"><FiZap className="w-3.5 h-3.5 text-amber-400" /> Free trial</span>
-              <span className="text-[11px] text-slate-400">{trialDaysRemaining}d remaining</span>
+              <span className="text-[11px] text-[#A99BC4]">{trialDaysRemaining}d remaining</span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1 leading-normal">Full access trial active</p>
+            <p className="text-[11px] text-[#A99BC4] mt-1 leading-normal">Full access trial active</p>
             <button
               onClick={() => openUpgradeModal()}
-              className="mt-2.5 w-full py-1.5 px-3 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+              className="mt-2.5 w-full py-1.5 px-3 rounded-lg btn-primary text-[#F4EEFF] text-xs font-semibold cursor-pointer"
             >
               View plans
             </button>
           </div>
         ) : tier === 'basic' ? (
-          <div className="p-3 rounded-lg bg-[#151822] border border-[#232736] text-slate-200">
-            <div className="flex items-center justify-between text-xs font-semibold text-slate-300">
+          <div className="p-3 rounded-xl bg-[#140727] border border-[rgba(196,139,255,0.14)] text-[#F4EEFF]">
+            <div className="flex items-center justify-between text-xs font-semibold text-[#F4EEFF]">
               <span>Basic tier</span>
-              <span className="text-[10px] text-slate-400 px-1.5 py-0.5 rounded bg-slate-800">Free</span>
+              <span className="text-[10px] text-[#A99BC4] px-1.5 py-0.5 rounded bg-[#1C0B36] border border-[rgba(196,139,255,0.1)]">Free</span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1 leading-normal">1 bank, 1 loan, 2 subscriptions</p>
+            <p className="text-[11px] text-[#A99BC4] mt-1 leading-normal">1 bank, 1 loan, 2 subscriptions</p>
             <button
               onClick={() => openUpgradeModal()}
-              className="mt-2.5 w-full py-1.5 px-3 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+              className="mt-2.5 w-full py-1.5 px-3 rounded-lg btn-primary text-[#F4EEFF] text-xs font-semibold cursor-pointer"
             >
               Upgrade plan (₹45)
             </button>
           </div>
         ) : (
-          <div className="p-2.5 rounded-lg bg-[#151822] border border-[#232736] text-slate-200 flex items-center justify-between text-xs font-medium">
+          <div className="p-2.5 rounded-xl bg-[#140727] border border-[rgba(196,139,255,0.14)] text-[#F4EEFF] flex items-center justify-between text-xs font-medium">
             <span className="flex items-center gap-1.5 text-emerald-400"><FiAward className="w-4 h-4" /> Pro member</span>
-            <button onClick={() => openUpgradeModal()} className="text-[11px] text-slate-400 hover:text-white cursor-pointer">Manage</button>
+            <button onClick={() => openUpgradeModal()} className="text-[11px] text-[#A99BC4] hover:text-[#F4EEFF] cursor-pointer transition-colors">Manage</button>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-slate-800 dark:border-dark-border bg-slate-950/20 dark:bg-dark-card/50">
+      <div className="p-4 border-t border-[rgba(196,139,255,0.14)] bg-[#0B0316]/60">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-rose-500/10 text-rose-400 hover:text-white hover:bg-rose-600 rounded-xl transition-all duration-200 font-semibold text-sm shadow-sm"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-500/15 text-rose-300 hover:text-white hover:bg-rose-600 rounded-xl transition-all duration-150 font-semibold text-xs border border-rose-500/20 cursor-pointer"
         >
-          <FiLogOut className="w-5 h-5" />
+          <FiLogOut className="w-4 h-4" />
           {t('logout')}
         </button>
         <div className="pt-2 text-center">
           <Link
             to="/privacy"
-            className="text-[10px] text-slate-500 hover:text-purple-400 transition-colors underline font-medium"
+            className="text-[10px] text-[#A99BC4] hover:text-[#F4EEFF] transition-colors underline font-medium"
           >
             Privacy Policy & Data Safety
           </Link>
