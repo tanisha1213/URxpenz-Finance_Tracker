@@ -114,10 +114,6 @@ nav {
   background-color: var(--surface) !important;
   border-color: var(--border) !important;
 }
-nav:not(.dark nav) {
-  background-color: var(--surface) !important;
-  border-color: var(--border) !important;
-}
 
 /* ==========================================================================
    SHAPE & DEPTH: CARDS, CONTAINERS, AND SURFACES
@@ -148,7 +144,8 @@ nav:not(.dark nav) {
 .dark .dark\:bg-\[\#191c26\],
 .dark .dark\:bg-\[\#1a1d29\],
 .dark .dark\:bg-\[\#10121a\],
-.dark .dark\:bg-\[\#1C0B36\] {
+.dark .dark\:bg-\[\#1C0B36\],
+.dark .dark\:bg-\[\#211A33\] {
   background-color: var(--surface-raised) !important;
 }
 
@@ -160,7 +157,8 @@ nav:not(.dark nav) {
 /* Layered Surface: Background Canvas */
 .dark .dark\:bg-\[\#090b11\],
 .dark .dark\:bg-\[\#0c0d12\],
-.dark .dark\:bg-\[\#0b0316\] {
+.dark .dark\:bg-\[\#0b0316\],
+.dark .dark\:bg-\[\#0F0B1A\] {
   background-color: var(--bg) !important;
 }
 
@@ -405,46 +403,49 @@ button.btn-accent:active {
 }
 
 /* --------------------------------------------------------------------------
-   DARK THEME BUTTON VARIANTS
+   DARK THEME BUTTON VARIANTS (Soft Dark Theme)
    -------------------------------------------------------------------------- */
 .dark {
   /* Primary Button (Dark) */
-  --btn-primary-bg: #8F2BFF;
+  --btn-primary-bg: #7A55E0;
   --btn-primary-text: #FFFFFF;
-  --btn-primary-border: #8F2BFF;
-  --btn-primary-hover-bg: #A855FF;
-  --btn-primary-hover-border: #A855FF;
-  --btn-primary-pressed-bg: #7A1FE0;
-  --btn-primary-pressed-border: #7A1FE0;
+  --btn-primary-border: #7A55E0;
+  --btn-primary-hover-bg: #8760E8;
+  --btn-primary-hover-border: #8760E8;
+  --btn-primary-pressed-bg: #6845CC;
+  --btn-primary-pressed-border: #6845CC;
 
   /* Secondary Button (Dark) */
-  --btn-secondary-bg: #140727;
-  --btn-secondary-text: #D9B8FF;
-  --btn-secondary-border: #AD5CFF;
-  --btn-secondary-hover-bg: #261047;
-  --btn-secondary-hover-text: #F4EEFF;
-  --btn-secondary-hover-border: #C48BFF;
-  --btn-secondary-pressed-bg: #1C0B36;
-  --btn-secondary-pressed-text: #F4EEFF;
-  --btn-secondary-pressed-border: #8F2BFF;
+  --btn-secondary-bg: #181226;
+  --btn-secondary-text: #CDBDF5;
+  --btn-secondary-border: #7F65C9;
+  --btn-secondary-hover-bg: #231A3A;
+  --btn-secondary-hover-text: #ECE7F7;
+  --btn-secondary-hover-border: #9B82E0;
+  --btn-secondary-pressed-bg: #1D1530;
+  --btn-secondary-pressed-text: #ECE7F7;
+  --btn-secondary-pressed-border: #7A55E0;
 
   /* Ghost Button (Dark) */
-  --btn-ghost-bg: #241046;
-  --btn-ghost-text: #F4EEFF;
-  --btn-ghost-border: #241046;
-  --btn-ghost-hover-bg: #321766;
-  --btn-ghost-hover-border: #321766;
-  --btn-ghost-pressed-bg: #3F1D80;
-  --btn-ghost-pressed-border: #3F1D80;
+  --btn-ghost-bg: #251C3D;
+  --btn-ghost-text: #ECE7F7;
+  --btn-ghost-border: #251C3D;
+  --btn-ghost-hover-bg: #30254D;
+  --btn-ghost-hover-border: #30254D;
+  --btn-ghost-pressed-bg: #3B2E5E;
+  --btn-ghost-pressed-border: #3B2E5E;
 
   /* Accent Button (Dark) */
-  --btn-accent-bg: #F25CFF;
-  --btn-accent-text: #1A0630;
-  --btn-accent-border: #F25CFF;
-  --btn-accent-hover-bg: #FF85FF;
-  --btn-accent-hover-border: #FF85FF;
-  --btn-accent-pressed-bg: #D93CF5;
-  --btn-accent-pressed-border: #D93CF5;
+  --btn-accent-bg: #D77BE8;
+  --btn-accent-text: #25102F;
+  --btn-accent-border: #D77BE8;
+  --btn-accent-hover-bg: #E292F0;
+  --btn-accent-hover-border: #E292F0;
+  --btn-accent-pressed-bg: #C464D8;
+  --btn-accent-pressed-border: #C464D8;
+
+  /* Soft Focus Ring */
+  --focus-ring: rgba(122, 85, 224, 0.35);
 }
 
 .dark .btn-primary,

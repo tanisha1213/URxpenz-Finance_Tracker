@@ -83,57 +83,57 @@
 }
 
 .dark {
-  /* Core Brand Tokens — Dark Theme */
-  --bg: #0B0316;
-  --surface: #140727;
-  --surface-raised: #1C0B36;
-  --border: #4A2A85;
-  --text: #F4EEFF;
-  --text-muted: #A99BC4;
-  --primary: #8F2BFF;
-  --primary-hover: #A855FF;
-  --primary-pressed: #7A1FE0;
-  --accent: #F25CFF;
-  --accent-hover: #FF85FF;
-  --accent-pressed: #D93CF5;
+  /* Core Brand Tokens — Soft Dark Theme */
+  --bg: #0F0B1A;
+  --surface: #181226;
+  --surface-raised: #211A33;
+  --border: #3A2F57;
+  --text: #ECE7F7;
+  --text-muted: #9D93B5;
+  --primary: #7A55E0;
+  --primary-hover: #8760E8;
+  --primary-pressed: #6845CC;
+  --accent: #D77BE8;
+  --accent-hover: #E292F0;
+  --accent-pressed: #C464D8;
 
-  /* Button Tokens — Dark Theme */
-  --btn-primary-bg: #8F2BFF;
+  /* Button Tokens — Soft Dark Theme */
+  --btn-primary-bg: #7A55E0;
   --btn-primary-text: #FFFFFF;
-  --btn-primary-border: #8F2BFF;
-  --btn-primary-hover-bg: #A855FF;
-  --btn-primary-hover-border: #A855FF;
-  --btn-primary-pressed-bg: #7A1FE0;
-  --btn-primary-pressed-border: #7A1FE0;
+  --btn-primary-border: #7A55E0;
+  --btn-primary-hover-bg: #8760E8;
+  --btn-primary-hover-border: #8760E8;
+  --btn-primary-pressed-bg: #6845CC;
+  --btn-primary-pressed-border: #6845CC;
 
-  --btn-secondary-bg: #140727;
-  --btn-secondary-text: #D9B8FF;
-  --btn-secondary-border: #AD5CFF;
-  --btn-secondary-hover-bg: #261047;
-  --btn-secondary-hover-text: #F4EEFF;
-  --btn-secondary-hover-border: #C48BFF;
-  --btn-secondary-pressed-bg: #1C0B36;
-  --btn-secondary-pressed-text: #F4EEFF;
-  --btn-secondary-pressed-border: #8F2BFF;
+  --btn-secondary-bg: #181226;
+  --btn-secondary-text: #CDBDF5;
+  --btn-secondary-border: #7F65C9;
+  --btn-secondary-hover-bg: #231A3A;
+  --btn-secondary-hover-text: #ECE7F7;
+  --btn-secondary-hover-border: #9B82E0;
+  --btn-secondary-pressed-bg: #1D1530;
+  --btn-secondary-pressed-text: #ECE7F7;
+  --btn-secondary-pressed-border: #7A55E0;
 
-  --btn-ghost-bg: #241046;
-  --btn-ghost-text: #F4EEFF;
-  --btn-ghost-border: #241046;
-  --btn-ghost-hover-bg: #321766;
-  --btn-ghost-hover-border: #321766;
-  --btn-ghost-pressed-bg: #3F1D80;
-  --btn-ghost-pressed-border: #3F1D80;
+  --btn-ghost-bg: #251C3D;
+  --btn-ghost-text: #ECE7F7;
+  --btn-ghost-border: #251C3D;
+  --btn-ghost-hover-bg: #30254D;
+  --btn-ghost-hover-border: #30254D;
+  --btn-ghost-pressed-bg: #3B2E5E;
+  --btn-ghost-pressed-border: #3B2E5E;
 
-  --btn-accent-bg: #F25CFF;
-  --btn-accent-text: #1A0630;
-  --btn-accent-border: #F25CFF;
-  --btn-accent-hover-bg: #FF85FF;
-  --btn-accent-hover-border: #FF85FF;
-  --btn-accent-pressed-bg: #D93CF5;
-  --btn-accent-pressed-border: #D93CF5;
+  --btn-accent-bg: #D77BE8;
+  --btn-accent-text: #25102F;
+  --btn-accent-border: #D77BE8;
+  --btn-accent-hover-bg: #E292F0;
+  --btn-accent-hover-border: #E292F0;
+  --btn-accent-pressed-bg: #C464D8;
+  --btn-accent-pressed-border: #C464D8;
 
   /* Focus Ring */
-  --focus-ring: rgba(143, 43, 255, 0.35);
+  --focus-ring: rgba(122, 85, 224, 0.35);
 
   /* Functional Status Indicators */
   --color-positive: #10B981;
@@ -147,10 +147,10 @@
   --bg-surface: var(--surface);
   --bg-subtle: var(--surface-raised);
   --border-subtle: var(--border);
-  --border-strong: #6D3DBA;
+  --border-strong: #52437B;
   --text-primary: var(--text);
   --text-secondary: var(--text-muted);
   --color-brand: var(--primary);
   --color-brand-hover: var(--primary-hover);
-  --color-brand-subtle: rgba(143, 43, 255, 0.14);
+  --color-brand-subtle: rgba(122, 85, 224, 0.14);
 }
