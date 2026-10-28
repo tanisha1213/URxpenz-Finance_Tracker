@@ -271,9 +271,12 @@ export const subscribePlan = async (req, res) => {
     consumeReferralDiscount(req.userId);
     const referral = getUserReferralData(req.userId, user.name);
 
+    const receiptId = req.body.receiptId || `TXN_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
     return res.status(200).json({
       success: true,
-      message: `Successfully activated ${plan.name}! All premium features are unlocked until ${newExpiresAt.toLocaleDateString('en-IN')}.`,
+      message: `Transaction verified! ${plan.name} is now active until ${newExpiresAt.toLocaleDateString('en-IN')}.`,
+      receiptId,
       subscription,
       referral
     });

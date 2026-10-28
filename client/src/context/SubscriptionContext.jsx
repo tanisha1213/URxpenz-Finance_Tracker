@@ -86,10 +86,10 @@ export function SubscriptionProvider({ children }) {
     setUpgradeFeature(null);
   };
 
-  const activatePlan = async (planId) => {
+  const activatePlan = async (planPayload) => {
     try {
       setLoading(true);
-      const res = await subscribePlan(planId);
+      const res = await subscribePlan(planPayload);
       if (res?.data?.subscription) {
         setSubscription(res.data.subscription);
         if (user) {

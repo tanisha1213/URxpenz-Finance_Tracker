@@ -8,8 +8,10 @@ export const createPaymentOrder = (planId) =>
 export const verifyPaymentSignature = (verificationData) =>
   API.post('/billing/verify-payment', verificationData);
 
-export const subscribePlan = (planId) =>
-  API.post('/billing/subscribe', { planId });
+export const subscribePlan = (payload) => {
+  const body = typeof payload === 'string' ? { planId: payload } : payload;
+  return API.post('/billing/subscribe', body);
+};
 
 export const verifyPlayStorePurchase = (purchaseData) =>
   API.post('/billing/verify-play-store', purchaseData);

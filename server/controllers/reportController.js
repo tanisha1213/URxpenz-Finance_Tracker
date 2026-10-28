@@ -20,11 +20,13 @@ const safeFormatDate = (dateVal) => {
 
 export const getMonthlyReport = async (req, res) => {
   try {
+    const isWeekly = req.query.type === 'weekly';
     const isYearly = req.query.type === 'yearly';
-    const isCustom = !!(req.query.startDate && req.query.endDate);
+    // Only flag as custom if explicitly requested with valid date strings and not weekly/monthly
+    const isCustom = !isWeekly && !isYearly && !!(req.query.startDate && req.query.endDate && req.query.startDate !== 'undefined' && req.query.endDate !== 'undefined');
 
     // PDF export, custom date range reports, and yearly reports require Pro subscription
-    // Monthly reports are available for all users including Basic tier
+    // Monthly reports and weekly reports are 100% available for all users including Basic/Free tier
     if (req.query.format === 'pdf' || isCustom || isYearly) {
       const user = await User.findById(req.userId);
       const subscription = getUserSubscription(user);
@@ -40,7 +42,7 @@ export const getMonthlyReport = async (req, res) => {
           return res.status(403).json({
             success: false,
             code: 'PRO_REQUIRED',
-            message: 'Report generation at anytime (custom date ranges or specific dates) requires an active Pro subscription or 60-day trial. Basic tier includes monthly and weekly reports.'
+            message: 'Report generation with custom date ranges or yearly view requires an active Pro subscription or trial. Basic tier includes monthly and weekly reports.'
           });
         }
       }
