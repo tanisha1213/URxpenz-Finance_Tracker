@@ -744,7 +744,7 @@ function Profile() {
                 type="button"
                 onClick={() => setShowDeleteModal(false)}
                 disabled={deleteLoading}
-                className="flex-1 px-3 py-2 rounded-lg border border-slate-200 dark:border-[#2a2f42] text-slate-700 dark:text-slate-300 font-medium text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="btn-ghost flex-1 px-3 py-2 rounded-xl font-medium text-sm cursor-pointer"
               >
                 Cancel
               </button>

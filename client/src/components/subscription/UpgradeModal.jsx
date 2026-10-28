@@ -392,12 +392,12 @@ export default function UpgradeModal() {
           <button
             onClick={handleSubscribe}
             disabled={loading || (typeof navigator !== 'undefined' && !navigator.onLine)}
-            className="w-full flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg btn-primary text-white font-semibold text-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full flex-1 flex items-center justify-center gap-2 rounded-xl text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="inline-block animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" />
             ) : (
-              <FiAward className="w-3.5 h-3.5" />
+              <FiAward className="w-4 h-4" />
             )}
             <span>
               Activate {selectedPlan.name} (₹{calculatePrice(selectedPlan.price)})
@@ -406,7 +406,7 @@ export default function UpgradeModal() {
           
           <button
             onClick={closeUpgradeModal}
-            className="w-full sm:w-auto px-4 py-2.5 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer"
+            className="btn-ghost w-full sm:w-auto px-4 rounded-xl text-sm font-medium cursor-pointer"
           >
             Keep basic tier
           </button>

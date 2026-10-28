@@ -175,7 +175,7 @@ function Balance() {
         <button
           id="add-account-btn-tour"
           onClick={handleOpenAdd}
-          className="flex items-center gap-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 px-3.5 py-2 font-semibold text-white text-xs transition-colors cursor-pointer"
+          className="btn-primary flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium cursor-pointer"
         >
           <FiPlus className="w-4 h-4" />
           {t('addAccount')}
@@ -369,17 +369,17 @@ function Balance() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-end gap-2 pt-2">
+                <div className="flex justify-end gap-3 pt-2">
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border text-slate-500 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-dark-border transition-colors cursor-pointer"
+                    className="btn-ghost px-4 py-2.5 rounded-xl font-medium text-sm cursor-pointer"
                   >
                     {t('cancel')}
                   </button>
                   <button
                     type="submit"
-                    className="flex items-center gap-1 px-4 py-2.5 rounded-xl bg-secondary dark:bg-purple-650 font-bold text-white text-sm hover:bg-indigo-700 dark:hover:bg-purple-750 transition-colors shadow-md shadow-secondary/15 cursor-pointer"
+                    className="btn-primary flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium cursor-pointer"
                   >
                     <FiCheck className="w-4 h-4" />
                     {t('addAccount')}
@@ -452,17 +452,17 @@ function Balance() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-end gap-2 pt-2">
+                <div className="flex justify-end gap-3 pt-2">
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border text-slate-500 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-dark-border transition-colors cursor-pointer"
+                    className="btn-ghost px-4 py-2.5 rounded-xl font-medium text-sm cursor-pointer"
                   >
                     {t('cancel')}
                   </button>
                   <button
                     type="submit"
-                    className="flex items-center gap-1 px-4 py-2.5 rounded-xl bg-secondary dark:bg-purple-650 font-bold text-white text-sm hover:bg-indigo-700 dark:hover:bg-purple-750 transition-colors shadow-md shadow-secondary/15 cursor-pointer"
+                    className="btn-primary flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium cursor-pointer"
                   >
                     <FiCheck className="w-4 h-4" />
                     {t('saveChanges')}
@@ -489,11 +489,11 @@ function Balance() {
                   <strong>Warning:</strong> Deleting this bank account will perform a cascade delete. All transactions associated with this account will also be permanently removed.
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2">
+                <div className="flex justify-end gap-3 pt-2">
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border text-slate-500 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-dark-border transition-colors cursor-pointer"
+                    className="btn-ghost px-4 py-2.5 rounded-xl font-medium text-sm cursor-pointer"
                   >
                     {t('cancel')}
                   </button>

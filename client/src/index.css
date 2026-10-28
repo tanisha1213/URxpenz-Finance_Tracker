@@ -1,105 +1,15 @@
+@import './theme/tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* ==========================================================================
-   URXPENZ DESIGN TOKENS & VISUAL IDENTITY SYSTEM
-   Derived directly from the URxpenz ribbon monogram and analytics logo.
-   ========================================================================== */
-
-:root {
-  /* Brand Scale (Sampled from the Logo) */
-  --violet-50:  #F6EEFF;
-  --violet-100: #EBD9FF;
-  --violet-200: #D9B8FF;
-  --violet-300: #C48BFF;
-  --violet-400: #AD5CFF;
-  --violet-500: #8F2BFF;   /* Primary Brand */
-  --violet-600: #7A00FF;   /* Pure Logo Violet, Primary Buttons */
-  --violet-700: #5A00D6;
-  --violet-800: #3A0A9A;
-  --violet-900: #1F0752;
-  --violet-950: #0E0420;   /* Dark Background Base */
-  --magenta-400: #F25CFF;  /* Accent, mirrors the bars; used with restraint */
-  --magenta-500: #D93CF5;
-
-  /* Light Theme */
-  --bg: #FBF9FE;
-  --surface: #FFFFFF;
-  --surface-raised: #F3ECFC;
-  --border: rgba(58, 10, 154, 0.12);
-  --text: #170A2E;         /* Deep violet-black, never pure #000 */
-  --text-muted: #5E5078;
-  --primary: var(--violet-600);
-  --primary-hover: var(--violet-700);
-  --accent: var(--magenta-500);
-
-  /* Signature Brand Gradients (Used strictly on CTAs, active pills, bar highlights) */
-  --brand-gradient: linear-gradient(135deg, #F3B3FF 0%, #C45BFF 30%, #8A2BFF 60%, #4B00E6 85%, #2A0A8F 100%);
-  --brand-gradient-hover: linear-gradient(135deg, #F7C6FF 0%, #CF70FF 30%, #983DFF 60%, #5808F0 85%, #340E9E 100%);
-
-  /* Functional Status Indicators */
-  --color-positive: #059669;
-  --color-positive-subtle: rgba(5, 150, 105, 0.08);
-  --color-negative: #DC2626;
-  --color-negative-subtle: rgba(220, 38, 38, 0.08);
-  --color-warning: #D97706;
-
-  /* Backward Compatibility Variables for Legacy Helpers */
-  --bg-canvas: var(--bg);
-  --bg-surface: var(--surface);
-  --bg-subtle: var(--surface-raised);
-  --border-subtle: var(--border);
-  --border-strong: rgba(58, 10, 154, 0.22);
-  --text-primary: var(--text);
-  --text-secondary: var(--text-muted);
-  --color-brand: var(--primary);
-  --color-brand-hover: var(--primary-hover);
-  --color-brand-subtle: rgba(122, 0, 255, 0.08);
-}
-
-.dark {
-  /* Dark Theme */
-  --bg: #0B0316;
-  --surface: #140727;
-  --surface-raised: #1C0B36;
-  --border: rgba(196, 139, 255, 0.14);
-  --text: #F4EEFF;         /* Off-white, never pure #fff */
-  --text-muted: #A99BC4;
-  --primary: var(--violet-500);
-  --primary-hover: var(--violet-400);
-  --accent: var(--magenta-400);
-
-  /* Signature Dark Brand Gradient */
-  --brand-gradient: linear-gradient(160deg, #8A0FF5 0%, #3A0A9A 45%, #0F0420 100%);
-  --brand-gradient-hover: linear-gradient(160deg, #9C2BF7 0%, #490FB8 45%, #180733 100%);
-
-  /* Functional Status Indicators */
-  --color-positive: #10B981;
-  --color-positive-subtle: rgba(16, 185, 129, 0.12);
-  --color-negative: #EF4444;
-  --color-negative-subtle: rgba(239, 68, 68, 0.12);
-  --color-warning: #F59E0B;
-
-  /* Backward Compatibility Variables for Legacy Helpers */
-  --bg-canvas: var(--bg);
-  --bg-surface: var(--surface);
-  --bg-subtle: var(--surface-raised);
-  --border-subtle: var(--border);
-  --border-strong: rgba(196, 139, 255, 0.24);
-  --text-primary: var(--text);
-  --text-secondary: var(--text-muted);
-  --color-brand: var(--primary);
-  --color-brand-hover: var(--primary-hover);
-  --color-brand-subtle: rgba(143, 43, 255, 0.14);
-}
 
 /* ==========================================================================
    GLOBAL TYPOGRAPHY & BASE RESET
    ========================================================================== */
 
 body {
-  font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
   background-color: var(--bg);
   color: var(--text);
@@ -120,6 +30,7 @@ h1, h2, h3, h4, h5, h6 {
 table,
 .tabular-nums,
 [data-metric] {
+  font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' on, 'zero' on;
 }
 
@@ -128,15 +39,17 @@ a {
   transition: color 150ms ease-out;
 }
 .dark a:hover {
-  color: var(--violet-400);
+  color: var(--primary-hover);
 }
 .light a:hover {
-  color: var(--violet-700);
+  color: var(--primary-hover);
 }
 
-/* ==========================================================================
-   COMPONENT STYLES: SIDEBAR, NAVIGATION, CARDS, BUTTONS, INPUTS
-   ========================================================================== */
+/* Icon Stroke Standardization: 1.5px stroke with rounded caps */
+svg {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 /* ==========================================================================
    PERMANENT DARK SIDEBAR (Remains dark in BOTH light & dark themes)
@@ -171,7 +84,7 @@ aside h2,
 .dark .sidebar-inactive {
   color: #A99BC4 !important;
   border-left: 3px solid transparent !important;
-  transition: color 150ms ease-out, background-color 150ms ease-out;
+  transition: color 200ms ease-out, background-color 200ms ease-out;
 }
 
 .sidebar-inactive:hover,
@@ -195,7 +108,7 @@ aside h2,
 
 /* Top Navbar & Mobile Bottom Nav */
 nav {
-  transition: background-color 150ms ease-out, border-color 150ms ease-out;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
 }
 .dark nav {
   background-color: var(--surface) !important;
@@ -206,12 +119,17 @@ nav:not(.dark nav) {
   border-color: var(--border) !important;
 }
 
-/* Card Surfaces & Containers: 14-20px radius, 1px token borders over shadows */
+/* ==========================================================================
+   SHAPE & DEPTH: CARDS, CONTAINERS, AND SURFACES
+   - Cards and containers: 16px radius, 1px --border, flat fill from surface tokens
+   - Prefer borders over shadows. Shadows only on menus and modals, soft and violet-tinted
+   - Dark theme depth comes from layered surfaces (bg, surface, surface-raised), not glows
+   ========================================================================== */
+
 .dark .bg-white,
 .dark .dark\:bg-dark-card,
 .dark .dark\:bg-\[\#14161f\],
 .dark .dark\:bg-\[\#11131f\],
-.dark .dark\:bg-\[\#0c0d12\],
 .dark .dark\:bg-\[\#151822\] {
   background-color: var(--surface) !important;
   border-color: var(--border) !important;
@@ -222,56 +140,410 @@ nav:not(.dark nav) {
 .light .bg-white {
   background-color: var(--surface) !important;
   border-color: var(--border) !important;
-  box-shadow: 0 1px 3px rgba(58, 10, 154, 0.04) !important;
+  box-shadow: none !important;
 }
 
-/* Primary CTA Buttons with Logo Signature Gradient */
+/* Layered Surface: Raised */
+.dark .dark\:bg-\[\#181a24\],
+.dark .dark\:bg-\[\#191c26\],
+.dark .dark\:bg-\[\#1a1d29\],
+.dark .dark\:bg-\[\#10121a\],
+.dark .dark\:bg-\[\#1C0B36\] {
+  background-color: var(--surface-raised) !important;
+}
+
+.light .bg-slate-50,
+.light .bg-slate-100 {
+  background-color: var(--surface-raised) !important;
+}
+
+/* Layered Surface: Background Canvas */
+.dark .dark\:bg-\[\#090b11\],
+.dark .dark\:bg-\[\#0c0d12\],
+.dark .dark\:bg-\[\#0b0316\] {
+  background-color: var(--bg) !important;
+}
+
+/* Strict 16px radius and 1px border for containers and cards */
+.rounded-xl,
+.rounded-2xl {
+  border-radius: 16px !important;
+}
+
+/* Border token mappings */
+.border-slate-200,
+.border-slate-300,
+.dark .dark\:border-\[\#222634\],
+.dark .dark\:border-dark-border,
+.dark .dark\:border-\[\#2b3042\],
+.dark .dark\:border-\[\#1e212d\] {
+  border-color: var(--border) !important;
+}
+
+/* Text token mappings */
+.text-slate-900,
+.dark .dark\:text-white,
+.dark .dark\:text-slate-100 {
+  color: var(--text) !important;
+}
+
+.text-slate-500,
+.text-slate-400,
+.dark .dark\:text-slate-400,
+.dark .dark\:text-dark-text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* ==========================================================================
+   BUTTON SYSTEM
+   Shared: height 42px, padding 0 20px, radius 12px, font-weight 500, 14px,
+   1.5px border, transition 200ms ease-out for background, border-color, and transform.
+   Hover: translateY(-1px). Pressed: scale(0.98). Focus-visible: 3px ring in violet at 35% opacity.
+   No glow, no bounce, no gradients on buttons.
+   ========================================================================== */
+
 .btn-primary,
+.btn-secondary,
+.btn-ghost,
+.btn-accent,
+button.btn-primary,
+button.btn-secondary,
+button.btn-ghost,
+button.btn-accent,
 button.bg-secondary,
-.bg-secondary,
-.dark .bg-secondary,
-.light .bg-secondary,
-.dark .dark\:bg-purple-650,
-.dark .dark\:bg-purple-600,
-.bg-indigo-600 {
-  background-image: var(--brand-gradient) !important;
-  background-color: transparent !important;
-  color: #F4EEFF !important;
-  border-radius: 10px !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  font-weight: 600;
-  box-shadow: 0 2px 8px -2px rgba(122, 0, 255, 0.3) !important;
-  transition: all 150ms ease-out !important;
+button.bg-indigo-600,
+button.dark\:bg-purple-650,
+button.dark\:bg-purple-600 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  min-height: 42px;
+  padding: 0 20px;
+  border-radius: 12px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  border-width: 1.5px !important;
+  border-style: solid !important;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out, color 200ms ease-out, transform 200ms ease-out !important;
+  cursor: pointer;
+  box-shadow: none !important;
+  background-image: none !important;
+  text-decoration: none;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .btn-primary:hover,
+.btn-secondary:hover,
+.btn-ghost:hover,
+.btn-accent:hover,
+button.btn-primary:hover,
+button.btn-secondary:hover,
+button.btn-ghost:hover,
+button.btn-accent:hover,
 button.bg-secondary:hover,
-.bg-secondary:hover,
-.dark .bg-secondary:hover,
-.light .bg-secondary:hover,
-.dark .dark\:bg-purple-650:hover,
-.dark .dark\:bg-purple-600:hover,
-.bg-indigo-600:hover {
-  background-image: var(--brand-gradient-hover) !important;
-  box-shadow: 0 4px 14px -2px rgba(122, 0, 255, 0.45) !important;
+button.bg-indigo-600:hover,
+button.dark\:bg-purple-650:hover,
+button.dark\:bg-purple-600:hover {
+  transform: translateY(-1px);
 }
 
-/* Visible accessible focus ring in violet-300 */
-button:focus-visible,
-.btn-primary:focus-visible {
-  outline: 2px solid var(--violet-300) !important;
-  outline-offset: 2px !important;
+.btn-primary:active,
+.btn-secondary:active,
+.btn-ghost:active,
+.btn-accent:active,
+button.btn-primary:active,
+button.btn-secondary:active,
+button.btn-ghost:active,
+button.btn-accent:active,
+button.bg-secondary:active,
+button.bg-indigo-600:active,
+button.dark\:bg-purple-650:active,
+button.dark\:bg-purple-600:active {
+  transform: scale(0.98);
 }
 
-/* Form Inputs, Selects & Textareas */
-input:not([type="checkbox"]):not([type="radio"]),
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-ghost:focus-visible,
+.btn-accent:focus-visible,
+button:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px var(--focus-ring) !important;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-ghost:disabled,
+.btn-accent:disabled,
+button:disabled {
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   LIGHT THEME BUTTON VARIANTS
+   -------------------------------------------------------------------------- */
+:root {
+  /* Primary Button (Light) */
+  --btn-primary-bg: #7A00FF;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-border: #7A00FF;
+  --btn-primary-hover-bg: #5A00D6;
+  --btn-primary-hover-border: #5A00D6;
+  --btn-primary-pressed-bg: #3A0A9A;
+  --btn-primary-pressed-border: #3A0A9A;
+
+  /* Secondary Button (Light) */
+  --btn-secondary-bg: #FFFFFF;
+  --btn-secondary-text: #5A00D6;
+  --btn-secondary-border: #7A00FF;
+  --btn-secondary-hover-bg: #F0E4FF;
+  --btn-secondary-hover-text: #3A0A9A;
+  --btn-secondary-hover-border: #5A00D6;
+  --btn-secondary-pressed-bg: #E0CBFF;
+  --btn-secondary-pressed-text: #3A0A9A;
+  --btn-secondary-pressed-border: #5A00D6;
+
+  /* Ghost Button (Light) */
+  --btn-ghost-bg: #EFE4FB;
+  --btn-ghost-text: #2A0E66;
+  --btn-ghost-border: #EFE4FB;
+  --btn-ghost-hover-bg: #E2D0F7;
+  --btn-ghost-hover-border: #E2D0F7;
+  --btn-ghost-pressed-bg: #D3B9F2;
+  --btn-ghost-pressed-border: #D3B9F2;
+
+  /* Accent Button (Light) */
+  --btn-accent-bg: #C026D9;
+  --btn-accent-text: #FFFFFF;
+  --btn-accent-border: #C026D9;
+  --btn-accent-hover-bg: #A71BBF;
+  --btn-accent-hover-border: #A71BBF;
+  --btn-accent-pressed-bg: #8A12A0;
+  --btn-accent-pressed-border: #8A12A0;
+}
+
+.btn-primary,
+button.btn-primary,
+button.bg-secondary,
+button.bg-indigo-600 {
+  background-color: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-text) !important;
+  border-color: var(--btn-primary-border) !important;
+}
+.btn-primary:hover,
+button.btn-primary:hover,
+button.bg-secondary:hover,
+button.bg-indigo-600:hover {
+  background-color: var(--btn-primary-hover-bg) !important;
+  border-color: var(--btn-primary-hover-border) !important;
+}
+.btn-primary:active,
+button.btn-primary:active,
+button.bg-secondary:active,
+button.bg-indigo-600:active {
+  background-color: var(--btn-primary-pressed-bg) !important;
+  border-color: var(--btn-primary-pressed-border) !important;
+}
+
+.btn-secondary,
+button.btn-secondary {
+  background-color: var(--btn-secondary-bg) !important;
+  color: var(--btn-secondary-text) !important;
+  border-color: var(--btn-secondary-border) !important;
+}
+.btn-secondary:hover,
+button.btn-secondary:hover {
+  background-color: var(--btn-secondary-hover-bg) !important;
+  color: var(--btn-secondary-hover-text) !important;
+  border-color: var(--btn-secondary-hover-border) !important;
+}
+.btn-secondary:active,
+button.btn-secondary:active {
+  background-color: var(--btn-secondary-pressed-bg) !important;
+  color: var(--btn-secondary-pressed-text) !important;
+  border-color: var(--btn-secondary-pressed-border) !important;
+}
+
+.btn-ghost,
+button.btn-ghost {
+  background-color: var(--btn-ghost-bg) !important;
+  color: var(--btn-ghost-text) !important;
+  border-color: var(--btn-ghost-border) !important;
+}
+.btn-ghost:hover,
+button.btn-ghost:hover {
+  background-color: var(--btn-ghost-hover-bg) !important;
+  border-color: var(--btn-ghost-hover-border) !important;
+}
+.btn-ghost:active,
+button.btn-ghost:active {
+  background-color: var(--btn-ghost-pressed-bg) !important;
+  border-color: var(--btn-ghost-pressed-border) !important;
+}
+
+.btn-accent,
+button.btn-accent {
+  background-color: var(--btn-accent-bg) !important;
+  color: var(--btn-accent-text) !important;
+  border-color: var(--btn-accent-border) !important;
+}
+.btn-accent:hover,
+button.btn-accent:hover {
+  background-color: var(--btn-accent-hover-bg) !important;
+  border-color: var(--btn-accent-hover-border) !important;
+}
+.btn-accent:active,
+button.btn-accent:active {
+  background-color: var(--btn-accent-pressed-bg) !important;
+  border-color: var(--btn-accent-pressed-border) !important;
+}
+
+/* --------------------------------------------------------------------------
+   DARK THEME BUTTON VARIANTS
+   -------------------------------------------------------------------------- */
+.dark {
+  /* Primary Button (Dark) */
+  --btn-primary-bg: #8F2BFF;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-border: #8F2BFF;
+  --btn-primary-hover-bg: #A855FF;
+  --btn-primary-hover-border: #A855FF;
+  --btn-primary-pressed-bg: #7A1FE0;
+  --btn-primary-pressed-border: #7A1FE0;
+
+  /* Secondary Button (Dark) */
+  --btn-secondary-bg: #140727;
+  --btn-secondary-text: #D9B8FF;
+  --btn-secondary-border: #AD5CFF;
+  --btn-secondary-hover-bg: #261047;
+  --btn-secondary-hover-text: #F4EEFF;
+  --btn-secondary-hover-border: #C48BFF;
+  --btn-secondary-pressed-bg: #1C0B36;
+  --btn-secondary-pressed-text: #F4EEFF;
+  --btn-secondary-pressed-border: #8F2BFF;
+
+  /* Ghost Button (Dark) */
+  --btn-ghost-bg: #241046;
+  --btn-ghost-text: #F4EEFF;
+  --btn-ghost-border: #241046;
+  --btn-ghost-hover-bg: #321766;
+  --btn-ghost-hover-border: #321766;
+  --btn-ghost-pressed-bg: #3F1D80;
+  --btn-ghost-pressed-border: #3F1D80;
+
+  /* Accent Button (Dark) */
+  --btn-accent-bg: #F25CFF;
+  --btn-accent-text: #1A0630;
+  --btn-accent-border: #F25CFF;
+  --btn-accent-hover-bg: #FF85FF;
+  --btn-accent-hover-border: #FF85FF;
+  --btn-accent-pressed-bg: #D93CF5;
+  --btn-accent-pressed-border: #D93CF5;
+}
+
+.dark .btn-primary,
+.dark button.btn-primary,
+.dark button.bg-secondary,
+.dark button.bg-indigo-600,
+.dark button.dark\:bg-purple-650,
+.dark button.dark\:bg-purple-600 {
+  background-color: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-text) !important;
+  border-color: var(--btn-primary-border) !important;
+}
+.dark .btn-primary:hover,
+.dark button.btn-primary:hover,
+.dark button.bg-secondary:hover,
+.dark button.bg-indigo-600:hover,
+.dark button.dark\:bg-purple-650:hover,
+.dark button.dark\:bg-purple-600:hover {
+  background-color: var(--btn-primary-hover-bg) !important;
+  border-color: var(--btn-primary-hover-border) !important;
+}
+.dark .btn-primary:active,
+.dark button.btn-primary:active,
+.dark button.bg-secondary:active,
+.dark button.bg-indigo-600:active,
+.dark button.dark\:bg-purple-650:active,
+.dark button.dark\:bg-purple-600:active {
+  background-color: var(--btn-primary-pressed-bg) !important;
+  border-color: var(--btn-primary-pressed-border) !important;
+}
+
+.dark .btn-secondary,
+.dark button.btn-secondary {
+  background-color: var(--btn-secondary-bg) !important;
+  color: var(--btn-secondary-text) !important;
+  border-color: var(--btn-secondary-border) !important;
+}
+.dark .btn-secondary:hover,
+.dark button.btn-secondary:hover {
+  background-color: var(--btn-secondary-hover-bg) !important;
+  color: var(--btn-secondary-hover-text) !important;
+  border-color: var(--btn-secondary-hover-border) !important;
+}
+.dark .btn-secondary:active,
+.dark button.btn-secondary:active {
+  background-color: var(--btn-secondary-pressed-bg) !important;
+  color: var(--btn-secondary-pressed-text) !important;
+  border-color: var(--btn-secondary-pressed-border) !important;
+}
+
+.dark .btn-ghost,
+.dark button.btn-ghost {
+  background-color: var(--btn-ghost-bg) !important;
+  color: var(--btn-ghost-text) !important;
+  border-color: var(--btn-ghost-border) !important;
+}
+.dark .btn-ghost:hover,
+.dark button.btn-ghost:hover {
+  background-color: var(--btn-ghost-hover-bg) !important;
+  border-color: var(--btn-ghost-hover-border) !important;
+}
+.dark .btn-ghost:active,
+.dark button.btn-ghost:active {
+  background-color: var(--btn-ghost-pressed-bg) !important;
+  border-color: var(--btn-ghost-pressed-border) !important;
+}
+
+.dark .btn-accent,
+.dark button.btn-accent {
+  background-color: var(--btn-accent-bg) !important;
+  color: var(--btn-accent-text) !important;
+  border-color: var(--btn-accent-border) !important;
+}
+.dark .btn-accent:hover,
+.dark button.btn-accent:hover {
+  background-color: var(--btn-accent-hover-bg) !important;
+  border-color: var(--btn-accent-hover-border) !important;
+}
+.dark .btn-accent:active,
+.dark button.btn-accent:active {
+  background-color: var(--btn-accent-pressed-bg) !important;
+  border-color: var(--btn-accent-pressed-border) !important;
+}
+
+/* ==========================================================================
+   FORM INPUTS, SELECTS & TEXTAREAS
+   - Inputs: 12px radius, 1px border, violet focus ring
+   ========================================================================== */
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 select,
 textarea {
   background-color: var(--surface) !important;
   border: 1px solid var(--border) !important;
   color: var(--text) !important;
-  border-radius: 10px !important;
-  transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+  border-radius: 12px !important;
+  font-size: 14px;
+  line-height: 1.6;
+  transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
 }
 
 input:focus,
@@ -279,23 +551,49 @@ select:focus,
 textarea:focus {
   border-color: var(--primary) !important;
   outline: none !important;
-  box-shadow: 0 0 0 2px rgba(143, 43, 255, 0.25) !important;
+  box-shadow: 0 0 0 3px var(--focus-ring) !important;
 }
 
-/* Select options */
 select option {
   background-color: var(--surface) !important;
   color: var(--text) !important;
 }
 
-/* Modals & Popovers (Soft violet-950 tinted floating shadows) */
-.shadow-lg,
-.shadow-xl,
-.shadow-2xl {
-  box-shadow: 0 16px 36px -6px rgba(14, 4, 32, 0.35) !important;
+/* ==========================================================================
+   MENUS, MODALS & POPOVERS
+   - Soft violet-tinted floating shadows strictly on menus and dialogs
+   ========================================================================== */
+
+.shadow-sm,
+.shadow,
+.shadow-md {
+  box-shadow: none !important;
 }
 
-/* Respect user's motion preferences */
+.shadow-lg,
+.shadow-xl,
+.shadow-2xl,
+[role="dialog"] {
+  box-shadow: 0 16px 36px -6px rgba(14, 4, 32, 0.35) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.light .shadow-lg,
+.light .shadow-xl,
+.light .shadow-2xl,
+.light [role="dialog"] {
+  box-shadow: 0 16px 36px -6px rgba(58, 10, 154, 0.12) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* ==========================================================================
+   MOTION: 150-250ms, ease-out only. Respect prefers-reduced-motion.
+   ========================================================================== */
+
+* {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;

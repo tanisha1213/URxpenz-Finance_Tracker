@@ -467,7 +467,7 @@ function Transactions() {
             <button
               id="add-transaction-btn-tour"
               onClick={openCreate}
-              className="flex items-center justify-center gap-2 rounded-xl bg-secondary dark:bg-purple-650 px-4 py-2.5 font-bold text-white text-sm hover:bg-indigo-700 dark:hover:bg-purple-750 shadow-md transition-all w-fit cursor-pointer"
+              className="btn-primary flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium w-fit cursor-pointer"
             >
               <FiPlus className="w-4 h-4" />
               {t('addTransaction')}
@@ -1311,13 +1311,13 @@ function Transactions() {
                   onClick={() => {
                     setShowForm(false)
                   }}
-                  className="rounded-xl border border-slate-200 dark:border-dark-border px-4 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-350 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                  className="btn-ghost rounded-xl px-4 py-2.5 text-sm font-medium cursor-pointer"
                 >
                   {t('cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-secondary dark:bg-purple-650 px-5 py-2.5 font-bold text-white text-sm hover:bg-indigo-700 dark:hover:bg-purple-750 transition-colors shadow-md shadow-secondary/15 cursor-pointer"
+                  className="btn-primary rounded-xl px-5 py-2.5 text-sm font-medium cursor-pointer"
                 >
                   {editingId ? t('saveChanges') : form.isLoan && form.loanAction === 'create' ? t('createLoanAndLog') : t('addTransaction')}
                 </button>
@@ -1437,13 +1437,13 @@ function Transactions() {
                 <button
                   type="button"
                   onClick={() => setShowEditLoan(false)}
-                  className="rounded-xl border border-slate-200 dark:border-dark-border px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
+                  className="btn-ghost rounded-xl px-4 py-2 text-sm font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 text-sm font-medium transition-colors cursor-pointer"
+                  className="btn-primary rounded-xl px-5 py-2 text-sm font-medium cursor-pointer"
                 >
                   Save Loan
                 </button>

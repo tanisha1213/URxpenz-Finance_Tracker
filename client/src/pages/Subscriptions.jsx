@@ -234,7 +234,7 @@ export default function Subscriptions() {
         <button
           id="add-subscription-btn-tour"
           onClick={handleOpenAdd}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-xs transition-colors cursor-pointer"
+          className="btn-primary flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium cursor-pointer"
         >
           <FiPlus className="w-4 h-4" />
           <span>Add subscription</span>
@@ -620,18 +620,18 @@ export default function Subscriptions() {
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold cursor-pointer"
+                  className="btn-ghost rounded-xl px-4 py-2 text-sm font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="px-5 py-2 bg-secondary hover:bg-indigo-700 dark:bg-purple-650 text-white font-bold rounded-xl shadow-md transition-all cursor-pointer"
+                  className="btn-primary rounded-xl px-5 py-2 text-sm font-medium cursor-pointer"
                 >
                   {formLoading ? 'Saving...' : editingId ? 'Update Subscription' : 'Create Subscription'}
                 </button>

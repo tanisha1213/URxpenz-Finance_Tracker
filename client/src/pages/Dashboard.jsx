@@ -944,14 +944,14 @@ function Dashboard() {
                   onClick={() => {
                     setShowForm(false)
                   }}
-                  className="rounded-xl border border-slate-200 dark:border-dark-border px-4 py-2.5 text-sm font-bold text-slate-650 dark:text-slate-350 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                  className="btn-ghost rounded-xl px-4 py-2.5 text-sm font-medium cursor-pointer"
                 >
                   {t('cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="flex items-center justify-center gap-1.5 rounded-xl bg-secondary dark:bg-purple-650 px-4 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 dark:hover:bg-purple-755 shadow-md disabled:opacity-50 cursor-pointer"
+                  className="btn-primary flex items-center justify-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-medium disabled:opacity-50 cursor-pointer"
                 >
                   <FiCheck className="w-4 h-4" />
                   {formLoading ? 'Saving...' : form.isLoan && form.loanAction === 'create' ? t('createLoanAndLog') : t('addTransaction')}

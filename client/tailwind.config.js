@@ -17,7 +17,10 @@ export default {
         'text-muted': 'var(--text-muted)',
         primary: 'var(--primary)',
         'primary-hover': 'var(--primary-hover)',
+        'primary-pressed': 'var(--primary-pressed)',
         accent: 'var(--accent)',
+        'accent-hover': 'var(--accent-hover)',
+        'accent-pressed': 'var(--accent-pressed)',
 
         // Brand scale (sampled directly from the URxpenz logo)
         violet: {
@@ -26,16 +29,17 @@ export default {
           200: '#D9B8FF',
           300: '#C48BFF',
           400: '#AD5CFF',
-          500: '#8F2BFF',   // primary brand
-          600: '#7A00FF',   // pure logo violet, primary buttons
+          500: '#8F2BFF',   // dark primary brand
+          600: '#7A00FF',   // light primary brand
           700: '#5A00D6',
           800: '#3A0A9A',
           900: '#1F0752',
           950: '#0E0420',   // dark background base
         },
         magenta: {
-          400: '#F25CFF',   // accent, mirrors the bars
+          400: '#F25CFF',   // dark accent
           500: '#D93CF5',
+          600: '#C026D9',   // light accent
         },
 
         // Legacy compatibility mappings
@@ -54,9 +58,9 @@ export default {
       },
       borderRadius: {
         'card': '16px',
-        'container': '20px',
-        'btn': '10px',
-        'input': '10px',
+        'container': '16px',
+        'btn': '12px',
+        'input': '12px',
       },
       boxShadow: {
         'floating': '0 8px 24px -4px rgba(14, 4, 32, 0.15)',
