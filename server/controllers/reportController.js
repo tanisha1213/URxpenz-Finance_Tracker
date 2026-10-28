@@ -116,7 +116,7 @@ export const getMonthlyReport = async (req, res) => {
       doc.pipe(res);
 
       // 1. App Header Block
-      doc.fillColor('#4f46e5').fontSize(24).font('Helvetica-Bold').text('Xpenz', 48, 48);
+      doc.fillColor('#4f46e5').fontSize(24).font('Helvetica-Bold').text('URxpenz', 48, 48);
       doc.fillColor('#475569').fontSize(10).font('Helvetica').text('Personal Finance Tracker Statement', 48, 76);
       
       // Period Right-Aligned

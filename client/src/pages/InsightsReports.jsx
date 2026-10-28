@@ -210,7 +210,7 @@ function InsightsReports() {
               <FiCpu className="w-8 h-8" />
             </div>
             <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-3">
-              Xpenz Pro Feature
+              URxpenz Pro Feature
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white">AI Financial Intelligence & Forecasts</h2>
             <p className="text-sm text-slate-300 max-w-lg mt-2 leading-relaxed">

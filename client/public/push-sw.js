@@ -1,4 +1,4 @@
-// Custom Push Notification Handler for Xpenz PWA
+// Custom Push Notification Handler for URxpenz PWA
 // Receives OS-level background notifications when the app and browser tab are completely closed
 
 self.addEventListener('push', (event) => {
@@ -8,26 +8,26 @@ self.addEventListener('push', (event) => {
       data = event.data.json();
     } catch (e) {
       data = {
-        title: 'Xpenz Financial Alert',
+        title: 'URxpenz Financial Alert',
         body: event.data.text()
       };
     }
   }
 
-  const title = data.title || 'Xpenz Reminder 💰';
+  const title = data.title || 'URxpenz Reminder 💰';
   const options = {
     body: data.body || data.message || 'You have an upcoming loan or financial reminder.',
     icon: data.icon || '/pwa-192x192.png',
     badge: '/pwa-192x192.png',
     vibrate: [200, 100, 200, 100, 200],
-    tag: data.tag || 'xpenz-alert',
+    tag: data.tag || 'urxpenz-alert',
     renotify: true,
     data: {
       url: data.url || '/loans',
       timestamp: Date.now()
     },
     actions: [
-      { action: 'open_app', title: 'Open Xpenz' },
+      { action: 'open_app', title: 'Open URxpenz' },
       { action: 'dismiss', title: 'Dismiss' }
     ]
   };

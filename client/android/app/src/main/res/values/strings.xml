@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Xpenz</string>
-    <string name="title_activity_main">Xpenz</string>
+    <string name="app_name">URxpenz</string>
+    <string name="title_activity_main">URxpenz</string>
     <string name="package_name">com.tanisha.fintrack</string>
     <string name="custom_url_scheme">com.tanisha.fintrack</string>
 </resources>

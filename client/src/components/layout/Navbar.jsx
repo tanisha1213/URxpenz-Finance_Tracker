@@ -147,9 +147,9 @@ function Navbar() {
       <div className="px-3 sm:px-6 py-3 flex justify-between items-center gap-2 max-w-full overflow-hidden">
         {/* Brand Logo & Title */}
         <div className="flex items-center gap-2 shrink-0">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-7 h-7 rounded-md object-contain shadow-sm" />
+          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-8 h-8 rounded-md object-contain shadow-sm" />
           <h2 className="text-base sm:text-lg md:text-xl font-bold text-slate-800 dark:text-white tracking-tight">
-            Xpenz
+            URxpenz
           </h2>
         </div>
         

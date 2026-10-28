@@ -48,8 +48,8 @@ function Sidebar() {
       <div className="p-6 border-b border-slate-800 dark:border-dark-border flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-8 h-8 rounded-lg object-contain shadow-md" />
-            Xpenz
+            <img src={logoDark} alt="URxpenz" className="w-10 h-10 rounded-lg object-contain" />
+            URxpenz
           </h1>
           <p className="text-[10px] text-slate-400 dark:text-dark-text-muted mt-1 font-bold uppercase tracking-wider">AI Personal Finance</p>
         </div>
