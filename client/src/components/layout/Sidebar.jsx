@@ -43,7 +43,7 @@ function Sidebar() {
   }
 
   return (
-    <aside className="w-64 bg-slate-900 dark:bg-dark-card text-white flex flex-col transition-all duration-200 border-r border-slate-800 dark:border-dark-border shadow-premium h-screen">
+    <aside className="w-64 bg-slate-900 dark:bg-dark-card text-white flex flex-col transition-all duration-200 border-r border-slate-800 dark:border-dark-border shadow-premium h-screen no-scrollbar">
       {/* Header */}
       <div className="p-6 border-b border-slate-800 dark:border-dark-border flex items-center justify-between">
         <div>
@@ -56,7 +56,7 @@ function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav id="sidebar-navigation-tour" className="flex-1 p-4 space-y-1 bg-slate-900 dark:bg-dark-card overflow-y-auto">
+      <nav id="sidebar-navigation-tour" className="flex-1 p-4 space-y-1 bg-slate-900 dark:bg-dark-card overflow-y-auto no-scrollbar">
         {navItems.map((item) => {
           const Icon = item.icon
           const active = isActive(item.path)

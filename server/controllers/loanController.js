@@ -513,14 +513,14 @@ export const payInstallment = async (req, res) => {
 
     // Fallback: If no account specified or found, select user's default Cash or primary account
     if (!account) {
-      account = await Account.findOne({ userId }).sort({ isDefault: -1, createdAt: 1 });
+      account = (await Account.findOne({ userId, type: 'cash' }).catch(() => null)) ||
+                (await Account.findOne({ userId }).catch(() => null));
       if (!account) {
         account = await Account.create({
           userId,
-          name: 'Cash Wallet',
+          name: 'Cash',
           type: 'cash',
-          balance: 0,
-          isDefault: true
+          balance: 0
         });
       }
       accountId = account._id;
@@ -657,14 +657,14 @@ export const payLoanDirect = async (req, res) => {
     }
 
     if (!account) {
-      account = await Account.findOne({ userId }).sort({ isDefault: -1, createdAt: 1 });
+      account = (await Account.findOne({ userId, type: 'cash' }).catch(() => null)) ||
+                (await Account.findOne({ userId }).catch(() => null));
       if (!account) {
         account = await Account.create({
           userId,
-          name: 'Cash Wallet',
+          name: 'Cash',
           type: 'cash',
-          balance: 0,
-          isDefault: true
+          balance: 0
         });
       }
       accountId = account._id;

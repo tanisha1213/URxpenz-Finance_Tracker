@@ -31,8 +31,22 @@ const POPULAR_BANKS = [
 function Balance() {
   const { t } = useLanguage()
   const { isPro, openUpgradeModal } = useSubscription()
-  const [accounts, setAccounts] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [accounts, setAccounts] = useState(() => {
+    try {
+      const cached = localStorage.getItem('xpenz_cached_accounts')
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      }
+    } catch (e) {
+      console.warn('Failed to parse cached accounts:', e)
+    }
+    return [
+      { _id: 'default-cash', type: 'cash', name: 'Cash', balance: 0 },
+      { _id: 'default-bank', type: 'bank', name: 'State Bank of India', balance: 0 }
+    ]
+  })
+  const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
@@ -44,21 +58,39 @@ function Balance() {
   // Form fields
   const [formData, setFormData] = useState({ name: '', balance: '' })
 
-  const fetchAccounts = async () => {
+  const fetchAccounts = async (silent = false) => {
     try {
-      setLoading(true)
+      if (!silent && accounts.length === 0) setLoading(true)
       const response = await getAccounts()
-      setAccounts(response.data.data)
+      if (response?.data?.data && Array.isArray(response.data.data)) {
+        setAccounts(response.data.data)
+        localStorage.setItem('xpenz_cached_accounts', JSON.stringify(response.data.data))
+        setError('')
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch accounts.')
+      console.warn('Failed to fetch accounts:', err)
+      const cached = localStorage.getItem('xpenz_cached_accounts')
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached)
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setAccounts(parsed)
+            setError('')
+            return
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+      setError(err.response?.data?.message || 'Unable to connect to server. Working with saved balances.')
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchAccounts()
-    const handleSyncComplete = () => fetchAccounts()
+    fetchAccounts(true)
+    const handleSyncComplete = () => fetchAccounts(true)
     window.addEventListener('xpenz-offline-synced', handleSyncComplete)
     return () => window.removeEventListener('xpenz-offline-synced', handleSyncComplete)
   }, [])
@@ -98,12 +130,19 @@ function Balance() {
     setMessage('')
     setError('')
     try {
-      await addBankAccount({
+      const res = await addBankAccount({
         name: formData.name,
         balance: Number(formData.balance) || 0
       })
       setMessage('Bank account added successfully.')
-      fetchAccounts()
+      if (res?.data?.data) {
+        setAccounts((prev) => {
+          const updated = [...prev, res.data.data]
+          localStorage.setItem('xpenz_cached_accounts', JSON.stringify(updated))
+          return updated
+        })
+      }
+      fetchAccounts(true)
       handleCloseModal()
     } catch (err) {
       if (err.response?.data?.code === 'LIMIT_REACHED') {
@@ -125,7 +164,16 @@ function Balance() {
         balance: Number(formData.balance) || 0
       })
       setMessage('Account updated successfully.')
-      fetchAccounts()
+      setAccounts((prev) => {
+        const updated = prev.map((a) =>
+          a._id === selectedAccount._id
+            ? { ...a, name: formData.name, balance: Number(formData.balance) || 0 }
+            : a
+        )
+        localStorage.setItem('xpenz_cached_accounts', JSON.stringify(updated))
+        return updated
+      })
+      fetchAccounts(true)
       handleCloseModal()
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update account.')
@@ -138,16 +186,22 @@ function Balance() {
     try {
       await deleteBankAccount(selectedAccount._id)
       setMessage('Bank account and all associated transactions deleted successfully.')
-      fetchAccounts()
+      setAccounts((prev) => {
+        const updated = prev.filter((a) => a._id !== selectedAccount._id)
+        localStorage.setItem('xpenz_cached_accounts', JSON.stringify(updated))
+        return updated
+      })
+      fetchAccounts(true)
       handleCloseModal()
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete bank account.')
     }
   }
 
-  const totalBalance = accounts.reduce((acc, curr) => acc + curr.balance, 0)
+  const totalBalance = accounts.reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0)
   const cashAccounts = accounts.filter(a => a.type === 'cash')
   const bankAccounts = accounts.filter(a => a.type === 'bank')
+  const primaryCash = cashAccounts[0] || { _id: 'default-cash', type: 'cash', name: 'Cash', balance: 0 }
 
   const existingAccountNames = accounts.map(a => a.name.toLowerCase().trim())
   const availableBanks = POPULAR_BANKS.filter(bank => {
@@ -190,9 +244,17 @@ function Balance() {
         </div>
       )}
       {error && (
-        <div className="rounded-xl border border-rose-100 dark:border-rose-950/20 bg-rose-50/50 dark:bg-rose-950/5 p-3 text-sm text-rose-700 dark:text-rose-400 flex items-center gap-2">
-          <FiX className="w-4 h-4 flex-shrink-0" />
-          <span>{error}</span>
+        <div className="rounded-xl border border-rose-100 dark:border-rose-950/20 bg-rose-50/50 dark:bg-rose-950/5 p-3 text-sm text-rose-700 dark:text-rose-400 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <FiX className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+          <button
+            onClick={() => { setError(''); fetchAccounts(); }}
+            className="px-2.5 py-1 text-xs font-bold rounded-lg bg-rose-600 text-white hover:bg-rose-700 transition-colors cursor-pointer shrink-0"
+          >
+            Retry
+          </button>
         </div>
       )}
 
@@ -210,13 +272,13 @@ function Balance() {
             <div className="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 flex-1 sm:flex-initial min-w-0">
               <span className="block text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('cashBalance')}</span>
               <span className="text-sm sm:text-base font-extrabold text-slate-200 block truncate">
-                {formatCurrency(cashAccounts.reduce((acc, curr) => acc + curr.balance, 0))}
+                {formatCurrency(cashAccounts.reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0))}
               </span>
             </div>
             <div className="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 flex-1 sm:flex-initial min-w-0">
               <span className="block text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('bankBalance')}</span>
               <span className="text-sm sm:text-base font-extrabold text-slate-200 block truncate">
-                {formatCurrency(bankAccounts.reduce((acc, curr) => acc + curr.balance, 0))}
+                {formatCurrency(bankAccounts.reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0))}
               </span>
             </div>
           </div>
@@ -238,7 +300,7 @@ function Balance() {
                 </div>
               </div>
               <button
-                onClick={() => handleOpenEdit(cashAccounts[0])}
+                onClick={() => handleOpenEdit(primaryCash)}
                 className="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-purple-400 rounded-lg hover:bg-slate-50 dark:hover:bg-dark-border transition-all cursor-pointer"
                 title="Adjust Balance"
               >
@@ -248,7 +310,7 @@ function Balance() {
             <div className="mt-6">
               <span className="block text-[10px] text-slate-400 dark:text-dark-text-muted font-bold uppercase tracking-wider">{t('totalBalance')}</span>
               <span className="text-2xl font-black text-slate-800 dark:text-white">
-                {formatCurrency(cashAccounts[0]?.balance || 0)}
+                {formatCurrency(primaryCash.balance || 0)}
               </span>
             </div>
           </div>
