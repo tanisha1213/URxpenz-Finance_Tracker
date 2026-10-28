@@ -151,7 +151,7 @@ function Profile() {
   const referralCode = referralData?.referralCode || user?.referral?.referralCode || 'URXPENZ'
   const referralCount = referralData?.referralCount ?? user?.referral?.referralCount ?? 0
   const discountPercent = referralData?.discountPercent ?? user?.referral?.discountPercent ?? 0
-  const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}/signup?ref=${referralCode}` : `https://xpenz-finance-tracker-advance.vercel.app/signup?ref=${referralCode}`
+  const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}/signup?ref=${referralCode}` : `https://urxpenz-finance-tracker.vercel.app/signup?ref=${referralCode}`
 
   const handleCopyCode = async () => {
     try {

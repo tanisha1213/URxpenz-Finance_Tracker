@@ -1,33 +1,31 @@
 import axios from 'axios'
 
-const PROD_API_URL = 'https://xpenz-finance-tracker-advance.vercel.app/api'
+export const PROD_API_URL = 'https://urxpenz-finance-tracker.vercel.app/api'
 
 const getBaseURL = () => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL
   }
+
   // Native Capacitor Android / iOS APK detection
   const isNativeApp = 
-    window.Capacitor || 
-    window.location.protocol === 'capacitor:' || 
-    window.location.protocol === 'file:' ||
-    (window.location.hostname === 'localhost' && window.location.port !== '5173' && window.location.port !== '4173')
+    typeof window !== 'undefined' && (
+      window.Capacitor || 
+      window.location.protocol === 'capacitor:' || 
+      window.location.protocol === 'file:' ||
+      (window.location.hostname === 'localhost' && window.location.port !== '5173' && window.location.port !== '4173')
+    )
 
   if (isNativeApp) {
     return PROD_API_URL
   }
 
-  // If running in browser locally or on any Vercel domain
-  if (typeof window !== 'undefined') {
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      return '/api'
-    }
-    if (window.location.hostname.endsWith('.vercel.app') || window.location.origin) {
-      return '/api'
-    }
+  // In any browser environment (whether hosted on Vercel or running locally), use relative '/api'
+  // Relative '/api' stays on the exact same origin, completely preventing any CORS preflight or cross-origin blocks
+  if (typeof window !== 'undefined' && window.location && window.location.origin) {
+    return '/api'
   }
 
-  // Fallback production URL
   return PROD_API_URL
 }
 
@@ -48,7 +46,7 @@ API.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
-    // Failover for local development: if request to local /api fails with connection error (port 5000 offline), retry to production backend
+    // Failover for local development ONLY: if local port 5000 is not running, retry against production backend
     if (
       originalRequest &&
       !originalRequest._retry &&

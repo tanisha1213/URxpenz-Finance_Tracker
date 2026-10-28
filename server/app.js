@@ -35,6 +35,20 @@ const allowedOrigins = [
 // Trust Vercel reverse proxy headers for per-client IP rate limiting
 app.set('trust proxy', 1);
 
+// Bulletproof CORS preflight & cross-origin access for all web & mobile clients
+app.use((req, res, next) => {
+  const origin = req.headers.origin || '*';
+  res.header('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
+
 // Middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
@@ -43,6 +57,7 @@ app.use(cors({
   origin: true,
   credentials: true
 }));
+app.options('*', cors());
 app.use(rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
