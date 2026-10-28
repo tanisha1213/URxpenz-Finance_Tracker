@@ -2,226 +2,134 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg-canvas: #f8f9fa;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f1f3f5;
+  --border-subtle: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --color-brand: #4338ca;
+  --color-brand-hover: #3730a3;
+  --color-brand-subtle: rgba(67, 56, 202, 0.08);
+  --color-positive: #059669;
+  --color-positive-subtle: rgba(5, 150, 105, 0.08);
+  --color-negative: #dc2626;
+  --color-negative-subtle: rgba(220, 38, 38, 0.08);
+}
+
+.dark {
+  --bg-canvas: #0c0d12;
+  --bg-surface: #14161f;
+  --bg-subtle: #1a1d28;
+  --border-subtle: #222634;
+  --border-strong: #2f3547;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --color-brand: #6366f1;
+  --color-brand-hover: #4f46e5;
+  --color-brand-subtle: rgba(99, 102, 241, 0.12);
+  --color-positive: #10b981;
+  --color-positive-subtle: rgba(16, 185, 129, 0.12);
+  --color-negative: #ef4444;
+  --color-negative-subtle: rgba(239, 68, 68, 0.12);
+}
+
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
 }
 
-/* Premium radial dark background grids */
-.dark body {
-  background-color: #090a0f;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
-    radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.06) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(99, 102, 241, 0.04) 0px, transparent 50%);
-  background-attachment: fixed;
-}
-
-/* Premium radial light background grids matching reference */
-.light body {
-  background-color: #f6f8fd;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.04) 0px, transparent 50%),
-    radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.03) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.03) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(99, 102, 241, 0.02) 0px, transparent 50%);
-  background-attachment: fixed;
-}
-
-/* Dynamic curved lines pattern / texture overlay */
-.fintech-overlay {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image: 
-    linear-gradient(rgba(99, 102, 241, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.015) 1px, transparent 1px);
-  background-size: 50px 50px;
-  mask-image: radial-gradient(ellipse 65% 55% at 50% 0%, #000 60%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 0%, #000 60%, transparent 100%);
-  z-index: 0;
-  opacity: 0.85;
-}
-
-/* Glassmorphism shortcuts */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.light .glass-panel {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-/* Premium Card and Shadows overriding utility rules */
-.dark .bg-white, .dark .dark\:bg-dark-card {
-  background: linear-gradient(180deg, #131522 0%, #0d0f17 100%) !important;
-  border-color: rgba(168, 85, 247, 0.08) !important;
-  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4) !important;
-}
-
-.light .bg-white {
-  background: linear-gradient(180deg, #ffffff 0%, #fcfcff 100%) !important;
-  border-color: rgba(99, 102, 241, 0.08) !important;
-  box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.06) !important;
-}
-
-/* Rounded corners overrides to match 24px layout reference */
-.rounded-2xl {
-  border-radius: 1.5rem !important; /* 24px */
-}
-.rounded-3xl {
-  border-radius: 1.75rem !important; /* 28px */
-}
-
-/* Accent Button Glowing Shadows for Dark theme */
-.dark .bg-secondary, .dark\:bg-purple-600 {
-  box-shadow: 0 8px 20px -3px rgba(139, 92, 246, 0.35) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-.dark .bg-secondary:hover, .dark\:bg-purple-600:hover {
-  box-shadow: 0 12px 25px -4px rgba(139, 92, 246, 0.5) !important;
-  transform: translateY(-1px) !important;
-}
-
-/* Light Theme Premium Purple Accent Button overrides matching reference */
-.light .bg-secondary,
-.light button.bg-secondary,
-.light .bg-indigo-600,
-.light button.bg-indigo-600,
-.light .text-white.bg-secondary {
-  background: #743BF7 !important;
-  color: #ffffff !important;
-  box-shadow: 
-    0 12px 30px rgba(116, 59, 247, 0.28), 
-    0 4px 12px rgba(116, 59, 247, 0.18) !important;
-  border-radius: 9999px !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  border: none !important;
-}
-
-.light .bg-secondary:hover,
-.light button.bg-secondary:hover,
-.light .bg-indigo-600:hover,
-.light button.bg-indigo-600:hover {
-  background: #602ee3 !important;
-  box-shadow: 
-    0 14px 35px rgba(116, 59, 247, 0.35), 
-    0 6px 16px rgba(116, 59, 247, 0.24) !important;
-  transform: translateY(-1px) !important;
-}
-
-.light .bg-secondary:active,
-.light button.bg-secondary:active,
-.light .bg-indigo-600:active,
-.light button.bg-indigo-600:active {
-  filter: brightness(0.9) !important;
-  transform: scale(0.98) !important;
-}
-
-/* Light Mode active navigation icons, text links, active tabs & pills */
-.light .text-secondary,
-.light .text-indigo-600,
-.light .text-purple-600 {
-  color: #743BF7 !important;
-}
-
-.light .border-secondary,
-.light .border-indigo-600,
-.light .border-purple-600 {
-  border-color: #743BF7 !important;
-}
-
-/* Selected filters or active tab indicator states */
-.light .bg-secondary\/10,
-.light .bg-indigo-600\/10,
-.light .bg-purple-600\/10,
-.light .bg-primary\/10 {
-  background: rgba(116, 59, 247, 0.08) !important;
-  color: #743BF7 !important;
-}
-
-.light .bg-secondary\/20,
-.light .bg-indigo-600\/20,
-.light .bg-purple-600\/20,
-.light .bg-primary\/20 {
-  background: rgba(116, 59, 247, 0.12) !important;
-  color: #743BF7 !important;
-}
-
-/* Focus outline rings mapping to primary purple */
-.light *:focus {
-  outline-color: rgba(116, 59, 247, 0.4) !important;
-}
-
-/* Premium Sidebar Navy-Purple vertical gradient flow */
+/* Technical sidebar styling */
 aside {
-  background: linear-gradient(180deg, #0e101f 0%, #150f28 100%) !important;
-  border-right: 1px solid rgba(139, 92, 246, 0.1) !important;
+  background-color: #0f1117 !important;
+  border-right: 1px solid #1e2230 !important;
 }
 
-/* Sidebar navigation item active status glow matching reference */
 .sidebar-active {
-  background: linear-gradient(90deg, rgba(116, 59, 247, 0.18) 0%, rgba(116, 59, 247, 0.06) 100%) !important;
-  border-left: 4px solid #743BF7 !important;
-  color: #a855f7 !important;
-  box-shadow: 0 4px 15px -3px rgba(116, 59, 247, 0.25) !important;
+  background-color: rgba(99, 102, 241, 0.12) !important;
+  color: #ffffff !important;
+  border-left: 3px solid #6366f1 !important;
+  font-weight: 600;
 }
 
 .sidebar-inactive {
   color: #94a3b8 !important;
-  border-left: 4px solid transparent !important;
-  transition: all 0.2s ease !important;
+  border-left: 3px solid transparent !important;
+  transition: color 150ms ease, background-color 150ms ease;
 }
 
 .sidebar-inactive:hover {
   color: #ffffff !important;
-  background: rgba(255, 255, 255, 0.05) !important;
+  background-color: rgba(255, 255, 255, 0.04) !important;
 }
 
-/* Light Theme Sidebar and Top Navbar subtle style adjustments */
-.light aside {
-  background: linear-gradient(180deg, #101224 0%, #1c1533 100%) !important;
+/* Card surfaces */
+.dark .bg-white,
+.dark .dark\:bg-dark-card,
+.dark .dark\:bg-\[\#11131f\] {
+  background-color: #14161f !important;
+  border-color: #222634 !important;
+  box-shadow: none !important;
 }
 
-/* Soft purple radial glow behind main content blocks */
-.light .fintech-overlay {
-  background-image: 
-    linear-gradient(rgba(99, 102, 241, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.015) 1px, transparent 1px),
-    radial-gradient(circle at 50% 120px, rgba(168, 85, 247, 0.05), transparent 300px);
+.light .bg-white {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
 }
 
-.dark .fintech-overlay {
-  background-image: 
-    linear-gradient(rgba(99, 102, 241, 0.012) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.012) 1px, transparent 1px),
-    radial-gradient(circle at 50% 120px, rgba(168, 85, 247, 0.12), transparent 350px);
+/* Refined buttons */
+.dark .bg-secondary,
+.dark .dark\:bg-purple-650,
+.dark .dark\:bg-purple-600 {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  transition: background-color 150ms ease;
 }
 
-/* Ensure select option dropdowns inherit dark mode styling on all platforms */
+.dark .bg-secondary:hover,
+.dark .dark\:bg-purple-650:hover,
+.dark .dark\:bg-purple-600:hover {
+  background-color: #4338ca !important;
+}
+
+.light .bg-secondary,
+.light button.bg-secondary,
+.light .bg-indigo-600 {
+  background-color: #4338ca !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  transition: background-color 150ms ease;
+}
+
+.light .bg-secondary:hover,
+.light button.bg-secondary:hover,
+.light .bg-indigo-600:hover {
+  background-color: #3730a3 !important;
+}
+
+/* Dropdown select options */
 .dark select option,
 .dark select {
-  background-color: #131522 !important;
-  color: #f8fafc !important;
+  background-color: #14161f !important;
+  color: #f3f4f6 !important;
 }
 
 .light select option,
 .light select {
   background-color: #ffffff !important;
-  color: #0f172a !important;
+  color: #111827 !important;
+}
+
+/* Clean monospaced figures */
+.font-mono {
+  font-feature-settings: 'tnum' on, 'zero' on;
 }

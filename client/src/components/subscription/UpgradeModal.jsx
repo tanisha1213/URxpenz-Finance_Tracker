@@ -21,39 +21,39 @@ import {
 const PLANS = [
   {
     id: 'kickstart',
-    name: 'Kickstart Plan',
-    duration: '1 Month (30 Days)',
+    name: 'Kickstart',
+    duration: '30 days',
     price: 45,
     perMonth: 45,
-    tag: 'Intro Pass',
-    badgeClass: 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+    tag: '1 month',
+    badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
   },
   {
     id: 'quarterly',
-    name: 'Quarterly Pro',
-    duration: '3 Months (90 Days)',
+    name: 'Quarterly',
+    duration: '90 days',
     price: 119,
     perMonth: 39,
-    tag: '13% OFF',
-    badgeClass: 'bg-purple-500/10 text-purple-500 border-purple-500/20'
+    tag: '13% savings',
+    badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
   },
   {
     id: 'half_yearly',
-    name: 'Half-Yearly Pro',
-    duration: '6 Months (180 Days)',
+    name: 'Half-yearly',
+    duration: '180 days',
     price: 199,
     perMonth: 33,
-    tag: '26% OFF',
-    badgeClass: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20'
+    tag: '26% savings',
+    badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
   },
   {
     id: 'annual',
-    name: 'Annual Pro',
-    duration: '1 Year (365 Days)',
+    name: 'Annual',
+    duration: '365 days',
     price: 349,
     perMonth: 29,
-    tag: '👑 BEST VALUE (35% OFF)',
-    badgeClass: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30 font-black'
+    tag: '35% savings',
+    badgeClass: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 font-semibold'
   }
 ];
 
@@ -186,113 +186,111 @@ export default function UpgradeModal() {
   const getFeatureHeadline = () => {
     switch (upgradeFeature) {
       case 'accounts':
-        return 'Unlock Unlimited Bank Accounts';
+        return 'Manage multiple bank accounts';
       case 'loans':
-        return 'Unlock Unlimited Loans & EMI Tracking';
+        return 'Track multiple loans and EMI schedules';
       case 'subscriptions':
-        return 'Unlock Unlimited Recurring Subscriptions';
+        return 'Track recurring subscriptions';
       case 'investments':
-        return 'Unlock Investments Portfolio Tracker';
+        return 'Investment portfolio tracking';
       case 'insurance':
-        return 'Unlock Insurance Policies & Reminders';
+        return 'Insurance policy tracking';
       case 'ai':
-        return 'Unlock AI Forecasts & Cashflow Runway';
+        return 'Cashflow runway projections';
       case 'daily_budget':
-        return 'Unlock Daily Budget & End-of-Day Alerts';
+        return 'Daily budget and reminder schedule';
       case 'reports':
-        return 'Unlock Anytime Reports & Custom Dates';
+        return 'Custom date-range reports';
       default:
-        return 'Upgrade to Xpenz Pro';
+        return 'Select a subscription plan';
     }
   };
 
   const selectedPlan = PLANS.find((p) => p.id === selectedPlanId) || PLANS[3];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/70 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl bg-white dark:bg-[#11131f] border border-slate-100 dark:border-slate-800 shadow-2xl p-5 sm:p-7 text-slate-800 dark:text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+      <div className="relative w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-xl bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] p-5 sm:p-6 text-slate-800 dark:text-slate-100">
         
         {/* Close Button */}
         <button
           onClick={closeUpgradeModal}
-          className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-650 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+          className="absolute top-4 right-4 p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
         >
-          <FiX className="w-5 h-5" />
+          <FiX className="w-4 h-4" />
         </button>
 
         {/* Top Header Badge */}
         <div className="flex items-center gap-2 mb-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 dark:bg-purple-900/30 text-secondary dark:text-purple-400 border border-secondary/20">
-            <FiZap className="w-3.5 h-3.5 fill-current" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+            <FiZap className="w-3.5 h-3.5 text-amber-500" />
             {isTrial
-              ? `🎁 ${user?.hasReferralBonus ? '70-Day Referral Bonus' : '60-Day'} Free Trial (${trialDaysRemaining} days remaining)`
-              : 'Xpenz Membership'}
+              ? `${user?.hasReferralBonus ? '70-day referral trial' : '60-day trial'} (${trialDaysRemaining}d remaining)`
+              : 'Xpenz membership'}
           </span>
           {discountPercent > 0 && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-              <FiGift className="w-3.5 h-3.5" />
-              {discountPercent}% Referral Reward
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <FiGift className="w-3 h-3" />
+              {discountPercent}% referral discount
             </span>
           )}
         </div>
 
         {/* Headline */}
-        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+        <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
           {getFeatureHeadline()}
         </h2>
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
           {isTrial
-            ? user?.hasReferralBonus
-              ? 'Your extended 70-day referral trial is active! Upgrade anytime with your discount to ensure continuous access.'
-              : 'Your 60-day full-access trial is active! Upgrade anytime to ensure uninterrupted access to all advanced tools.'
-            : 'Basic tier includes monthly budget, monthly/weekly reports, 1 bank account, 1 loan, 2 subscriptions, and permanent cloud sync. Upgrade for daily budgets, anytime reports & unlimited tracking.'}
+            ? 'Choose a plan to continue accessing multi-account tracking, loan schedules, and custom reports.'
+            : 'Basic plan includes monthly budget, monthly/weekly reports, 1 bank account, 1 loan, and 2 subscriptions.'}
         </p>
 
         {/* Referral Reward Callout */}
         {discountPercent > 0 && (
-          <div className="mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-purple-500/10 to-indigo-500/15 border border-amber-500/30 flex items-center justify-between gap-3 text-slate-800 dark:text-slate-100 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-500 flex-shrink-0">
-                <FiGift className="w-5 h-5" />
+          <div className="mt-3.5 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 flex items-center justify-between gap-3 text-slate-800 dark:text-slate-100">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 shrink-0">
+                <FiGift className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400">
-                  {discountPercent}% Referral Reward Applied!
+                <p className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                  {discountPercent}% referral discount applied
                 </p>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  You referred {user?.referral?.referralCount || 0} friend{user?.referral?.referralCount === 1 ? '' : 's'}. This discount applies automatically to your next plan upgrade!
+                  Earned from referring {user?.referral?.referralCount || 0} friend{user?.referral?.referralCount === 1 ? '' : 's'}. Deducted at checkout.
                 </p>
               </div>
             </div>
-            <span className="px-3 py-1 rounded-xl text-xs font-black bg-amber-500 text-white shadow-md flex-shrink-0">
-              -{discountPercent}% OFF
+            <span className="px-2 py-0.5 rounded text-xs font-bold bg-emerald-600 text-white shrink-0">
+              -{discountPercent}%
             </span>
           </div>
         )}
 
         {/* Success or Error Banner */}
         {successMsg && (
-          <div className="mt-4 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm font-semibold flex items-center gap-2">
-            <FiCheck className="w-5 h-5 flex-shrink-0" />
+          <div className="mt-3.5 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-medium flex items-center gap-2">
+            <FiCheck className="w-4 h-4 shrink-0" />
             {successMsg}
           </div>
         )}
         {errorMsg && (
-          <div className="mt-4 p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs sm:text-sm font-semibold flex items-center gap-2">
-            <FiX className="w-5 h-5 flex-shrink-0" />
+          <div className="mt-3.5 p-3 rounded-lg bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 text-rose-700 dark:text-rose-300 text-xs font-medium flex items-center gap-2">
+            <FiX className="w-4 h-4 shrink-0" />
             {errorMsg}
           </div>
         )}
 
         {typeof navigator !== 'undefined' && !navigator.onLine && (
-          <div className="mt-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs sm:text-sm font-semibold flex items-center gap-2.5">
-            <FiWifiOff className="w-5 h-5 flex-shrink-0 text-amber-500" />
-            <span>You are currently offline. Subscription activations and payment processing require an active internet connection.</span>
+          <div className="mt-3.5 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-amber-800 dark:text-amber-300 text-xs font-medium flex items-center gap-2">
+            <FiWifiOff className="w-4 h-4 shrink-0 text-amber-500" />
+            <span>Internet connection required for subscription changes.</span>
           </div>
         )}
 
         {/* Plans Selection Grid */}
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           {PLANS.map((plan) => {
             const isSelected = selectedPlanId === plan.id;
             const finalPrice = calculatePrice(plan.price);
@@ -303,43 +301,43 @@ export default function UpgradeModal() {
               <div
                 key={plan.id}
                 onClick={() => setSelectedPlanId(plan.id)}
-                className={`relative p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                className={`relative p-3.5 rounded-lg border transition-colors cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'border-secondary dark:border-purple-500 bg-secondary/5 dark:bg-purple-950/20 shadow-md shadow-secondary/10'
-                    : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30'
+                    ? 'border-indigo-600 bg-indigo-50/20 dark:bg-indigo-950/20'
+                    : 'border-slate-200 dark:border-[#222634] hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-[#191c26]'
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-bold text-sm text-slate-900 dark:text-white">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-semibold text-sm text-slate-900 dark:text-white">
                       {plan.name}
                     </span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-md border ${plan.badgeClass}`}>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${plan.badgeClass}`}>
                       {plan.tag}
                     </span>
                   </div>
                   <p className="text-xs text-slate-400">{plan.duration}</p>
                 </div>
 
-                <div className="mt-4 flex items-baseline justify-between pt-3 border-t border-slate-200/60 dark:border-slate-800">
+                <div className="mt-3 flex items-baseline justify-between pt-2.5 border-t border-slate-100 dark:border-[#222634]">
                   <div className="flex items-baseline gap-1.5">
                     {discountPercent > 0 ? (
                       <>
-                        <span className="text-2xl font-black text-slate-900 dark:text-white">
+                        <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
                           ₹{finalPrice}
                         </span>
-                        <span className="text-xs line-through text-slate-400">
+                        <span className="text-xs line-through text-slate-400 font-mono">
                           ₹{plan.price}
                         </span>
                       </>
                     ) : (
-                      <span className="text-2xl font-black text-slate-900 dark:text-white">
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
                         ₹{plan.price}
                       </span>
                     )}
-                    <span className="text-xs text-slate-400">total</span>
+                    <span className="text-[11px] text-slate-400">total</span>
                   </div>
-                  <span className="text-xs font-semibold text-secondary dark:text-purple-400">
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400 font-mono">
                     ~₹{perMonthDiscounted}/mo
                   </span>
                 </div>
@@ -349,61 +347,57 @@ export default function UpgradeModal() {
         </div>
 
         {/* Feature Comparison Checklist */}
-        <div className="mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/70 dark:border-slate-800">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
-            What you get with Xpenz Pro:
+        <div className="mt-4 p-3.5 rounded-lg bg-slate-50 dark:bg-[#191c26] border border-slate-200 dark:border-[#222634]">
+          <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2.5">
+            Included with Pro:
           </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
             <div className="flex items-center gap-2">
-              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>Unlimited</strong> Bank, Cash & Card accounts</span>
+              <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Multiple bank, cash, and card accounts</span>
             </div>
             <div className="flex items-center gap-2">
-              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>Unlimited</strong> Loans, EMIs & Calendar</span>
+              <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Loan and EMI schedules</span>
             </div>
             <div className="flex items-center gap-2">
-              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>Unlimited</strong> Subscriptions & Auto-Deductions</span>
+              <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Recurring subscription tracking</span>
             </div>
             <div className="flex items-center gap-2">
-              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>Investments Portfolio</strong> (Stocks, MF, Gold)</span>
+              <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Investment portfolio overview</span>
             </div>
             <div className="flex items-center gap-2">
-              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>Insurance Policies</strong> & Renewal alerts</span>
+              <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Insurance policy renewal reminders</span>
             </div>
             <div className="flex items-center gap-2">
-              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>AI Cashflow Runway</strong> & Burn rate predictor</span>
+              <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Cashflow projections</span>
             </div>
             <div className="flex items-center gap-2">
-              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>Daily Budget & End-of-Day Alerts</strong> (Basic: monthly only)</span>
+              <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Daily budget alerts with custom times</span>
             </div>
             <div className="flex items-center gap-2">
-              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>Anytime Reports & PDF Statements</strong> (Basic: monthly/weekly)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FiCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span><strong>Multi-Device Cloud Sync</strong> (Always Safe)</span>
+              <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Custom date-range reports and statements</span>
             </div>
           </div>
         </div>
 
         {/* Action Button */}
-        <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
+        <div className="mt-4 flex flex-col sm:flex-row items-center gap-2.5">
           <button
             onClick={handleSubscribe}
             disabled={loading || (typeof navigator !== 'undefined' && !navigator.onLine)}
-            className="w-full flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl bg-secondary hover:bg-indigo-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-black text-sm shadow-xl shadow-secondary/25 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+              <span className="inline-block animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" />
             ) : (
-              <FiAward className="w-4 h-4" />
+              <FiAward className="w-3.5 h-3.5" />
             )}
             <span>
               Activate {selectedPlan.name} (₹{calculatePrice(selectedPlan.price)})
@@ -412,15 +406,14 @@ export default function UpgradeModal() {
           
           <button
             onClick={closeUpgradeModal}
-            className="w-full sm:w-auto px-5 py-3.5 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2.5 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer"
           >
-            Continue with Basic
+            Keep basic tier
           </button>
         </div>
 
-        {/* Guarantee Note */}
-        <p className="mt-3 text-center text-[11px] text-slate-400">
-          🔒 Google Play & Cloud verified. Your transaction data and manual logging remain 100% free and stored safely forever.
+        <p className="mt-2 text-center text-[11px] text-slate-400">
+          All your manual entries and budget history remain available on the basic tier.
         </p>
       </div>
     </div>

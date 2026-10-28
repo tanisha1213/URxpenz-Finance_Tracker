@@ -41,37 +41,37 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-dark-bg dark:to-dark-card flex items-center justify-center p-4 transition-colors duration-200">
-      <div className="bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="flex flex-col items-center mb-8">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-16 h-16 rounded-2xl object-contain shadow-lg mb-3" />
-          <h1 className="text-3xl font-extrabold text-slate-850 dark:text-white tracking-tight">Xpenz</h1>
-          <p className="text-[10px] text-slate-400 dark:text-dark-text-muted mt-1 uppercase font-bold tracking-wider">AI Personal Finance</p>
+    <div className="min-h-screen bg-slate-100 dark:bg-[#0c0d12] flex items-center justify-center p-4 transition-colors">
+      <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl shadow-lg p-6 sm:p-8 w-full max-w-md">
+        <div className="flex flex-col items-center mb-6">
+          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-12 h-12 rounded-lg object-contain mb-2" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Xpenz</h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Expense & budget manager</p>
         </div>
 
         {error && (
-          <div className="bg-red-150 border border-red-400 text-red-700 dark:bg-red-950/20 dark:border-red-900/30 dark:text-red-450 px-4 py-3 rounded-xl mb-4 text-sm font-semibold">
+          <div className="bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 px-3.5 py-2.5 rounded-lg mb-4 text-xs font-medium">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-slate-750 dark:text-dark-text-muted font-bold text-xs uppercase mb-1">Email Address</label>
+            <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Email address</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-dark-border rounded-xl bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none focus:border-secondary"
+              className="w-full px-3.5 py-2 text-xs border border-slate-300 dark:border-[#222634] rounded-lg bg-white dark:bg-[#0f1117] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               required
             />
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="block text-slate-750 dark:text-dark-text-muted font-bold text-xs uppercase">Password</label>
-              <Link to="/forgot-password" className="text-secondary dark:text-purple-400 font-bold text-xs hover:underline">
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300">Password</label>
+              <Link to="/forgot-password" className="text-indigo-600 dark:text-indigo-400 font-medium text-xs hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -80,7 +80,7 @@ function Login() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-dark-border rounded-xl bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none focus:border-secondary"
+              className="w-full px-3.5 py-2 text-xs border border-slate-300 dark:border-[#222634] rounded-lg bg-white dark:bg-[#0f1117] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               required
             />
           </div>
@@ -88,22 +88,22 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-secondary dark:bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-750 dark:hover:bg-purple-700 disabled:opacity-50 transition-all shadow-md shadow-secondary/15 dark:shadow-purple-600/10 mt-6"
+            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition-colors cursor-pointer disabled:opacity-50 mt-4 text-xs"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
-        <p className="text-center mt-6 text-sm text-slate-500 dark:text-dark-text-muted">
+        <p className="text-center mt-6 text-xs text-slate-500 dark:text-slate-400">
           Don&apos;t have an account?{' '}
-          <Link to="/signup" className="text-secondary dark:text-purple-400 font-bold hover:underline">
-            Sign up
+          <Link to="/signup" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
+            Create an account
           </Link>
         </p>
 
-        <p className="text-center mt-3 text-xs text-slate-400 dark:text-dark-text-muted">
-          <Link to="/privacy" className="underline hover:text-secondary dark:hover:text-purple-400 font-medium">
-            Privacy Policy & Data Safety
+        <p className="text-center mt-3 text-[11px] text-slate-400 dark:text-slate-500">
+          <Link to="/privacy" className="underline hover:text-slate-600 dark:hover:text-slate-300">
+            Privacy policy & data safety
           </Link>
         </p>
       </div>

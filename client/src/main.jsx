@@ -11,8 +11,12 @@ import { SubscriptionProvider } from './context/SubscriptionContext.jsx'
 import { registerSW } from 'virtual:pwa-register'
 import { initOfflineSyncListener } from './services/offlineSyncService.js'
 
-// Register Service Worker immediately for background push notifications
-registerSW({ immediate: true })
+const updateSW = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    updateSW(true)
+  }
+})
 
 // Initialize offline transaction sync listeners
 initOfflineSyncListener()
