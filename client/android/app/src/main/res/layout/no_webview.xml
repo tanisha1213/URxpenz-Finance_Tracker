@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="28dp"
+    android:background="#0e101c">
+
+    <ImageView
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="URxpenz Logo"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="System WebView Required"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="URxpenz requires Android System WebView or Google Chrome to run. It appears WebView is disabled, outdated, or updating on your device."
+        android:textColor="#94A3B8"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.25"
+        android:layout_marginBottom="28dp" />
+
+    <Button
+        android:id="@+id/btn_update_webview"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Update Android System WebView"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:backgroundTint="#743BF7"
+        android:layout_marginBottom="12dp" />
+
+    <Button
+        android:id="@+id/btn_update_chrome"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Update Google Chrome"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:backgroundTint="#222533"
+        android:layout_marginBottom="12dp" />
+
+    <Button
+        android:id="@+id/btn_retry"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Retry / Open App"
+        android:textColor="#8B5CF6"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:backgroundTint="#161828" />
+
+</LinearLayout>
+
