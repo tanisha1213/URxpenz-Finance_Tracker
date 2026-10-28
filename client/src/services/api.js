@@ -12,18 +12,21 @@ const getBaseURL = () => {
     (window.location.hostname === 'localhost' && window.location.port !== '5173' && window.location.port !== '4173');
 
   if (isNativeApp) {
-    return 'https://urxpenz.vercel.app/api';
+    return 'https://xpenz-finance-tracker-advance.vercel.app/api';
   }
 
-  // If running in browser locally (Vite dev server)
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return '/api';
+  // If running in browser locally or on any Vercel domain
+  if (typeof window !== 'undefined') {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return '/api';
+    }
+    if (window.location.hostname.endsWith('.vercel.app') || window.location.origin) {
+      return '/api';
+    }
   }
-  if (window.location.hostname.endsWith('.vercel.app') || window.location.hostname === 'vercel.app') {
-    return '/api';
-  }
-  // Default to live Vercel production backend URL
-  return 'https://urxpenz.vercel.app/api';
+
+  // Fallback production URL
+  return 'https://xpenz-finance-tracker-advance.vercel.app/api';
 };
 
 const API = axios.create({
