@@ -139,44 +139,44 @@ function InsightsReports() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight">{t('spendingInsights')}</h2>
-          <p className="text-slate-400 dark:text-dark-text-muted text-sm mt-0.5">{t('insightsSubtitle')}</p>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{t('spendingInsights')}</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">{t('insightsSubtitle')}</p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex bg-slate-100 dark:bg-slate-dark p-1 rounded-xl w-fit">
+        <div className="flex bg-slate-100 dark:bg-[#10121a] p-1 rounded-lg border border-slate-200 dark:border-[#222634] w-fit">
           <button
             onClick={() => setActiveTab('insights')}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-lg transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
               activeTab === 'insights'
-                ? 'bg-white dark:bg-dark-card text-secondary dark:text-purple-400 shadow-sm'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-[#181a24] text-slate-900 dark:text-white border border-slate-200 dark:border-[#2b3042]'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
           >
-            <FiCpu className="w-4 h-4" />
-            {t('aiForecast')}
+            <FiCpu className="w-3.5 h-3.5" />
+            <span>Forecasts</span>
           </button>
           <button
             onClick={() => setActiveTab('reports')}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-lg transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
               activeTab === 'reports'
-                ? 'bg-white dark:bg-dark-card text-secondary dark:text-purple-400 shadow-sm'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-[#181a24] text-slate-900 dark:text-white border border-slate-200 dark:border-[#2b3042]'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
           >
-            <FiLayers className="w-4 h-4" />
-            Monthly Reports
+            <FiLayers className="w-3.5 h-3.5" />
+            <span>Monthly reports</span>
           </button>
           <button
             onClick={() => setActiveTab('welfare')}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-lg transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
               activeTab === 'welfare'
-                ? 'bg-white dark:bg-dark-card text-secondary dark:text-purple-400 shadow-sm'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-[#181a24] text-slate-900 dark:text-white border border-slate-200 dark:border-[#2b3042]'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
           >
-            <FiUsers className="w-4 h-4" />
-            Government Schemes & Welfare
+            <FiUsers className="w-3.5 h-3.5" />
+            <span>Welfare schemes</span>
           </button>
         </div>
       </div>
@@ -184,61 +184,61 @@ function InsightsReports() {
       {/* AI INSIGHTS VIEW */}
       {activeTab === 'insights' && (
         !isPro ? (
-          <div className="rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/20 via-slate-900 to-indigo-950/20 p-8 sm:p-12 text-center flex flex-col items-center justify-center shadow-xl animate-fadeIn">
-            <div className="w-16 h-16 rounded-3xl bg-secondary/20 dark:bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-secondary dark:text-purple-400 mb-5">
-              <FiCpu className="w-8 h-8" />
+          <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-8 sm:p-10 text-center flex flex-col items-center justify-center">
+            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-[#1a1d29] border border-slate-200 dark:border-[#2b3042] flex items-center justify-center text-slate-700 dark:text-slate-300 mb-4">
+              <FiCpu className="w-6 h-6" />
             </div>
-            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-3">
-              Xpenz Pro Feature
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+              Pro plan feature
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">AI Financial Intelligence & Forecasts</h2>
-            <p className="text-sm text-slate-300 max-w-lg mt-2 leading-relaxed">
-              Unlock AI Cashflow Runway, predictive month-end outlays, burn rate analysis, and smart cheaper alternative recommendations.
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Financial forecasts & runway intelligence</h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-lg mt-2 leading-relaxed">
+              Analyze projected month-end outlays, cashflow runway, burn rate alerts, and category reduction opportunities.
             </p>
             <button
               onClick={() => openUpgradeModal('ai')}
-              className="mt-6 flex items-center gap-2 py-3.5 px-8 rounded-2xl bg-secondary hover:bg-indigo-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-black text-sm shadow-xl shadow-secondary/30 transition-all hover:scale-105 cursor-pointer"
+              className="mt-6 flex items-center gap-2 py-2.5 px-6 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs transition-colors cursor-pointer"
             >
-              <FiZap className="w-4 h-4 fill-current" />
-              <span>Unlock AI Insights (Starts at ₹45)</span>
+              <FiZap className="w-3.5 h-3.5" />
+              <span>Upgrade to Pro (from ₹45)</span>
             </button>
           </div>
         ) : (
-        <div className="space-y-6 animate-fadeIn">
-          {aiError && <div className="rounded-xl border border-rose-100 dark:border-rose-950/30 bg-rose-50/50 dark:bg-rose-950/10 p-4 text-sm text-rose-700 dark:text-rose-400">{aiError}</div>}
+        <div className="space-y-6">
+          {aiError && <div className="rounded-lg border border-rose-200 dark:border-rose-950/40 bg-rose-50 dark:bg-rose-950/20 p-3 text-xs text-rose-700 dark:text-rose-400">{aiError}</div>}
 
           <div className="grid gap-6 lg:grid-cols-3 w-full overflow-hidden">
             {/* Suggestions Card */}
-            <section id="analytics-ai-advice-tour" className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium lg:col-span-2 space-y-4 min-w-0 overflow-hidden">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-dark-border pb-4">
+            <section id="analytics-ai-advice-tour" className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 lg:col-span-2 space-y-4 min-w-0 overflow-hidden">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-[#222634] pb-3">
                 <div className="flex items-center gap-2">
-                  <FiCpu className="w-5 h-5 text-secondary dark:text-purple-400" />
-                  <h3 className="font-bold text-slate-800 dark:text-white text-lg">AI Financial Advice</h3>
+                  <FiCpu className="w-4 h-4 text-indigo-500" />
+                  <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Financial suggestions</h3>
                 </div>
                 <button
                   onClick={() => { dispatch(fetchInsights()); dispatch(fetchPrediction()) }}
-                  className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card px-3 py-1.5 text-xs font-bold text-slate-650 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 rounded border border-slate-200 dark:border-[#222634] bg-slate-50 dark:bg-[#181a24] px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#222634] transition-colors cursor-pointer"
                 >
-                  <FiRefreshCw className="w-3.5 h-3.5" />
+                  <FiRefreshCw className="w-3 h-3" />
                   Refresh
                 </button>
               </div>
 
               {aiLoading ? (
-                <div className="py-12 flex flex-col items-center justify-center gap-2 text-slate-400 dark:text-slate-500 text-sm">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-secondary dark:border-purple-400"></div>
-                  Generating AI insights...
+                <div className="py-12 flex flex-col items-center justify-center gap-2 text-slate-400 dark:text-slate-500 text-xs">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-indigo-500 border-t-transparent"></div>
+                  Generating forecast recommendations...
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {insights.length ? insights.map((item, index) => (
-                    <div key={`${item}-${index}`} className="flex items-start gap-3 rounded-xl border border-indigo-50/30 dark:border-purple-950/20 bg-indigo-50/10 dark:bg-purple-950/5 p-4 text-slate-700 dark:text-slate-300 hover:bg-indigo-50/20 dark:hover:bg-purple-950/10 transition-colors">
-                      <FiCheckCircle className="w-5 h-5 text-secondary dark:text-purple-400 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm font-medium leading-relaxed">{item}</p>
+                    <div key={`${item}-${index}`} className="flex items-start gap-3 rounded-lg border border-slate-100 dark:border-[#222634] bg-slate-50/60 dark:bg-[#181a24]/50 p-3 text-slate-700 dark:text-slate-300">
+                      <FiCheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs leading-relaxed">{item}</p>
                     </div>
                   )) : (
-                    <p className="text-sm text-slate-400 dark:text-slate-500 py-6 text-center">
-                      Record more transactions to unlock AI insights recommendations.
+                    <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">
+                      Log more transactions to generate forecast recommendations.
                     </p>
                   )}
                 </div>
@@ -246,10 +246,10 @@ function InsightsReports() {
             </section>
 
             {/* Forecast Panel */}
-            <section id="analytics-ai-forecast-tour" className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium h-fit space-y-6 min-w-0 overflow-hidden">
-              <div className="flex items-center gap-2 pb-4 border-b border-slate-100 dark:border-dark-border">
-                <FiTrendingUp className="w-5 h-5 text-secondary dark:text-purple-400" />
-                <h3 className="font-bold text-slate-800 dark:text-white text-lg">{t('aiForecast')}</h3>
+            <section id="analytics-ai-forecast-tour" className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 h-fit space-y-5 min-w-0 overflow-hidden">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-[#222634]">
+                <FiTrendingUp className="w-4 h-4 text-indigo-500" />
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Forecast</h3>
               </div>
 
               <div className="space-y-4">
@@ -323,13 +323,13 @@ function InsightsReports() {
 
       {/* STATEMENTS & PDF REPORTS VIEW */}
       {activeTab === 'reports' && (
-        <div className="space-y-6 animate-fadeIn">
-          {reportError && <div className="rounded-xl border border-rose-100 dark:border-rose-950/30 bg-rose-50/50 dark:bg-rose-950/10 p-4 text-sm text-rose-700 dark:text-rose-400">{reportError}</div>}
+        <div className="space-y-6">
+          {reportError && <div className="rounded-lg border border-rose-200 dark:border-rose-950/40 bg-rose-50 dark:bg-rose-950/20 p-3 text-xs text-rose-700 dark:text-rose-400">{reportError}</div>}
 
           {/* Period Filter Card */}
-          <section className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-5 shadow-premium flex flex-col md:flex-row gap-4 justify-between items-center">
+          <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-              <FiCalendar className="text-secondary dark:text-purple-400 w-5 h-5 flex-shrink-0" />
+              <FiCalendar className="text-indigo-500 w-4 h-4 flex-shrink-0" />
               
               <select
                 value={periodType}
@@ -341,25 +341,25 @@ function InsightsReports() {
                   }
                   setPeriodType(val);
                 }}
-                className="rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
+                className="rounded-lg border border-slate-200 dark:border-[#222634] px-3 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
               >
-                <option value="monthly">Monthly Report (Basic)</option>
-                <option value="weekly">Weekly Report (Basic)</option>
-                <option value="custom">{!isPro ? '🔒 Custom Dates / Range - Anytime (Pro)' : 'Custom Range / Specific Dates (Anytime)'}</option>
-                <option value="yearly">{!isPro ? '🔒 Yearly (Pro)' : 'Yearly'}</option>
+                <option value="monthly">Monthly report</option>
+                <option value="weekly">Weekly report</option>
+                <option value="custom">{!isPro ? '🔒 Custom date range (Pro)' : 'Custom date range'}</option>
+                <option value="yearly">{!isPro ? '🔒 Yearly report (Pro)' : 'Yearly report'}</option>
               </select>
 
               {periodType === 'weekly' && (
                 <select
                   value={weekOffset}
                   onChange={(e) => setWeekOffset(Number(e.target.value))}
-                  className="rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
+                  className="rounded-lg border border-slate-200 dark:border-[#222634] px-3 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
                 >
-                  <option value={0}>This Week (Current)</option>
-                  <option value={-1}>Last Week</option>
-                  <option value={-2}>2 Weeks Ago</option>
-                  <option value={-3}>3 Weeks Ago</option>
-                  <option value={-4}>4 Weeks Ago</option>
+                  <option value={0}>This week (current)</option>
+                  <option value={-1}>Last week</option>
+                  <option value={-2}>2 weeks ago</option>
+                  <option value={-3}>3 weeks ago</option>
+                  <option value={-4}>4 weeks ago</option>
                 </select>
               )}
 
@@ -368,7 +368,7 @@ function InsightsReports() {
                   <select
                     value={period.month}
                     onChange={(e) => setPeriod({ ...period, month: Number(e.target.value) })}
-                    className="rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
+                    className="rounded-lg border border-slate-200 dark:border-[#222634] px-3 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
                   >
                     {Array.from({ length: 12 }, (_, index) => (
                       <option key={index + 1} value={index + 1}>
@@ -380,7 +380,7 @@ function InsightsReports() {
                     type="number"
                     value={period.year}
                     onChange={(e) => setPeriod({ ...period, year: Number(e.target.value) })}
-                    className="w-24 rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
+                    className="w-20 rounded-lg border border-slate-200 dark:border-[#222634] px-2.5 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none font-mono"
                     placeholder="Year"
                   />
                 </div>
@@ -391,7 +391,7 @@ function InsightsReports() {
                   type="number"
                   value={period.year}
                   onChange={(e) => setPeriod({ ...period, year: Number(e.target.value) })}
-                  className="w-28 rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
+                  className="w-24 rounded-lg border border-slate-200 dark:border-[#222634] px-2.5 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none font-mono"
                   placeholder="Year"
                 />
               )}
@@ -402,14 +402,14 @@ function InsightsReports() {
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
+                    className="rounded-lg border border-slate-200 dark:border-[#222634] px-2.5 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
                   />
                   <span className="text-slate-400 text-xs">to</span>
                   <input
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
+                    className="rounded-lg border border-slate-200 dark:border-[#222634] px-2.5 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
                   />
                 </div>
               )}
@@ -418,46 +418,46 @@ function InsightsReports() {
             <button
               onClick={exportPdf}
               disabled={reportLoading || !report}
-              className="flex items-center justify-center gap-2 rounded-xl bg-secondary dark:bg-purple-600 px-4 py-2.5 font-bold text-white text-sm hover:bg-indigo-700 dark:hover:bg-purple-700 transition-colors shadow-md disabled:opacity-50 w-full md:w-auto cursor-pointer"
+              className="flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 font-medium text-white text-xs hover:bg-indigo-700 transition-colors disabled:opacity-50 w-full md:w-auto cursor-pointer"
             >
-              <FiDownload className="w-4 h-4" />
-              Download Report
+              <FiDownload className="w-3.5 h-3.5" />
+              <span>Download PDF statement</span>
             </button>
           </section>
 
           {reportLoading && (
-            <div className="py-12 flex flex-col items-center justify-center gap-2 text-slate-400 dark:text-slate-500 text-sm">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-secondary dark:border-purple-400"></div>
-              Generating statement report...
+            <div className="py-12 flex flex-col items-center justify-center gap-2 text-slate-400 dark:text-slate-500 text-xs">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-indigo-500 border-t-transparent"></div>
+              Generating report...
             </div>
           )}
 
           {report && !reportLoading && (
             <>
               {/* Summary Metric Counters */}
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-5 shadow-premium flex flex-col justify-between">
-                  <span className="text-xs font-bold text-slate-400 dark:text-dark-text-muted uppercase tracking-wider">Income</span>
-                  <span className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-2">{formatCurrency(report.totalIncome)}</span>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 flex flex-col justify-between">
+                  <span className="text-[11px] font-mono uppercase text-slate-400 dark:text-slate-500">Income</span>
+                  <span className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-2">{formatCurrency(report.totalIncome)}</span>
                 </div>
-                <div className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-5 shadow-premium flex flex-col justify-between">
-                  <span className="text-xs font-bold text-slate-400 dark:text-dark-text-muted uppercase tracking-wider">Expense</span>
-                  <span className="text-2xl font-extrabold text-rose-600 dark:text-rose-455 mt-2">{formatCurrency(report.totalExpense)}</span>
+                <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 flex flex-col justify-between">
+                  <span className="text-[11px] font-mono uppercase text-slate-400 dark:text-slate-500">Expense</span>
+                  <span className="text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-2">{formatCurrency(report.totalExpense)}</span>
                 </div>
-                <div className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-5 shadow-premium flex flex-col justify-between">
-                  <span className="text-xs font-bold text-slate-400 dark:text-dark-text-muted uppercase tracking-wider">Savings</span>
-                  <span className="text-2xl font-extrabold text-slate-800 dark:text-white mt-2">{formatCurrency(report.savings)}</span>
+                <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 flex flex-col justify-between">
+                  <span className="text-[11px] font-mono uppercase text-slate-400 dark:text-slate-500">Savings</span>
+                  <span className="text-xl font-bold font-mono text-slate-900 dark:text-white mt-2">{formatCurrency(report.savings)}</span>
                 </div>
-                <div className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-5 shadow-premium flex flex-col justify-between">
-                  <span className="text-xs font-bold text-slate-400 dark:text-dark-text-muted uppercase tracking-wider">Balance Left</span>
-                  <span className={`text-2xl font-extrabold mt-2 ${report.savings >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-450'}`}>{formatCurrency(report.savings)}</span>
+                <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 flex flex-col justify-between">
+                  <span className="text-[11px] font-mono uppercase text-slate-400 dark:text-slate-500">Net balance</span>
+                  <span className={`text-xl font-bold font-mono mt-2 ${report.savings >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{formatCurrency(report.savings)}</span>
                 </div>
               </div>
 
               <div className="grid gap-6 lg:grid-cols-3 w-full overflow-hidden">
                 {/* Category Spend Chart */}
-                <section className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium lg:col-span-2 min-w-0 overflow-hidden">
-                  <h3 className="font-bold text-slate-800 dark:text-white text-lg mb-4">Category Analysis</h3>
+                <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 lg:col-span-2 min-w-0 overflow-hidden">
+                  <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-4">Category analysis</h3>
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={report.categoryBreakdown} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -480,32 +480,32 @@ function InsightsReports() {
                 </section>
 
                 {/* Categorical Breakdown Table */}
-                <section className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium flex flex-col justify-between min-w-0 overflow-hidden">
+                <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 flex flex-col justify-between min-w-0 overflow-hidden">
                   <div className="space-y-4">
-                    <h3 className="font-bold text-slate-800 dark:text-white text-lg">Categorical Statement</h3>
+                    <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Categorical breakdown</h3>
                     <div className="max-h-72 overflow-y-auto pr-1">
                       <table className="w-full text-xs text-left">
                         <thead>
-                          <tr className="text-slate-400 dark:text-dark-text-muted text-[10px] font-bold uppercase border-b border-slate-100 dark:border-dark-border/40">
+                          <tr className="text-slate-400 dark:text-slate-500 text-[10px] font-mono uppercase border-b border-slate-100 dark:border-[#222634]">
                             <th className="pb-2">Category</th>
                             <th className="pb-2">Type</th>
                             <th className="pb-2 text-right">Amount</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50 dark:divide-dark-border/40">
+                        <tbody className="divide-y divide-slate-100 dark:divide-[#222634]/60">
                           {report.fullCategoryBreakdown && report.fullCategoryBreakdown.length > 0 ? (
                             report.fullCategoryBreakdown.map((item, idx) => (
                               <tr key={`${item.category}-${item.type}-${idx}`} className="text-slate-700 dark:text-slate-200">
-                                <td className="py-2.5 font-bold text-slate-800 dark:text-white truncate max-w-[100px]">{item.category}</td>
+                                <td className="py-2.5 font-medium text-slate-900 dark:text-white truncate max-w-[100px]">{item.category}</td>
                                 <td className="py-2.5 capitalize">
-                                  <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-extrabold uppercase ${
+                                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono uppercase ${
                                     item.type === 'income' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
                                   }`}>
                                     {item.type}
                                   </span>
                                 </td>
-                                <td className={`py-2.5 text-right font-black ${
-                                  item.type === 'income' ? 'text-emerald-500' : 'text-rose-505'
+                                <td className={`py-2.5 text-right font-mono font-medium ${
+                                  item.type === 'income' ? 'text-emerald-500' : 'text-rose-500'
                                 }`}>
                                   {item.type === 'income' ? '+' : '-'}{formatCurrency(item.amount)}
                                 </td>
@@ -520,10 +520,10 @@ function InsightsReports() {
                           )}
                         </tbody>
                         <tfoot>
-                          <tr className="border-t border-slate-200 dark:border-dark-border font-extrabold text-slate-800 dark:text-white text-xs bg-slate-50/50 dark:bg-slate-900/40">
-                            <td className="py-3" colSpan="2">Net Balance</td>
-                            <td className={`py-3 text-right font-black ${
-                              report.savings >= 0 ? 'text-emerald-500' : 'text-rose-505'
+                          <tr className="border-t border-slate-200 dark:border-[#222634] font-semibold text-slate-900 dark:text-white text-xs bg-slate-50 dark:bg-[#181a24]">
+                            <td className="py-2.5 px-1" colSpan="2">Net balance</td>
+                            <td className={`py-2.5 text-right font-mono font-bold ${
+                              report.savings >= 0 ? 'text-emerald-500' : 'text-rose-500'
                             }`}>
                               {report.savings >= 0 ? '+' : ''}{formatCurrency(report.savings)}
                             </td>
@@ -541,20 +541,20 @@ function InsightsReports() {
 
       {/* WELFARE & AI COACH VIEW */}
       {activeTab === 'welfare' && (
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-6">
           {/* Top Row: AI Cashflow Burn Rate & Run-out gauge */}
           <div className="grid gap-6 md:grid-cols-3 w-full overflow-hidden">
             {/* Cashflow Run-out Predictor */}
-            <div className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium space-y-4 min-w-0 overflow-hidden">
-              <div className="flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-dark-border">
-                <FiActivity className="w-5 h-5 text-secondary dark:text-purple-400" />
-                <h3 className="font-bold text-slate-800 dark:text-white text-base">Cashflow Burn Rate</h3>
+            <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 space-y-4 min-w-0 overflow-hidden">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-[#222634]">
+                <FiActivity className="w-4 h-4 text-indigo-500" />
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Cashflow burn rate</h3>
               </div>
               {safePredictions?.cashflowForecast ? (
                 <div className="space-y-3.5">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-slate-450 dark:text-dark-text-muted">Total Accounts Balance</span>
-                    <span className="text-sm font-black text-slate-800 dark:text-white">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">Total accounts balance</span>
+                    <span className="text-sm font-bold font-mono text-slate-900 dark:text-white">
                       {formatCurrency(safePredictions.cashflowForecast.totalCashBalance)}
                     </span>
                   </div>
@@ -591,26 +591,26 @@ function InsightsReports() {
             </div>
 
             {/* Spend Reducer & Cheaper Alternatives */}
-            <div className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium space-y-4 md:col-span-2 min-w-0 overflow-hidden">
-              <div className="flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-dark-border">
-                <FiTrendingUp className="w-5 h-5 text-secondary dark:text-purple-400" />
-                <h3 className="font-bold text-slate-800 dark:text-white text-base">Cheaper Alternatives & Spend Reductions</h3>
+            <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 space-y-4 md:col-span-2 min-w-0 overflow-hidden">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-[#222634]">
+                <FiTrendingUp className="w-4 h-4 text-indigo-500" />
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Category reduction opportunities</h3>
               </div>
               <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 max-h-48 overflow-y-auto pr-1">
                 {safePredictions?.cashflowForecast?.cheaperAlternatives?.length ? (
                   safePredictions.cashflowForecast.cheaperAlternatives.map((alt, idx) => (
-                    <div key={idx} className="rounded-xl border border-slate-50 dark:border-dark-border/40 p-3.5 bg-slate-50/20 dark:bg-slate-900/10 space-y-2 flex flex-col justify-between">
+                    <div key={idx} className="rounded-lg border border-slate-100 dark:border-[#222634] p-3 bg-slate-50/50 dark:bg-[#181a24]/50 space-y-1.5 flex flex-col justify-between">
                       <div>
                         <div className="flex justify-between items-baseline mb-1">
-                          <span className="font-bold text-slate-800 dark:text-white text-xs truncate max-w-[80px]">{alt.category}</span>
-                          <span className="text-[10px] font-black text-rose-500">{formatCurrency(alt.amount)}</span>
+                          <span className="font-medium text-slate-900 dark:text-white text-xs truncate max-w-[80px]">{alt.category}</span>
+                          <span className="text-[11px] font-mono font-bold text-rose-500">{formatCurrency(alt.amount)}</span>
                         </div>
-                        <p className="text-[10px] leading-relaxed text-slate-450 dark:text-dark-text-muted">{alt.suggestion}</p>
+                        <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">{alt.suggestion}</p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="col-span-3 text-xs text-slate-400 py-6 text-center">Log category expenses to unlock cheaper alternative suggestions.</p>
+                  <p className="col-span-3 text-xs text-slate-400 py-6 text-center">Log expenses to view category reduction suggestions.</p>
                 )}
               </div>
             </div>
@@ -619,92 +619,92 @@ function InsightsReports() {
           {/* Interactive Calculators & Coaching Row */}
           <div className="grid gap-6 md:grid-cols-2 w-full overflow-hidden">
             {/* Pension Eligibility & APY Calculator */}
-            <section className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium space-y-5 min-w-0 overflow-hidden">
-              <div className="flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-dark-border">
-                <FiShield className="w-5 h-5 text-secondary dark:text-purple-400" />
-                <h3 className="font-bold text-slate-800 dark:text-white text-base">Atal Pension Yojana (APY) & Pension Eligibility</h3>
+            <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 space-y-4 min-w-0 overflow-hidden">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-[#222634]">
+                <FiShield className="w-4 h-4 text-indigo-500" />
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Atal Pension Yojana (APY) eligibility</h3>
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase">Your Current Age</label>
+                    <label className="text-[10px] font-mono text-slate-400 uppercase">Current age</label>
                     <input
                       type="number"
                       min="18"
                       max="40"
                       value={pensionAge}
                       onChange={(e) => setPensionAge(Math.min(40, Math.max(18, Number(e.target.value))))}
-                      className="w-full rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
+                      className="w-full rounded-lg border border-slate-200 dark:border-[#222634] px-3 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none font-mono"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase font-bold">Target Pension Amount</label>
+                    <label className="text-[10px] font-mono text-slate-400 uppercase">Target pension</label>
                     <select
                       value={pensionTarget}
                       onChange={(e) => setPensionTarget(Number(e.target.value))}
-                      className="w-full rounded-xl border border-slate-200 dark:border-dark-border px-3 py-2 text-sm bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
+                      className="w-full rounded-lg border border-slate-200 dark:border-[#222634] px-3 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none"
                     >
-                      <option value="1000">INR 1,000 / month</option>
-                      <option value="2000">INR 2,000 / month</option>
-                      <option value="3000">INR 3,000 / month</option>
-                      <option value="4000">INR 4,000 / month</option>
-                      <option value="5000">INR 5,000 / month</option>
+                      <option value="1000">₹1,000 / month</option>
+                      <option value="2000">₹2,000 / month</option>
+                      <option value="3000">₹3,000 / month</option>
+                      <option value="4000">₹4,000 / month</option>
+                      <option value="5000">₹5,000 / month</option>
                     </select>
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-slate-50/50 dark:bg-slate-900/20 p-4 border border-slate-50 dark:border-dark-border/40 space-y-2">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-slate-450 dark:text-dark-text-muted">Estimated Premium Contribution</span>
-                    <span className="font-extrabold text-slate-800 dark:text-white">
+                <div className="rounded-lg bg-slate-50 dark:bg-[#181a24] p-3.5 border border-slate-100 dark:border-[#222634] space-y-2">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-500 dark:text-slate-400">Estimated monthly contribution</span>
+                    <span className="font-mono font-bold text-slate-900 dark:text-white">
                       {formatCurrency(Math.round(pensionTarget * (0.04 + (pensionAge - 18) * 0.004)))}/month
                     </span>
                   </div>
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-slate-450 dark:text-dark-text-muted">Retirement Payout Commences</span>
-                    <span className="font-extrabold text-slate-800 dark:text-white">At age 60</span>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-500 dark:text-slate-400">Retirement payout start</span>
+                    <span className="font-mono font-medium text-slate-900 dark:text-white">Age 60</span>
                   </div>
-                  <p className="text-[10px] text-slate-400 leading-relaxed pt-2 border-t border-slate-100 dark:border-dark-border/40">
-                    *Note: APY premium depends on entry age. Joining early (e.g. 18 years) requires lower monthly investments compared to joining at age 40.
+                  <p className="text-[10px] text-slate-400 leading-relaxed pt-2 border-t border-slate-200/60 dark:border-[#222634]">
+                    APY contribution depends on entry age. Joining early requires lower monthly investments compared to joining at age 40.
                   </p>
                 </div>
               </div>
             </section>
 
             {/* Loan Affordability Calculator */}
-            <section className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium space-y-5 min-w-0 overflow-hidden">
-              <div className="flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-dark-border">
-                <FiPercent className="w-5 h-5 text-secondary dark:text-purple-400" />
-                <h3 className="font-bold text-slate-800 dark:text-white text-base">Loan Affordability Calculator</h3>
+            <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 space-y-4 min-w-0 overflow-hidden">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-[#222634]">
+                <FiPercent className="w-4 h-4 text-indigo-500" />
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Loan affordability calculator</h3>
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase">Amount</label>
+                    <label className="text-[10px] font-mono text-slate-400 uppercase">Amount</label>
                     <input
                       type="number"
                       value={loanAmount}
                       onChange={(e) => setLoanAmount(Number(e.target.value))}
-                      className="w-full rounded-xl border border-slate-200 dark:border-dark-border px-2.5 py-2 text-xs bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
+                      className="w-full rounded-lg border border-slate-200 dark:border-[#222634] px-2.5 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none font-mono"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase">Rate (%)</label>
+                    <label className="text-[10px] font-mono text-slate-400 uppercase">Rate (%)</label>
                     <input
                       type="number"
                       step="0.1"
                       value={loanInterest}
                       onChange={(e) => setLoanInterest(Number(e.target.value))}
-                      className="w-full rounded-xl border border-slate-200 dark:border-dark-border px-2.5 py-2 text-xs bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
+                      className="w-full rounded-lg border border-slate-200 dark:border-[#222634] px-2.5 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none font-mono"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase">Tenure (Yrs)</label>
+                    <label className="text-[10px] font-mono text-slate-400 uppercase">Tenure (yrs)</label>
                     <input
                       type="number"
                       value={loanTenure}
                       onChange={(e) => setLoanTenure(Number(e.target.value))}
-                      className="w-full rounded-xl border border-slate-200 dark:border-dark-border px-2.5 py-2 text-xs bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
+                      className="w-full rounded-lg border border-slate-200 dark:border-[#222634] px-2.5 py-1.5 text-xs bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-200 focus:outline-none font-mono"
                     />
                   </div>
                 </div>
@@ -721,25 +721,25 @@ function InsightsReports() {
                   const dtiRatio = emi / userIncome
 
                   return (
-                    <div className="rounded-xl bg-slate-50/50 dark:bg-slate-900/20 p-4 border border-slate-50 dark:border-dark-border/40 space-y-3">
-                      <div className="flex justify-between text-xs font-semibold">
-                        <span className="text-slate-450 dark:text-dark-text-muted">Estimated Monthly EMI</span>
-                        <span className="font-extrabold text-slate-800 dark:text-white">{formatCurrency(emi)}</span>
+                    <div className="rounded-lg bg-slate-50 dark:bg-[#181a24] p-3.5 border border-slate-100 dark:border-[#222634] space-y-2.5">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-500 dark:text-slate-400">Estimated monthly EMI</span>
+                        <span className="font-mono font-bold text-slate-900 dark:text-white">{formatCurrency(emi)}</span>
                       </div>
-                      <div className="flex justify-between text-xs font-semibold">
-                        <span className="text-slate-450 dark:text-dark-text-muted">Debt Burden (DTI)</span>
-                        <span className={`font-black ${dtiRatio < 0.3 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-500 dark:text-slate-400">Debt burden (DTI)</span>
+                        <span className={`font-mono font-bold ${dtiRatio < 0.3 ? 'text-emerald-500' : 'text-rose-500'}`}>
                           {Math.round(dtiRatio * 100)}% of income
                         </span>
                       </div>
-                      <div className="pt-2 border-t border-slate-100 dark:border-dark-border/40">
+                      <div className="pt-2 border-t border-slate-200/60 dark:border-[#222634]">
                         {dtiRatio < 0.3 ? (
-                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
-                            Affordable: This EMI accounts for less than 30% of your income. You can safely manage this debt.
+                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                            Affordable: EMI is within 30% of estimated income.
                           </p>
                         ) : (
-                          <p className="text-[10px] text-rose-600 dark:text-rose-450 font-bold">
-                            High Risk: EMI exceeds 30% of income. Consider increasing tenure or reducing principal amount.
+                          <p className="text-[10px] text-rose-600 dark:text-rose-400 font-medium">
+                            High debt burden: EMI exceeds 30% of income. Consider increasing tenure or reducing principal.
                           </p>
                         )}
                       </div>
@@ -753,16 +753,16 @@ function InsightsReports() {
           {/* Welfare Schemes Matcher & Subsidy Logger */}
           <div className="grid gap-6 md:grid-cols-2 w-full overflow-hidden">
             {/* Government Schemes & Scholarships Finder */}
-            <section className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-4 sm:p-6 shadow-premium space-y-5 min-w-0 overflow-hidden">
-              <div className="flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-dark-border">
-                <FiUsers className="w-5 h-5 text-secondary dark:text-purple-400" />
-                <h3 className="font-bold text-slate-800 dark:text-white text-base">Eligible Welfare Schemes & Scholarships</h3>
+            <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 space-y-4 min-w-0 overflow-hidden">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-[#222634]">
+                <FiUsers className="w-4 h-4 text-indigo-500" />
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Welfare schemes & scholarships</h3>
               </div>
 
               {/* Profile Inputs */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50/30 dark:bg-slate-900/10 p-3 rounded-xl border border-slate-50 dark:border-dark-border/30">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 dark:bg-[#181a24] p-3 rounded-lg border border-slate-100 dark:border-[#222634]">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-400 uppercase">Age</label>
+                  <label className="text-[9px] font-mono text-slate-400 uppercase">Age</label>
                   <input
                     type="number"
                     value={schemeAge}

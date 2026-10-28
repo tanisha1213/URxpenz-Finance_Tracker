@@ -695,33 +695,33 @@ export default function OnboardingTour() {
       {/* Tour Dialog Pop-up (Fixed Bottom Center console layout) */}
       <div
         style={cardStyle}
-        className="bg-white dark:bg-[#131522] border border-slate-100 dark:border-slate-800 rounded-3xl p-5 shadow-2xl space-y-4 z-[1000] text-slate-800 dark:text-slate-100 transition-all duration-300"
+        className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl p-4 shadow-lg space-y-3 z-[1000] text-slate-900 dark:text-white transition-all duration-200"
       >
         <div className="flex justify-between items-start">
-          <span className="text-[10px] font-bold text-indigo-500 dark:text-purple-400 bg-indigo-50 dark:bg-purple-950/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
-            {stepIndex + 1} / {steps.length}
+          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-[#181a24] px-1.5 py-0.5 rounded border border-slate-200 dark:border-[#222634]">
+            Step {stepIndex + 1} of {steps.length}
           </span>
           <button
             onClick={handleComplete}
-            className="text-slate-400 hover:text-slate-650 dark:hover:text-white p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded hover:bg-slate-50 dark:hover:bg-[#181a24] transition-colors cursor-pointer"
           >
-            <FiX className="w-4 h-4" />
+            <FiX className="w-3.5 h-3.5" />
           </button>
         </div>
 
         <div className="space-y-1">
-          <h4 className="font-extrabold text-base text-slate-800 dark:text-white">
+          <h4 className="font-semibold text-sm text-slate-900 dark:text-white">
             {stepTitle}
           </h4>
-          <p className="text-slate-500 dark:text-dark-text-muted text-xs leading-relaxed">
+          <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">
             {stepDesc}
           </p>
         </div>
 
-        <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-dark-border">
+        <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-[#222634]">
           <button
             onClick={handleComplete}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 text-xs font-bold hover:underline cursor-pointer"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 text-xs font-medium hover:underline cursor-pointer"
           >
             {labels.skip}
           </button>
@@ -730,18 +730,18 @@ export default function OnboardingTour() {
             {stepIndex > 0 && (
               <button
                 onClick={handleBack}
-                className="flex items-center gap-1 px-3 py-1.5 border border-slate-200 dark:border-dark-border text-slate-600 dark:text-slate-350 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1.5 border border-slate-200 dark:border-[#222634] text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium hover:bg-slate-50 dark:hover:bg-[#181a24] transition-colors cursor-pointer"
               >
-                <FiChevronLeft className="w-3.5 h-3.5" />
+                <FiChevronLeft className="w-3 h-3" />
                 {labels.back}
               </button>
             )}
             <button
               onClick={handleNext}
-              className="flex items-center gap-1 px-4 py-1.5 bg-secondary dark:bg-purple-650 hover:bg-indigo-700 dark:hover:bg-purple-750 text-white rounded-xl text-xs font-bold shadow-md shadow-secondary/15 transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
             >
-              {stepIndex === steps.length - 1 ? labels.finish : labels.next}
-              <FiChevronRight className="w-3.5 h-3.5" />
+              <span>{stepIndex === steps.length - 1 ? labels.finish : labels.next}</span>
+              <FiChevronRight className="w-3 h-3" />
             </button>
           </div>
         </div>

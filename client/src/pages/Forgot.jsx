@@ -51,25 +51,22 @@ function Forgot() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-dark-bg dark:to-dark-card flex items-center justify-center p-4 transition-colors duration-200">
-      <div className="bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border rounded-2xl shadow-xl p-8 w-full max-w-md relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0c0d12] flex items-center justify-center p-4 transition-colors">
+      <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl p-8 w-full max-w-md relative overflow-hidden">
         
-        {/* Header decoration */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-indigo-650 dark:from-purple-650 dark:to-pink-650"></div>
-
         <div className="flex flex-col items-center mb-6">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-16 h-16 rounded-2xl object-contain shadow-lg mb-3" />
-          <h1 className="text-3xl font-extrabold text-slate-850 dark:text-white tracking-tight">Forgot Password</h1>
-          <p className="text-[10px] text-slate-400 dark:text-dark-text-muted mt-1 uppercase font-bold tracking-wider">AI Personal Finance</p>
+          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-12 h-12 rounded-lg object-contain mb-3" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Forgot password</h1>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 uppercase font-mono tracking-wider">Expense & budget manager</p>
         </div>
 
         {error && (
           <motion.div 
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/20 dark:border-red-900/30 dark:text-red-400 px-4 py-3 rounded-xl mb-5 text-sm font-medium"
+            className="flex items-start gap-2.5 bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 px-3.5 py-2.5 rounded-lg mb-5 text-xs font-medium"
           >
-            <FiAlertCircle className="shrink-0 mt-0.5 text-base" />
+            <FiAlertCircle className="shrink-0 mt-0.5 text-sm" />
             <span className="leading-snug">{error}</span>
           </motion.div>
         )}
@@ -109,10 +106,10 @@ function Forgot() {
             <div className="w-full pt-2 flex flex-col gap-2.5">
               <Link
                 to="/login"
-                className="w-full bg-secondary dark:bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-750 dark:hover:bg-purple-700 transition-all shadow-md shadow-secondary/15 dark:shadow-purple-600/10 flex items-center justify-center gap-2"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-xs"
               >
                 <FiArrowLeft className="w-4 h-4" />
-                <span>Return to Login</span>
+                <span>Return to login</span>
               </Link>
 
               <button
@@ -125,23 +122,23 @@ function Forgot() {
             </div>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <p className="text-sm text-slate-500 dark:text-dark-text-muted leading-relaxed">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               Enter the email address registered with your account. We will send you a secure link to reset your password.
             </p>
             
             <div className="space-y-1">
-              <label className="block text-slate-750 dark:text-dark-text-muted font-bold text-xs uppercase mb-1">Email Address</label>
+              <label className="block text-slate-700 dark:text-slate-300 font-medium text-xs mb-1">Email address</label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-dark-text-muted">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                   <FiMail className="w-4 h-4" />
                 </span>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. yourname@example.com"
-                  className="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-dark-border rounded-xl bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none focus:border-secondary transition-all"
+                  placeholder="name@example.com"
+                  className="w-full pl-9 pr-3 py-2 border border-slate-200 dark:border-[#222634] rounded-lg bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                   required
                 />
               </div>
@@ -150,22 +147,22 @@ function Forgot() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-secondary dark:bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-750 dark:hover:bg-purple-700 disabled:opacity-50 transition-all shadow-md shadow-secondary/15 dark:shadow-purple-600/10 mt-6 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg disabled:opacity-50 transition-colors mt-4 flex items-center justify-center gap-2 text-xs cursor-pointer"
             >
               {loading ? (
-                <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+                <span className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent"></span>
               ) : (
                 <>
-                  <FiSend className="w-4 h-4" />
-                  <span>Send Reset Email</span>
+                  <FiSend className="w-3.5 h-3.5" />
+                  <span>Send reset email</span>
                 </>
               )}
             </button>
 
-            <p className="text-center pt-2 text-sm text-slate-500 dark:text-dark-text-muted flex items-center justify-center gap-1.5">
+            <p className="text-center pt-2 text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1.5">
               <FiArrowLeft className="w-3.5 h-3.5" />
               <span>Back to</span>
-              <Link to="/login" className="text-secondary dark:text-purple-400 font-bold hover:underline">
+              <Link to="/login" className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
                 Login
               </Link>
             </p>

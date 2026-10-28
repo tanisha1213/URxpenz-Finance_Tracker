@@ -283,24 +283,24 @@ export default function Investments() {
 
   if (!isPro) {
     return (
-      <div className="space-y-6 text-slate-800 dark:text-slate-100 animate-fadeIn">
-        <div className="rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/20 via-slate-900 to-indigo-950/20 p-8 sm:p-12 text-center flex flex-col items-center justify-center shadow-xl">
-          <div className="w-16 h-16 rounded-3xl bg-secondary/20 dark:bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-secondary dark:text-purple-400 mb-5">
-            <FiBriefcase className="w-8 h-8" />
+      <div className="space-y-6 text-slate-800 dark:text-slate-100">
+        <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-8 sm:p-10 text-center flex flex-col items-center justify-center">
+          <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-[#1a1d29] border border-slate-200 dark:border-[#2b3042] flex items-center justify-center text-slate-700 dark:text-slate-300 mb-4">
+            <FiBriefcase className="w-6 h-6" />
           </div>
-          <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-3">
-            Xpenz Pro Feature
+          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+            Pro plan feature
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Investments Portfolio Tracker</h2>
-          <p className="text-sm text-slate-300 max-w-lg mt-2 leading-relaxed">
-            Track your Mutual Funds, Stocks, Fixed Deposits, Gold, and Crypto in one unified dashboard with returns analytics and SIP schedules.
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Investment portfolio tracker</h2>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-lg mt-2 leading-relaxed">
+            Track mutual funds, stocks, fixed deposits, gold, and crypto assets with returns calculations and SIP schedules.
           </p>
           <button
             onClick={() => openUpgradeModal('investments')}
-            className="mt-6 flex items-center gap-2 py-3.5 px-8 rounded-2xl bg-secondary hover:bg-indigo-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-black text-sm shadow-xl shadow-secondary/30 transition-all hover:scale-105 cursor-pointer"
+            className="mt-6 flex items-center gap-2 py-2.5 px-6 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs transition-colors cursor-pointer"
           >
-            <FiZap className="w-4 h-4 fill-current" />
-            <span>Unlock Investments (Starts at ₹45)</span>
+            <FiZap className="w-3.5 h-3.5" />
+            <span>Upgrade to Pro (from ₹45)</span>
           </button>
         </div>
       </div>

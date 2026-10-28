@@ -48,52 +48,52 @@ function Reset() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-dark-bg dark:to-dark-card flex items-center justify-center p-4 transition-colors duration-200">
-      <div className="bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="flex flex-col items-center mb-8">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-16 h-16 rounded-2xl object-contain shadow-lg mb-3" />
-          <h1 className="text-3xl font-extrabold text-slate-850 dark:text-white tracking-tight">Reset Password</h1>
-          <p className="text-[10px] text-slate-400 dark:text-dark-text-muted mt-1 uppercase font-bold tracking-wider">AI Personal Finance</p>
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0c0d12] flex items-center justify-center p-4 transition-colors">
+      <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl p-8 w-full max-w-md">
+        <div className="flex flex-col items-center mb-6">
+          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-12 h-12 rounded-lg object-contain mb-3" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Reset password</h1>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 uppercase font-mono tracking-wider">Expense & budget manager</p>
         </div>
 
         {error && (
-          <div className="bg-red-150 border border-red-400 text-red-700 dark:bg-red-950/20 dark:border-red-900/30 dark:text-red-450 px-4 py-3 rounded-xl mb-4 text-sm font-semibold">
+          <div className="bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 px-3.5 py-2.5 rounded-lg mb-4 text-xs font-medium">
             {error}
           </div>
         )}
 
         {message && (
-          <div className="bg-emerald-150 border border-emerald-400 text-emerald-700 dark:bg-emerald-950/20 dark:border-emerald-900/30 dark:text-emerald-450 px-4 py-3 rounded-xl mb-4 text-sm font-semibold">
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 dark:bg-emerald-950/20 dark:border-emerald-900/30 dark:text-emerald-400 px-3.5 py-2.5 rounded-lg mb-4 text-xs font-medium">
             {message}
-            <p className="text-xs mt-1 text-emerald-600 dark:text-emerald-500 font-normal">Redirecting you to login page in 3 seconds...</p>
+            <p className="text-[11px] mt-1 text-emerald-600 dark:text-emerald-500 font-normal">Redirecting to login page in 3 seconds...</p>
           </div>
         )}
 
         {!message && (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <p className="text-sm text-slate-500 dark:text-dark-text-muted mb-4">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
               Enter and confirm your new password below.
             </p>
             
             <div>
-              <label className="block text-slate-750 dark:text-dark-text-muted font-bold text-xs uppercase mb-1">New Password</label>
+              <label className="block text-slate-700 dark:text-slate-300 font-medium text-xs mb-1">New password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-dark-border rounded-xl bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none focus:border-secondary"
+                className="w-full px-3 py-2 border border-slate-200 dark:border-[#222634] rounded-lg bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                 placeholder="Minimum 6 characters"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-slate-750 dark:text-dark-text-muted font-bold text-xs uppercase mb-1">Confirm New Password</label>
+              <label className="block text-slate-700 dark:text-slate-300 font-medium text-xs mb-1">Confirm new password</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-dark-border rounded-xl bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none focus:border-secondary"
+                className="w-full px-3 py-2 border border-slate-200 dark:border-[#222634] rounded-lg bg-white dark:bg-[#181a24] text-slate-800 dark:text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                 required
               />
             </div>
@@ -101,16 +101,16 @@ function Reset() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-secondary dark:bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-750 dark:hover:bg-purple-700 disabled:opacity-50 transition-all shadow-md shadow-secondary/15 dark:shadow-purple-600/10 mt-6"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg disabled:opacity-50 transition-colors mt-4 text-xs cursor-pointer"
             >
-              {loading ? 'Updating...' : 'Update Password'}
+              {loading ? 'Updating...' : 'Update password'}
             </button>
           </form>
         )}
 
-        <p className="text-center mt-6 text-sm text-slate-500 dark:text-dark-text-muted">
+        <p className="text-center mt-6 text-xs text-slate-500 dark:text-slate-400">
           Back to{' '}
-          <Link to="/login" className="text-secondary dark:text-purple-400 font-bold hover:underline">
+          <Link to="/login" className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
             Login
           </Link>
         </p>

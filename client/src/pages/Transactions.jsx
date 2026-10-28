@@ -1443,7 +1443,7 @@ function Transactions() {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-gradient-to-r from-secondary to-indigo-650 dark:from-purple-650 dark:to-indigo-650 text-white px-5 py-2 text-sm font-bold hover:shadow-lg hover:brightness-105 transition-all cursor-pointer"
+                  className="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 text-sm font-medium transition-colors cursor-pointer"
                 >
                   Save Loan
                 </button>

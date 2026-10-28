@@ -34,49 +34,49 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Hero Section */}
-        <div className="rounded-3xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent dark:from-purple-900/20 dark:via-indigo-950/10 p-6 sm:p-10 border border-indigo-100 dark:border-purple-900/30">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black uppercase tracking-wider mb-3">
+        <div className="rounded-xl bg-white dark:bg-[#14161f] p-6 sm:p-8 border border-slate-200 dark:border-[#222634]">
+          <div className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">
             <FiShield className="w-3.5 h-3.5" />
-            Google Play Data Safety & Privacy Policy
+            <span>Data safety & privacy policy</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-            Privacy Policy & User Data Retention
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Privacy policy & data retention
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">
-            Effective Date: October 27, 2026 • Last Reviewed: October 2026
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+            Effective: October 27, 2026 • Last reviewed: October 2026
           </p>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mt-4 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
             Welcome to <strong>Xpenz</strong> (&quot;we&quot;, &quot;our&quot;, or &quot;the Service&quot;). Your privacy and data security are our highest priorities. This Privacy Policy discloses how your personal and financial information is collected, stored, encrypted, and deleted in full compliance with the Google Play Store Developer Policy and international data protection standards.
           </p>
         </div>
 
         {/* Key Guarantees */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
-              <FiLock className="w-4 h-4" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-4 rounded-xl bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] space-y-2">
+            <div className="flex items-center gap-2">
+              <FiLock className="w-4 h-4 text-emerald-500" />
+              <h2 className="font-semibold text-xs text-slate-900 dark:text-white">Zero data selling</h2>
             </div>
-            <h2 className="font-extrabold text-sm text-slate-900 dark:text-white">Zero Data Selling</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               We never sell, rent, or share your financial data or personal identity with advertisers, third-party data brokers, or marketing networks.
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-purple-950/40 text-indigo-600 dark:text-purple-400 flex items-center justify-center font-bold">
-              <FiDatabase className="w-4 h-4" />
+          <div className="p-4 rounded-xl bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] space-y-2">
+            <div className="flex items-center gap-2">
+              <FiDatabase className="w-4 h-4 text-indigo-500" />
+              <h2 className="font-semibold text-xs text-slate-900 dark:text-white">Encrypted cloud & offline</h2>
             </div>
-            <h2 className="font-extrabold text-sm text-slate-900 dark:text-white">Encrypted Cloud & Offline</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               All cloud data is hosted on enterprise-grade Supabase infrastructure with multi-tenant row security and TLS 1.3 transport encryption.
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
-              <FiTrash2 className="w-4 h-4" />
+          <div className="p-4 rounded-xl bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] space-y-2">
+            <div className="flex items-center gap-2">
+              <FiTrash2 className="w-4 h-4 text-rose-500" />
+              <h2 className="font-semibold text-xs text-slate-900 dark:text-white">Permanent account deletion</h2>
             </div>
-            <h2 className="font-extrabold text-sm text-slate-900 dark:text-white">Instant Account Deletion</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               Self-serve permanent data erasure is available directly inside the app under Profile Settings with immediate cascading deletion.
             </p>
@@ -84,7 +84,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Detailed Sections */}
-        <div className="bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border rounded-3xl p-6 sm:p-9 space-y-8 shadow-sm">
+        <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl p-6 sm:p-8 space-y-8">
           
           {/* Section 1 */}
           <section className="space-y-3">

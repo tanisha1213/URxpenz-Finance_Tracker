@@ -478,27 +478,27 @@ function Loans() {
         {/* Left Side: Search, Filters, and Loans Cards list */}
         <div className="lg:col-span-3 space-y-6 min-w-0">
           {/* Forecast & Projections Banner Card */}
-          <div className="bg-gradient-to-r from-[#8B5CF6]/5 via-[#4f46e5]/5 to-indigo-500/5 dark:from-[#8B5CF6]/10 dark:to-indigo-500/10 border border-[#8B5CF6]/10 rounded-2xl p-4 sm:p-5 shadow-premium min-w-0 overflow-hidden" id="loans-payoff-date-tour">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-1.5">
-              <FiPercent className="text-secondary dark:text-purple-400" />
-              Expected Payoff Date
+          <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl p-4 sm:p-5 min-w-0 overflow-hidden" id="loans-payoff-date-tour">
+            <h3 className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-1.5">
+              <FiPercent className="text-indigo-500" />
+              <span>Debt payoff summary</span>
             </h3>
             <div className="grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-4 gap-3.5 text-xs">
               <div className="min-w-0">
-                <p className="text-slate-400 font-semibold leading-tight truncate">Total Debt</p>
-                <p className="font-extrabold text-slate-700 dark:text-slate-200 mt-0.5 truncate">{formatCurrency(forecast.totalRemaining + forecast.totalPaid)}</p>
+                <p className="text-slate-400 font-medium truncate">Total debt</p>
+                <p className="font-mono font-bold text-slate-900 dark:text-white mt-0.5 truncate">{formatCurrency(forecast.totalRemaining + forecast.totalPaid)}</p>
               </div>
               <div className="min-w-0">
-                <p className="text-slate-400 font-semibold leading-tight truncate">Total Paid</p>
-                <p className="font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5 truncate">{formatCurrency(forecast.totalPaid)}</p>
+                <p className="text-slate-400 font-medium truncate">Total paid</p>
+                <p className="font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 truncate">{formatCurrency(forecast.totalPaid)}</p>
               </div>
               <div className="min-w-0">
-                <p className="text-slate-400 font-semibold leading-tight truncate">Left to Pay</p>
-                <p className="font-extrabold text-rose-500 mt-0.5 truncate">{formatCurrency(forecast.totalRemaining)}</p>
+                <p className="text-slate-400 font-medium truncate">Remaining principal</p>
+                <p className="font-mono font-bold text-rose-500 mt-0.5 truncate">{formatCurrency(forecast.totalRemaining)}</p>
               </div>
               <div className="min-w-0">
-                <p className="text-slate-400 font-semibold leading-tight break-words">Expected Payoff Date</p>
-                <p className="font-extrabold text-indigo-600 dark:text-purple-400 mt-0.5 truncate">{forecast.debtFreeDate}</p>
+                <p className="text-slate-400 font-medium break-words">Estimated payoff date</p>
+                <p className="font-mono font-bold text-indigo-600 dark:text-indigo-400 mt-0.5 truncate">{forecast.debtFreeDate}</p>
               </div>
             </div>
           </div>
@@ -658,7 +658,7 @@ function Loans() {
                       </div>
                       <div className="w-full h-2 bg-slate-100 dark:bg-dark-border rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-[#8B5CF6] to-indigo-500 rounded-full transition-all duration-500 ease-out"
+                          className="h-full bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-300 ease-out"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
