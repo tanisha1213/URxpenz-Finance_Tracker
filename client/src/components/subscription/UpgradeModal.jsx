@@ -392,7 +392,7 @@ export default function UpgradeModal() {
           <button
             onClick={handleSubscribe}
             disabled={loading || (typeof navigator !== 'undefined' && !navigator.onLine)}
-            className="w-full flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg btn-primary text-white font-semibold text-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="inline-block animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" />

@@ -29,8 +29,8 @@ function BottomNavigation() {
               to={item.path}
               className={`flex flex-col items-center justify-center flex-1 h-full py-1 relative transition-colors ${
                 active 
-                  ? 'text-indigo-600 dark:text-indigo-400 font-semibold' 
-                  : 'text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium'
+                  ? 'text-[var(--primary)] font-semibold' 
+                  : 'text-[var(--text-muted)] hover:text-[var(--text)] font-medium'
               }`}
             >
               <Icon className="w-4.5 h-4.5 sm:w-5 sm:h-5 shrink-0" />
@@ -38,7 +38,7 @@ function BottomNavigation() {
                 {t(item.labelKey)}
               </span>
               {active && (
-                <span className="absolute bottom-0.5 w-1 h-1 rounded-full bg-indigo-600 dark:bg-indigo-400" />
+                <span className="absolute bottom-0.5 w-1 h-1 rounded-full bg-[var(--primary)]" />
               )}
             </Link>
           )

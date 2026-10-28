@@ -25,7 +25,7 @@ import { useTheme } from '../context/ThemeContext'
 import { useLanguage } from '../context/LanguageContext'
 import { getLoans, addLoan } from '../services/loanService'
 
-const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
+const COLORS = ['#8F2BFF', '#D93CF5', '#5A00D6', '#AD5CFF', '#F25CFF', '#3A0A9A']
 
 const emptyForm = {
   type: 'expense',
@@ -339,13 +339,13 @@ function Dashboard() {
   }))
 
   const isDark = theme === 'dark'
-  const gridStroke = isDark ? '#222533' : '#f1f5f9'
-  const textStroke = isDark ? '#475569' : '#94a3b8'
+  const gridStroke = isDark ? 'rgba(196,139,255,0.1)' : 'rgba(58,10,154,0.08)'
+  const textStroke = isDark ? '#A99BC4' : '#5E5078'
   const tooltipStyle = isDark
-    ? { backgroundColor: '#13141f', borderRadius: '12px', border: '1px solid #222533', color: '#fff' }
-    : { backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }
-  const tooltipItemStyle = { color: isDark ? '#f8fafc' : '#0f172a' }
-  const tooltipLabelStyle = { color: isDark ? '#94a3b8' : '#64748b' }
+    ? { backgroundColor: '#140727', borderRadius: '12px', border: '1px solid rgba(196,139,255,0.14)', color: '#F4EEFF' }
+    : { backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid rgba(58,10,154,0.12)', boxShadow: '0 4px 12px rgba(14, 4, 32, 0.08)' }
+  const tooltipItemStyle = { color: isDark ? '#F4EEFF' : '#170A2E' }
+  const tooltipLabelStyle = { color: isDark ? '#A99BC4' : '#5E5078' }
 
   const isBudgetDone = Number(summary?.monthlyBudget || 0) > 0
   const isAccountsDone = summary?.totalBalance > 0
@@ -600,8 +600,8 @@ function Dashboard() {
               <AreaChart data={trend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.0}/>
+                    <stop offset="5%" stopColor="#8F2BFF" stopOpacity={0.25}/>
+                    <stop offset="95%" stopColor="#8F2BFF" stopOpacity={0.0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridStroke} />
@@ -613,7 +613,7 @@ function Dashboard() {
                   labelStyle={tooltipLabelStyle}
                   formatter={(value) => [formatCurrency(value), 'Spent']}
                 />
-                <Area type="monotone" dataKey="expense" stroke="#6366f1" strokeWidth={2} fillOpacity={1} fill="url(#colorExpense)" activeDot={{ r: 5, strokeWidth: 1.5, stroke: '#fff' }} />
+                <Area type="monotone" dataKey="expense" stroke="#8F2BFF" strokeWidth={2.5} fillOpacity={1} fill="url(#colorExpense)" activeDot={{ r: 5, strokeWidth: 1.5, stroke: '#F4EEFF' }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>

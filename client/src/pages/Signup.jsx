@@ -105,7 +105,7 @@ function Signup() {
     <div className="min-h-screen bg-slate-100 dark:bg-[#0c0d12] flex items-center justify-center p-4 transition-colors">
       <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl shadow-lg p-6 sm:p-8 w-full max-w-md">
         <div className="flex flex-col items-center mb-6">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-16 h-16 rounded-xl object-contain mb-3 drop-shadow-sm" />
+          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-20 h-20 rounded-2xl object-contain mb-3.5" />
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">URxpenz</h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Expense & budget manager</p>
         </div>
@@ -230,7 +230,7 @@ function Signup() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition-colors cursor-pointer disabled:opacity-50 mt-4 text-xs"
+            className="w-full btn-primary text-white font-semibold py-2.5 rounded-lg transition-colors cursor-pointer disabled:opacity-50 mt-4 text-xs"
           >
             {loading ? 'Creating account...' : 'Create account'}
           </button>
@@ -238,7 +238,7 @@ function Signup() {
 
         <p className="text-center mt-6 text-xs text-slate-500 dark:text-slate-400">
           Already have an account?{' '}
-          <Link to="/login" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
+          <Link to="/login" className="text-[var(--primary)] font-semibold hover:underline">
             Sign in
           </Link>
         </p>

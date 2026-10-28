@@ -46,7 +46,7 @@ function Sidebar() {
       <div className="p-5 border-b border-[#1e2230] flex items-center justify-between">
         <div>
           <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-2.5">
-            <img src={logoDark} alt="URxpenz" className="w-9 h-9 rounded-lg object-contain" />
+            <img src={logoDark} alt="URxpenz" className="w-11 h-11 rounded-lg object-contain" />
             URxpenz
           </h1>
           <p className="text-[11px] text-slate-400 mt-0.5">Expense & budget manager</p>

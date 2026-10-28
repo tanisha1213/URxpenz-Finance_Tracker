@@ -55,7 +55,7 @@ function Forgot() {
       <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl p-8 w-full max-w-md relative overflow-hidden">
         
         <div className="flex flex-col items-center mb-6">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-16 h-16 rounded-xl object-contain mb-3 drop-shadow-sm" />
+          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-20 h-20 rounded-2xl object-contain mb-3.5" />
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Forgot password</h1>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 uppercase font-mono tracking-wider">Expense & budget manager</p>
         </div>
@@ -147,7 +147,7 @@ function Forgot() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg disabled:opacity-50 transition-colors mt-4 flex items-center justify-center gap-2 text-xs cursor-pointer"
+              className="w-full btn-primary text-white font-medium py-2.5 rounded-lg disabled:opacity-50 transition-colors mt-4 flex items-center justify-center gap-2 text-xs cursor-pointer"
             >
               {loading ? (
                 <span className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent"></span>

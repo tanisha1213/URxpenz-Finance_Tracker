@@ -2,134 +2,275 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   URXPENZ DESIGN TOKENS & VISUAL IDENTITY SYSTEM
+   Derived directly from the URxpenz ribbon monogram and analytics logo.
+   ========================================================================== */
+
 :root {
-  --bg-canvas: #f8f9fa;
-  --bg-surface: #ffffff;
-  --bg-subtle: #f1f3f5;
-  --border-subtle: #e5e7eb;
-  --border-strong: #d1d5db;
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-muted: #6b7280;
-  --color-brand: #4338ca;
-  --color-brand-hover: #3730a3;
-  --color-brand-subtle: rgba(67, 56, 202, 0.08);
+  /* Brand Scale (Sampled from the Logo) */
+  --violet-50:  #F6EEFF;
+  --violet-100: #EBD9FF;
+  --violet-200: #D9B8FF;
+  --violet-300: #C48BFF;
+  --violet-400: #AD5CFF;
+  --violet-500: #8F2BFF;   /* Primary Brand */
+  --violet-600: #7A00FF;   /* Pure Logo Violet, Primary Buttons */
+  --violet-700: #5A00D6;
+  --violet-800: #3A0A9A;
+  --violet-900: #1F0752;
+  --violet-950: #0E0420;   /* Dark Background Base */
+  --magenta-400: #F25CFF;  /* Accent, mirrors the bars; used with restraint */
+  --magenta-500: #D93CF5;
+
+  /* Light Theme */
+  --bg: #FBF9FE;
+  --surface: #FFFFFF;
+  --surface-raised: #F3ECFC;
+  --border: rgba(58, 10, 154, 0.12);
+  --text: #170A2E;         /* Deep violet-black, never pure #000 */
+  --text-muted: #5E5078;
+  --primary: var(--violet-600);
+  --primary-hover: var(--violet-700);
+  --accent: var(--magenta-500);
+
+  /* Signature Brand Gradients (Used strictly on CTAs, active pills, bar highlights) */
+  --brand-gradient: linear-gradient(135deg, #F3B3FF 0%, #C45BFF 30%, #8A2BFF 60%, #4B00E6 85%, #2A0A8F 100%);
+  --brand-gradient-hover: linear-gradient(135deg, #F7C6FF 0%, #CF70FF 30%, #983DFF 60%, #5808F0 85%, #340E9E 100%);
+
+  /* Functional Status Indicators */
   --color-positive: #059669;
   --color-positive-subtle: rgba(5, 150, 105, 0.08);
-  --color-negative: #dc2626;
+  --color-negative: #DC2626;
   --color-negative-subtle: rgba(220, 38, 38, 0.08);
+  --color-warning: #D97706;
+
+  /* Backward Compatibility Variables for Legacy Helpers */
+  --bg-canvas: var(--bg);
+  --bg-surface: var(--surface);
+  --bg-subtle: var(--surface-raised);
+  --border-subtle: var(--border);
+  --border-strong: rgba(58, 10, 154, 0.22);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-muted);
+  --color-brand: var(--primary);
+  --color-brand-hover: var(--primary-hover);
+  --color-brand-subtle: rgba(122, 0, 255, 0.08);
 }
 
 .dark {
-  --bg-canvas: #0c0d12;
-  --bg-surface: #14161f;
-  --bg-subtle: #1a1d28;
-  --border-subtle: #222634;
-  --border-strong: #2f3547;
-  --text-primary: #f3f4f6;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
-  --color-brand: #6366f1;
-  --color-brand-hover: #4f46e5;
-  --color-brand-subtle: rgba(99, 102, 241, 0.12);
-  --color-positive: #10b981;
+  /* Dark Theme */
+  --bg: #0B0316;
+  --surface: #140727;
+  --surface-raised: #1C0B36;
+  --border: rgba(196, 139, 255, 0.14);
+  --text: #F4EEFF;         /* Off-white, never pure #fff */
+  --text-muted: #A99BC4;
+  --primary: var(--violet-500);
+  --primary-hover: var(--violet-400);
+  --accent: var(--magenta-400);
+
+  /* Signature Dark Brand Gradient */
+  --brand-gradient: linear-gradient(160deg, #8A0FF5 0%, #3A0A9A 45%, #0F0420 100%);
+  --brand-gradient-hover: linear-gradient(160deg, #9C2BF7 0%, #490FB8 45%, #180733 100%);
+
+  /* Functional Status Indicators */
+  --color-positive: #10B981;
   --color-positive-subtle: rgba(16, 185, 129, 0.12);
-  --color-negative: #ef4444;
+  --color-negative: #EF4444;
   --color-negative-subtle: rgba(239, 68, 68, 0.12);
+  --color-warning: #F59E0B;
+
+  /* Backward Compatibility Variables for Legacy Helpers */
+  --bg-canvas: var(--bg);
+  --bg-surface: var(--surface);
+  --bg-subtle: var(--surface-raised);
+  --border-subtle: var(--border);
+  --border-strong: rgba(196, 139, 255, 0.24);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-muted);
+  --color-brand: var(--primary);
+  --color-brand-hover: var(--primary-hover);
+  --color-brand-subtle: rgba(143, 43, 255, 0.14);
 }
+
+/* ==========================================================================
+   GLOBAL TYPOGRAPHY & BASE RESET
+   ========================================================================== */
 
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  background-color: var(--bg);
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--bg-canvas);
-  color: var(--text-primary);
+  transition: background-color 200ms ease-out, color 200ms ease-out;
 }
 
-/* Technical sidebar styling */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Tabular figures for financial numbers & metrics */
+.font-mono,
+table,
+.tabular-nums,
+[data-metric] {
+  font-feature-settings: 'tnum' on, 'zero' on;
+}
+
+/* Links */
+a {
+  transition: color 150ms ease-out;
+}
+.dark a:hover {
+  color: var(--violet-400);
+}
+.light a:hover {
+  color: var(--violet-700);
+}
+
+/* ==========================================================================
+   COMPONENT STYLES: SIDEBAR, NAVIGATION, CARDS, BUTTONS, INPUTS
+   ========================================================================== */
+
+/* Left Sidebar: Sits in the deep violet-950 tile (#0E0420) to match the dark logo squircle */
 aside {
-  background-color: #0f1117 !important;
-  border-right: 1px solid #1e2230 !important;
+  background-color: var(--violet-950) !important;
+  border-right: 1px solid var(--border) !important;
 }
 
 .sidebar-active {
-  background-color: rgba(99, 102, 241, 0.12) !important;
-  color: #ffffff !important;
-  border-left: 3px solid #6366f1 !important;
+  background: rgba(143, 43, 255, 0.16) !important;
+  color: #F4EEFF !important;
+  border-left: 3px solid var(--primary) !important;
+  border-radius: 0 10px 10px 0;
   font-weight: 600;
 }
 
 .sidebar-inactive {
-  color: #94a3b8 !important;
+  color: var(--text-muted) !important;
   border-left: 3px solid transparent !important;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition: color 150ms ease-out, background-color 150ms ease-out;
 }
 
 .sidebar-inactive:hover {
-  color: #ffffff !important;
-  background-color: rgba(255, 255, 255, 0.04) !important;
+  color: var(--text) !important;
+  background-color: rgba(196, 139, 255, 0.08) !important;
 }
 
-/* Card surfaces */
+/* Top Navbar & Mobile Bottom Nav */
+nav {
+  transition: background-color 150ms ease-out, border-color 150ms ease-out;
+}
+.dark nav {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+nav:not(.dark nav) {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+
+/* Card Surfaces & Containers: 14-20px radius, 1px token borders over shadows */
 .dark .bg-white,
 .dark .dark\:bg-dark-card,
-.dark .dark\:bg-\[\#11131f\] {
-  background-color: #14161f !important;
-  border-color: #222634 !important;
+.dark .dark\:bg-\[\#14161f\],
+.dark .dark\:bg-\[\#11131f\],
+.dark .dark\:bg-\[\#0c0d12\],
+.dark .dark\:bg-\[\#151822\] {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
   box-shadow: none !important;
 }
 
+.bg-white,
 .light .bg-white {
-  background-color: #ffffff !important;
-  border-color: #e5e7eb !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 1px 3px rgba(58, 10, 154, 0.04) !important;
 }
 
-/* Refined buttons */
+/* Primary CTA Buttons with Logo Signature Gradient */
+.btn-primary,
+button.bg-secondary,
+.bg-secondary,
 .dark .bg-secondary,
-.dark .dark\:bg-purple-650,
-.dark .dark\:bg-purple-600 {
-  background-color: #4f46e5 !important;
-  color: #ffffff !important;
-  box-shadow: none !important;
-  transition: background-color 150ms ease;
-}
-
-.dark .bg-secondary:hover,
-.dark .dark\:bg-purple-650:hover,
-.dark .dark\:bg-purple-600:hover {
-  background-color: #4338ca !important;
-}
-
 .light .bg-secondary,
-.light button.bg-secondary,
-.light .bg-indigo-600 {
-  background-color: #4338ca !important;
-  color: #ffffff !important;
-  box-shadow: none !important;
-  transition: background-color 150ms ease;
+.dark .dark\:bg-purple-650,
+.dark .dark\:bg-purple-600,
+.bg-indigo-600 {
+  background-image: var(--brand-gradient) !important;
+  background-color: transparent !important;
+  color: #F4EEFF !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px -2px rgba(122, 0, 255, 0.3) !important;
+  transition: all 150ms ease-out !important;
 }
 
+.btn-primary:hover,
+button.bg-secondary:hover,
+.bg-secondary:hover,
+.dark .bg-secondary:hover,
 .light .bg-secondary:hover,
-.light button.bg-secondary:hover,
-.light .bg-indigo-600:hover {
-  background-color: #3730a3 !important;
+.dark .dark\:bg-purple-650:hover,
+.dark .dark\:bg-purple-600:hover,
+.bg-indigo-600:hover {
+  background-image: var(--brand-gradient-hover) !important;
+  box-shadow: 0 4px 14px -2px rgba(122, 0, 255, 0.45) !important;
 }
 
-/* Dropdown select options */
-.dark select option,
-.dark select {
-  background-color: #14161f !important;
-  color: #f3f4f6 !important;
+/* Visible accessible focus ring in violet-300 */
+button:focus-visible,
+.btn-primary:focus-visible {
+  outline: 2px solid var(--violet-300) !important;
+  outline-offset: 2px !important;
 }
 
-.light select option,
-.light select {
-  background-color: #ffffff !important;
-  color: #111827 !important;
+/* Form Inputs, Selects & Textareas */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: 10px !important;
+  transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
 }
 
-/* Clean monospaced figures */
-.font-mono {
-  font-feature-settings: 'tnum' on, 'zero' on;
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(143, 43, 255, 0.25) !important;
+}
+
+/* Select options */
+select option {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* Modals & Popovers (Soft violet-950 tinted floating shadows) */
+.shadow-lg,
+.shadow-xl,
+.shadow-2xl {
+  box-shadow: 0 16px 36px -6px rgba(14, 4, 32, 0.35) !important;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

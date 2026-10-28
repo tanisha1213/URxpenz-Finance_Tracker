@@ -461,19 +461,26 @@ function InsightsReports() {
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={report.categoryBreakdown} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" className="dark:stroke-dark-border" />
-                        <XAxis dataKey="category" tickLine={false} stroke="#94a3b8" fontSize={11} />
-                        <YAxis tickLine={false} stroke="#94a3b8" fontSize={11} />
+                        <defs>
+                          <linearGradient id="urxpenzBarGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#AD5CFF" />
+                            <stop offset="70%" stopColor="#7A00FF" />
+                            <stop offset="100%" stopColor="#3A0A9A" />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "rgba(196,139,255,0.1)" : "rgba(58,10,154,0.08)"} />
+                        <XAxis dataKey="category" tickLine={false} stroke={isDark ? "#A99BC4" : "#5E5078"} fontSize={11} />
+                        <YAxis tickLine={false} stroke={isDark ? "#A99BC4" : "#5E5078"} fontSize={11} />
                         <Tooltip
                           contentStyle={isDark
-                            ? { backgroundColor: '#13141f', borderRadius: '12px', border: '1px solid #222533', color: '#fff' }
-                            : { backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }
+                            ? { backgroundColor: '#140727', borderRadius: '12px', border: '1px solid rgba(196,139,255,0.14)', color: '#F4EEFF' }
+                            : { backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid rgba(58,10,154,0.12)', boxShadow: '0 4px 12px rgba(14, 4, 32, 0.08)' }
                           }
-                          itemStyle={{ color: isDark ? '#f8fafc' : '#0f172a' }}
-                          labelStyle={{ color: isDark ? '#94a3b8' : '#64748b' }}
+                          itemStyle={{ color: isDark ? '#F4EEFF' : '#170A2E' }}
+                          labelStyle={{ color: isDark ? '#A99BC4' : '#5E5078' }}
                           formatter={(value) => formatCurrency(value)}
                         />
-                        <Bar dataKey="amount" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="amount" fill="url(#urxpenzBarGradient)" radius={[6, 6, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
