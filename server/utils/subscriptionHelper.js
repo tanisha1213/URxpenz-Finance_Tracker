@@ -67,10 +67,13 @@ export const getUserSubscription = (user) => {
   const now = new Date();
   const createdAt = user.createdAt ? new Date(user.createdAt) : now;
 
-  // Calculate 60-day trial window
-  const trialEnd = user.trialEndDate 
-    ? new Date(user.trialEndDate) 
-    : new Date(createdAt.getTime() + 60 * 24 * 60 * 60 * 1000);
+  const effectiveTrialEndDate = user.trialEndDate || stored?.trialEndDate;
+
+  // Calculate trial window (defaults to 60 days, or 70 days if registered with referral code)
+  const defaultTrialDays = (user.hasReferralBonus || stored?.hasReferralBonus) ? 70 : 60;
+  const trialEnd = effectiveTrialEndDate 
+    ? new Date(effectiveTrialEndDate) 
+    : new Date(createdAt.getTime() + defaultTrialDays * 24 * 60 * 60 * 1000);
 
   // Check paid subscription
   const hasActivePaidPlan = !!(

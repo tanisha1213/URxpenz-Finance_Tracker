@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useSubscription } from '../../context/SubscriptionContext';
 import { createPaymentOrder, verifyPaymentSignature } from '../../services/billingService';
 import { formatCurrency } from '../../utils/format';
@@ -13,7 +14,8 @@ import {
   FiCalendar,
   FiAward,
   FiDownload,
-  FiWifiOff
+  FiWifiOff,
+  FiGift
 } from 'react-icons/fi';
 
 const PLANS = [
@@ -56,6 +58,7 @@ const PLANS = [
 ];
 
 export default function UpgradeModal() {
+  const { user } = useSelector((state) => state.auth);
   const {
     isUpgradeModalOpen,
     upgradeFeature,
@@ -71,6 +74,13 @@ export default function UpgradeModal() {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+
+  const discountPercent = user?.referral?.discountPercent || 0;
+  const calculatePrice = (price) => {
+    if (!discountPercent || discountPercent <= 0) return price;
+    const discount = Math.round((price * discountPercent) / 100);
+    return Math.max(1, price - discount);
+  };
 
   if (!isUpgradeModalOpen) return null;
 
@@ -214,8 +224,16 @@ export default function UpgradeModal() {
         <div className="flex items-center gap-2 mb-2">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-secondary/10 dark:bg-purple-900/30 text-secondary dark:text-purple-400 border border-secondary/20">
             <FiZap className="w-3.5 h-3.5 fill-current" />
-            {isTrial ? `🎁 60-Day Free Trial (${trialDaysRemaining} days remaining)` : 'Xpenz Membership'}
+            {isTrial
+              ? `🎁 ${user?.hasReferralBonus ? '70-Day Referral Bonus' : '60-Day'} Free Trial (${trialDaysRemaining} days remaining)`
+              : 'Xpenz Membership'}
           </span>
+          {discountPercent > 0 && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+              <FiGift className="w-3.5 h-3.5" />
+              {discountPercent}% Referral Reward
+            </span>
+          )}
         </div>
 
         {/* Headline */}
@@ -224,9 +242,33 @@ export default function UpgradeModal() {
         </h2>
         <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
           {isTrial
-            ? 'Your 60-day full-access trial is active! Upgrade anytime to ensure uninterrupted access to all advanced tools.'
+            ? user?.hasReferralBonus
+              ? 'Your extended 70-day referral trial is active! Upgrade anytime with your discount to ensure continuous access.'
+              : 'Your 60-day full-access trial is active! Upgrade anytime to ensure uninterrupted access to all advanced tools.'
             : 'Basic tier includes monthly budget, monthly/weekly reports, 1 bank account, 1 loan, 2 subscriptions, and permanent cloud sync. Upgrade for daily budgets, anytime reports & unlimited tracking.'}
         </p>
+
+        {/* Referral Reward Callout */}
+        {discountPercent > 0 && (
+          <div className="mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-purple-500/10 to-indigo-500/15 border border-amber-500/30 flex items-center justify-between gap-3 text-slate-800 dark:text-slate-100 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-500 flex-shrink-0">
+                <FiGift className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400">
+                  {discountPercent}% Referral Reward Applied!
+                </p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  You referred {user?.referral?.referralCount || 0} friend{user?.referral?.referralCount === 1 ? '' : 's'}. This discount applies automatically to your next plan upgrade!
+                </p>
+              </div>
+            </div>
+            <span className="px-3 py-1 rounded-xl text-xs font-black bg-amber-500 text-white shadow-md flex-shrink-0">
+              -{discountPercent}% OFF
+            </span>
+          </div>
+        )}
 
         {/* Success or Error Banner */}
         {successMsg && (
@@ -253,6 +295,10 @@ export default function UpgradeModal() {
         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {PLANS.map((plan) => {
             const isSelected = selectedPlanId === plan.id;
+            const finalPrice = calculatePrice(plan.price);
+            const monthsCount = plan.id === 'kickstart' ? 1 : plan.id === 'quarterly' ? 3 : plan.id === 'half_yearly' ? 6 : 12;
+            const perMonthDiscounted = Math.round(finalPrice / monthsCount);
+
             return (
               <div
                 key={plan.id}
@@ -276,14 +322,25 @@ export default function UpgradeModal() {
                 </div>
 
                 <div className="mt-4 flex items-baseline justify-between pt-3 border-t border-slate-200/60 dark:border-slate-800">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-black text-slate-900 dark:text-white">
-                      ₹{plan.price}
-                    </span>
+                  <div className="flex items-baseline gap-1.5">
+                    {discountPercent > 0 ? (
+                      <>
+                        <span className="text-2xl font-black text-slate-900 dark:text-white">
+                          ₹{finalPrice}
+                        </span>
+                        <span className="text-xs line-through text-slate-400">
+                          ₹{plan.price}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-2xl font-black text-slate-900 dark:text-white">
+                        ₹{plan.price}
+                      </span>
+                    )}
                     <span className="text-xs text-slate-400">total</span>
                   </div>
                   <span className="text-xs font-semibold text-secondary dark:text-purple-400">
-                    ~₹{plan.perMonth}/mo
+                    ~₹{perMonthDiscounted}/mo
                   </span>
                 </div>
               </div>
@@ -348,7 +405,9 @@ export default function UpgradeModal() {
             ) : (
               <FiAward className="w-4 h-4" />
             )}
-            <span>Activate {selectedPlan.name} (₹{selectedPlan.price})</span>
+            <span>
+              Activate {selectedPlan.name} (₹{calculatePrice(selectedPlan.price)})
+            </span>
           </button>
           
           <button

@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import User from '../models/User.js';
 import { getUserSubscription, SUBSCRIPTION_PLANS, BASIC_TIER_LIMITS } from '../utils/subscriptionHelper.js';
 import { saveStoredSubscription } from '../utils/subscriptionStore.js';
+import { getUserReferralData, consumeReferralDiscount } from '../utils/referralStore.js';
 import { supabase } from '../config/supabase.js';
 
 /**
@@ -15,10 +16,12 @@ export const getSubscriptionStatus = async (req, res) => {
     }
 
     const subscription = getUserSubscription(user);
+    const referral = getUserReferralData(req.userId, user.name);
 
     return res.status(200).json({
       success: true,
       subscription,
+      referral,
       plans: SUBSCRIPTION_PLANS,
       limits: BASIC_TIER_LIMITS,
       paymentConfig: {
@@ -48,6 +51,19 @@ export const createRazorpayOrder = async (req, res) => {
       });
     }
 
+    const referral = getUserReferralData(req.userId);
+    const discountPercent = referral?.discountPercent || 0; // 0, 5, 10, 15, 20, 25
+    const originalPrice = plan.price;
+    const discountAmount = discountPercent > 0 ? Math.round((originalPrice * discountPercent) / 100) : 0;
+    const finalPrice = Math.max(1, originalPrice - discountAmount);
+
+    const pricing = {
+      originalPrice,
+      finalPrice,
+      discountPercent,
+      discountAmount
+    };
+
     const keyId = process.env.RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
@@ -57,6 +73,7 @@ export const createRazorpayOrder = async (req, res) => {
         success: true,
         isDemoMode: true,
         plan,
+        pricing,
         message: 'Razorpay keys not configured. Direct activation available.'
       });
     }
@@ -64,13 +81,16 @@ export const createRazorpayOrder = async (req, res) => {
     // Call Razorpay API to generate order
     const authHeader = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
     const orderData = {
-      amount: plan.price * 100, // Amount in paise (e.g. ₹45 = 4500 paise)
+      amount: finalPrice * 100, // Amount in paise (discounted)
       currency: 'INR',
       receipt: `rcpt_${req.userId.slice(0, 8)}_${Date.now().toString().slice(-6)}`,
       notes: {
         userId: req.userId,
         planId: plan.id,
-        planName: plan.name
+        planName: plan.name,
+        discountPercent: `${discountPercent}%`,
+        discountAmount: `₹${discountAmount}`,
+        finalPrice: `₹${finalPrice}`
       }
     };
 
@@ -94,7 +114,8 @@ export const createRazorpayOrder = async (req, res) => {
       isDemoMode: false,
       order,
       keyId,
-      plan
+      plan,
+      pricing
     });
   } catch (error) {
     return res.status(500).json({
@@ -169,11 +190,15 @@ export const verifyRazorpayPayment = async (req, res) => {
     user.subscriptionExpiresAt = newExpiresAt.toISOString();
 
     const subscription = getUserSubscription(user);
+    // Consume one-time referral discount upon purchase
+    consumeReferralDiscount(req.userId);
+    const referral = getUserReferralData(req.userId, user.name);
 
     return res.status(200).json({
       success: true,
       message: `Payment verified! ${plan.name} is now active until ${newExpiresAt.toLocaleDateString('en-IN')}.`,
-      subscription
+      subscription,
+      referral
     });
   } catch (error) {
     return res.status(500).json({
@@ -242,11 +267,15 @@ export const subscribePlan = async (req, res) => {
     user.subscriptionExpiresAt = newExpiresAt.toISOString();
 
     const subscription = getUserSubscription(user);
+    // Consume one-time referral discount upon activation
+    consumeReferralDiscount(req.userId);
+    const referral = getUserReferralData(req.userId, user.name);
 
     return res.status(200).json({
       success: true,
       message: `Successfully activated ${plan.name}! All premium features are unlocked until ${newExpiresAt.toLocaleDateString('en-IN')}.`,
-      subscription
+      subscription,
+      referral
     });
   } catch (error) {
     return res.status(500).json({

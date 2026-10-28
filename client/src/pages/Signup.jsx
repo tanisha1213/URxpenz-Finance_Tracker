@@ -1,29 +1,82 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { signupUser } from '../redux/slices/authSlice'
+import { validateReferralCode } from '../services/referralService'
 import { useTheme } from '../context/ThemeContext'
+import { FiGift, FiCheck, FiX } from 'react-icons/fi'
 import logoLight from '../assets/logo-light.png'
 import logoDark from '../assets/logo-dark.png'
 
 function Signup() {
+  const [searchParams] = useSearchParams()
+  const initialRef = searchParams.get('ref') || ''
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    referralCode: initialRef.toUpperCase()
   })
   const [error, setError] = useState('')
+  const [referralValidation, setReferralValidation] = useState({
+    status: 'idle', // 'idle' | 'valid' | 'invalid'
+    message: ''
+  })
+  const [showRefInput, setShowRefInput] = useState(!!initialRef)
   const { theme } = useTheme()
   const { loading } = useSelector(state => state.auth)
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
+  useEffect(() => {
+    if (initialRef) {
+      validateCode(initialRef)
+    }
+  }, [initialRef])
+
+  const validateCode = async (code) => {
+    if (!code || !code.trim()) {
+      setReferralValidation({ status: 'idle', message: '' })
+      return
+    }
+    try {
+      const res = await validateReferralCode(code.trim())
+      if (res.data?.valid) {
+        setReferralValidation({
+          status: 'valid',
+          message: '🎉 Valid Referral Code! You unlock +10 Days Extra Free Trial (70 Days Total).'
+        })
+      } else {
+        setReferralValidation({
+          status: 'invalid',
+          message: 'Referral code not recognized.'
+        })
+      }
+    } catch (err) {
+      setReferralValidation({
+        status: 'invalid',
+        message: err.response?.data?.message || 'Referral code not recognized.'
+      })
+    }
+  }
+
   const handleChange = (e) => {
+    const { name, value } = e.target
+    const updated = name === 'referralCode' ? value.toUpperCase() : value
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: updated
     })
+
+    if (name === 'referralCode') {
+      if (!updated.trim()) {
+        setReferralValidation({ status: 'idle', message: '' })
+      } else {
+        validateCode(updated)
+      }
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -39,7 +92,8 @@ function Signup() {
       await dispatch(signupUser({
         name: formData.name,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        referralCode: formData.referralCode ? formData.referralCode.trim() : undefined
       })).unwrap()
       navigate('/dashboard')
     } catch (err) {
@@ -109,6 +163,68 @@ function Signup() {
               className="w-full px-4 py-2.5 border border-slate-200 dark:border-dark-border rounded-xl bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 focus:outline-none"
               required
             />
+          </div>
+
+          {/* Referral Code Field */}
+          <div className="pt-1">
+            {!showRefInput ? (
+              <button
+                type="button"
+                onClick={() => setShowRefInput(true)}
+                className="text-xs text-secondary dark:text-purple-400 font-bold hover:underline flex items-center gap-1.5 cursor-pointer"
+              >
+                <FiGift className="w-3.5 h-3.5" />
+                Have a Referral Code? Get +10 Days Extra Free Trial
+              </button>
+            ) : (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-slate-750 dark:text-dark-text-muted font-bold text-xs uppercase flex items-center gap-1">
+                    <FiGift className="w-3.5 h-3.5 text-secondary dark:text-purple-400" />
+                    Referral Code (+10 Days Bonus)
+                  </label>
+                  {!initialRef && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowRefInput(false)
+                        setFormData({ ...formData, referralCode: '' })
+                        setReferralValidation({ status: 'idle', message: '' })
+                      }}
+                      className="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-semibold cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="referralCode"
+                    value={formData.referralCode}
+                    onChange={handleChange}
+                    placeholder="e.g. XP-TANIS7A"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-dark-border rounded-xl bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 font-mono uppercase text-xs tracking-wider focus:outline-none focus:border-secondary"
+                  />
+                  {referralValidation.status === 'valid' && (
+                    <FiCheck className="absolute right-3 top-3 text-emerald-500 w-4 h-4" />
+                  )}
+                  {referralValidation.status === 'invalid' && (
+                    <FiX className="absolute right-3 top-3 text-rose-500 w-4 h-4" />
+                  )}
+                </div>
+
+                {referralValidation.message && (
+                  <p className={`text-[11px] font-semibold mt-1.5 ${
+                    referralValidation.status === 'valid' 
+                      ? 'text-emerald-600 dark:text-emerald-400' 
+                      : 'text-rose-600 dark:text-rose-400'
+                  }`}>
+                    {referralValidation.message}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           <button

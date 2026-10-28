@@ -33,14 +33,21 @@ export function SubscriptionProvider({ children }) {
       if (res?.data?.subscription) {
         setSubscription(res.data.subscription);
         if (user) {
-          dispatch(updateUser({ ...user, subscription: res.data.subscription }));
+          dispatch(updateUser({
+            ...user,
+            subscription: res.data.subscription,
+            referral: res.data.referral || user.referral
+          }));
         }
       }
     } catch (err) {
       // If endpoint fails or offline, compute fallback from user creation date
       if (user?.createdAt) {
         const createdAt = new Date(user.createdAt);
-        const trialEnd = new Date(createdAt.getTime() + 60 * 24 * 60 * 60 * 1000);
+        const trialDays = (user.hasReferralBonus || user.referral?.hasReferralBonus) ? 70 : 60;
+        const trialEnd = user.subscription?.trialEndDate
+          ? new Date(user.subscription.trialEndDate)
+          : new Date(createdAt.getTime() + trialDays * 24 * 60 * 60 * 1000);
         const now = new Date();
         const isTrialActive = now < trialEnd;
         const remaining = isTrialActive
@@ -52,6 +59,7 @@ export function SubscriptionProvider({ children }) {
           isPro: isTrialActive,
           isTrial: isTrialActive,
           trialDaysRemaining: remaining,
+          trialEndDate: trialEnd.toISOString(),
           limits: isTrialActive
             ? { maxAccounts: 9999, maxLoans: 9999, maxSubscriptions: 9999 }
             : { maxAccounts: 1, maxLoans: 1, maxSubscriptions: 2 }
@@ -85,7 +93,11 @@ export function SubscriptionProvider({ children }) {
       if (res?.data?.subscription) {
         setSubscription(res.data.subscription);
         if (user) {
-          dispatch(updateUser({ ...user, subscription: res.data.subscription }));
+          dispatch(updateUser({
+            ...user,
+            subscription: res.data.subscription,
+            referral: res.data.referral || user.referral
+          }));
         }
       }
       return { success: true, message: res.data.message };

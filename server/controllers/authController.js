@@ -14,6 +14,11 @@ import { sendPasswordResetEmail } from '../utils/sendEmail.js';
 import { getUserSubscription } from '../utils/subscriptionHelper.js';
 import { saveUserSettings } from '../utils/userSettings.js';
 import { saveStoredSubscription } from '../utils/subscriptionStore.js';
+import {
+  getUserReferralData,
+  findReferrerByCode,
+  recordReferralSignup
+} from '../utils/referralStore.js';
 
 const generateToken = (id) => {
   const secret = process.env.JWT_SECRET || 'xpenz_default_jwt_secret_key_2026';
@@ -23,16 +28,21 @@ const generateToken = (id) => {
   });
 };
 
-const sanitizeUser = (user) => ({
-  id: user._id,
-  name: user.name,
-  email: user.email,
-  subscription: getUserSubscription(user)
-});
+const sanitizeUser = (user) => {
+  const referral = getUserReferralData(user._id, user.name);
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    hasReferralBonus: user.hasReferralBonus ?? referral?.hasReferralBonus ?? false,
+    subscription: getUserSubscription(user),
+    referral
+  };
+};
 
 export const signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, referralCode } = req.body;
     const normalizedEmail = email?.trim().toLowerCase();
 
     if (!name?.trim() || !normalizedEmail || !password) {
@@ -60,20 +70,59 @@ export const signup = async (req, res) => {
       });
     }
 
+    // Validate referral code if submitted
+    let referrer = null;
+    let trialDays = 60; // standard trial
+    if (referralCode?.trim()) {
+      referrer = findReferrerByCode(referralCode.trim());
+      if (!referrer) {
+        return res.status(400).json({
+          success: false,
+          message: 'The referral code entered is invalid. Please double-check the code or remove it to proceed.'
+        });
+      }
+      trialDays = 70; // 60 regular + 10 extra bonus days!
+    }
+
     let user;
+    const now = new Date();
+    const trialEndDate = new Date(now.getTime() + trialDays * 24 * 60 * 60 * 1000);
+
     try {
-      const now = new Date();
-      const trialEndDate = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
       user = await User.create({
         name: name.trim(),
         email: normalizedEmail,
         password,
         subscriptionTier: 'trial',
         trialStartDate: now.toISOString(),
-        trialEndDate: trialEndDate.toISOString()
+        trialEndDate: trialEndDate.toISOString(),
+        referredBy: referrer ? referrer.userId : null,
+        hasReferralBonus: !!referrer
       });
     } catch (createErr) {
       user = await User.create({ name: name.trim(), email: normalizedEmail, password });
+      user.hasReferralBonus = !!referrer;
+      user.trialEndDate = trialEndDate.toISOString();
+    }
+
+    // Save trial expiration to stored subscriptions so trial length persists reliably
+    saveStoredSubscription(user._id, {
+      subscriptionTier: 'trial',
+      trialEndDate: trialEndDate.toISOString(),
+      hasReferralBonus: !!referrer
+    });
+
+    // Ensure referral profile is initialized for the new user
+    getUserReferralData(user._id, user.name);
+
+    // If referred, credit the referrer with +5% discount and record the referral
+    if (referrer) {
+      recordReferralSignup({
+        referrerId: referrer.userId,
+        newUserId: user._id,
+        newUserName: user.name,
+        newUserEmail: user.email
+      });
     }
 
     const token = generateToken(user._id);

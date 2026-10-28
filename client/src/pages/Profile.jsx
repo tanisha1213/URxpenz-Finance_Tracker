@@ -6,10 +6,12 @@ import { changePassword, getAccountStats, deleteUserAccount } from '../services/
 import { formatCurrency } from '../utils/format'
 import {
   FiUser, FiKey, FiCheck, FiPieChart, FiLogOut, FiBell,
-  FiSmartphone, FiAlertCircle, FiTrash2, FiAlertTriangle, FiShield
+  FiSmartphone, FiAlertCircle, FiTrash2, FiAlertTriangle, FiShield,
+  FiGift, FiCopy, FiShare2, FiUsers
 } from 'react-icons/fi'
 import { useLanguage } from '../context/LanguageContext'
 import { useNotification } from '../context/NotificationContext'
+import { getReferralStats } from '../services/referralService'
 
 function Profile() {
   const dispatch = useDispatch()
@@ -37,10 +39,26 @@ function Profile() {
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [deleteError, setDeleteError] = useState('')
+  const [referralData, setReferralData] = useState(null)
+  const [copiedCode, setCopiedCode] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
 
   useEffect(() => {
     if (user) setProfile({ name: user.name, email: user.email })
     getAccountStats().then((response) => setStats(response.data.data))
+    
+    // Fetch latest referral data
+    getReferralStats()
+      .then((res) => {
+        if (res.data?.data) {
+          setReferralData(res.data.data)
+        }
+      })
+      .catch(() => {
+        if (user?.referral) {
+          setReferralData(user.referral)
+        }
+      })
   }, [user])
 
   const saveProfile = async (event) => {
@@ -112,6 +130,55 @@ function Profile() {
     }
   }
 
+  const referralCode = referralData?.referralCode || user?.referral?.referralCode || 'XPENZ'
+  const referralCount = referralData?.referralCount ?? user?.referral?.referralCount ?? 0
+  const discountPercent = referralData?.discountPercent ?? user?.referral?.discountPercent ?? 0
+  const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}/signup?ref=${referralCode}` : `https://xpenz.app/signup?ref=${referralCode}`
+
+  const handleCopyCode = async () => {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(referralCode)
+      } else {
+        const input = document.createElement('input')
+        input.value = referralCode
+        document.body.appendChild(input)
+        input.select()
+        document.execCommand('copy')
+        document.body.removeChild(input)
+      }
+      setCopiedCode(true)
+      setTimeout(() => setCopiedCode(false), 2000)
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  const handleCopyLink = async () => {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(inviteLink)
+      } else {
+        const input = document.createElement('input')
+        input.value = inviteLink
+        document.body.appendChild(input)
+        input.select()
+        document.execCommand('copy')
+        document.body.removeChild(input)
+      }
+      setCopiedLink(true)
+      setTimeout(() => setCopiedLink(false), 2000)
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  const handleShareWhatsApp = () => {
+    const text = `Hey! Track your daily budgets, expenses, and bank accounts on Xpenz. Use my invite code "${referralCode}" to get 10 DAYS EXTRA FREE TRIAL (70 Days Total)! Sign up here: ${inviteLink}`
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`
+    window.open(url, '_blank')
+  }
+
   return (
     <div className="space-y-6 text-slate-800 dark:text-slate-100">
       <div>
@@ -121,6 +188,179 @@ function Profile() {
 
       {message && <div className="rounded-xl border border-emerald-100 dark:border-emerald-950/20 bg-emerald-50/50 dark:bg-emerald-950/5 p-3 text-sm text-emerald-700 dark:text-emerald-400">{message}</div>}
       {error && <div className="rounded-xl border border-rose-100 dark:border-rose-950/20 bg-rose-50/50 dark:bg-rose-950/5 p-3 text-sm text-rose-700 dark:text-rose-400">{error}</div>}
+
+      {/* 🎁 Refer & Earn Rewards Card */}
+      <section className="rounded-3xl border border-secondary/20 dark:border-purple-900/40 bg-gradient-to-br from-indigo-50/70 via-purple-50/40 to-white dark:from-[#151329] dark:via-[#121223] dark:to-dark-card p-6 sm:p-7 shadow-premium relative overflow-hidden">
+        {/* Glow decoration */}
+        <div className="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-gradient-to-br from-secondary/15 to-purple-500/10 blur-3xl pointer-events-none" />
+        
+        <div className="relative z-10 space-y-6">
+          {/* Header Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-secondary/10 dark:bg-purple-900/30 border border-secondary/20 flex items-center justify-center text-secondary dark:text-purple-400 shrink-0 shadow-inner">
+                <FiGift className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                    Refer & Earn Rewards
+                  </h3>
+                  {discountPercent > 0 && (
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-500 text-white shadow-sm animate-pulse">
+                      {discountPercent}% OFF Active
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                  Give friends <span className="font-bold text-secondary dark:text-purple-400">+10 Days Extra Free Trial</span> (70 Days Total). Earn <span className="font-bold text-emerald-600 dark:text-emerald-400">5% OFF</span> per friend up to 25% OFF your next plan upgrade!
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Share on WhatsApp */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleShareWhatsApp}
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 cursor-pointer"
+              >
+                <FiShare2 className="w-3.5 h-3.5" />
+                Share on WhatsApp
+              </button>
+            </div>
+          </div>
+
+          {/* Referral Code & Link Box */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {/* Code Box */}
+            <div className="p-4 rounded-2xl bg-white/80 dark:bg-dark-card/90 border border-slate-200/80 dark:border-dark-border shadow-sm flex items-center justify-between gap-3">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-dark-text-muted">
+                  Your Referral Code
+                </span>
+                <p className="text-lg font-black font-mono tracking-wider text-slate-900 dark:text-white mt-0.5">
+                  {referralCode}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopyCode}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors cursor-pointer"
+              >
+                {copiedCode ? <FiCheck className="w-3.5 h-3.5 text-emerald-500" /> : <FiCopy className="w-3.5 h-3.5" />}
+                {copiedCode ? 'Copied!' : 'Copy Code'}
+              </button>
+            </div>
+
+            {/* Link Box */}
+            <div className="p-4 rounded-2xl bg-white/80 dark:bg-dark-card/90 border border-slate-200/80 dark:border-dark-border shadow-sm flex items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-dark-text-muted">
+                  Your Personal Invite Link
+                </span>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5 font-mono">
+                  {inviteLink}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-secondary/10 hover:bg-secondary/20 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-secondary dark:text-purple-300 text-xs font-bold transition-colors shrink-0 cursor-pointer"
+              >
+                {copiedLink ? <FiCheck className="w-3.5 h-3.5 text-emerald-500" /> : <FiCopy className="w-3.5 h-3.5" />}
+                {copiedLink ? 'Copied!' : 'Copy Link'}
+              </button>
+            </div>
+          </div>
+
+          {/* 5-Step Escalator Tier Progress Bar */}
+          <div className="p-4.5 rounded-2xl bg-white/60 dark:bg-dark-card/60 border border-slate-200/60 dark:border-dark-border/60 space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold">
+              <span className="text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                <FiUsers className="w-3.5 h-3.5 text-secondary dark:text-purple-400" />
+                Referral Tier Escalator ({referralCount}/5 Friends Referred)
+              </span>
+              <span className="text-emerald-600 dark:text-emerald-400">
+                {discountPercent}% Discount Earned
+              </span>
+            </div>
+
+            {/* Visual Step Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              {[1, 2, 3, 4, 5].map((step) => {
+                const discount = step * 5;
+                const isReached = referralCount >= step;
+                return (
+                  <div
+                    key={step}
+                    className={`p-2.5 rounded-xl border text-center transition-all ${
+                      isReached
+                        ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 shadow-sm'
+                        : 'border-slate-200/80 dark:border-dark-border bg-slate-50/50 dark:bg-dark-bg/40 text-slate-400 dark:text-slate-500'
+                    }`}
+                  >
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      {isReached ? (
+                        <FiCheck className="w-3 h-3 text-emerald-500" />
+                      ) : (
+                        <span className="text-[10px] font-bold">Step {step}</span>
+                      )}
+                    </div>
+                    <p className={`text-xs font-black ${isReached ? 'text-emerald-600 dark:text-emerald-400' : ''}`}>
+                      {discount}% OFF
+                    </p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      {step} Friend{step > 1 ? 's' : ''}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Progress Track */}
+            <div className="w-full bg-slate-200 dark:bg-dark-bg h-2 rounded-full overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-secondary to-emerald-500 h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.min((referralCount / 5) * 100, 100)}%` }}
+              />
+            </div>
+
+            <p className="text-[11px] text-slate-400 dark:text-dark-text-muted text-center sm:text-left">
+              💡 <em>Friends receive 70 days free trial immediately upon signup with your code. Your discount applies automatically as a one-time reward on your next Pro plan upgrade.</em>
+            </p>
+          </div>
+
+          {/* Referred Friends List */}
+          {referralData?.friendsReferred && referralData.friendsReferred.length > 0 && (
+            <div className="space-y-2 pt-2 border-t border-slate-200/60 dark:border-dark-border/60">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-dark-text-muted">
+                Friends Who Joined ({referralData.friendsReferred.length}):
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                {referralData.friendsReferred.map((friend, idx) => (
+                  <div
+                    key={idx}
+                    className="p-2.5 rounded-xl bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border flex items-center justify-between text-xs"
+                  >
+                    <div className="min-w-0 pr-2">
+                      <p className="font-bold text-slate-800 dark:text-white truncate">
+                        {friend.name || 'Friend'}
+                      </p>
+                      <p className="text-[10px] text-slate-400">
+                        {friend.email ? friend.email.replace(/(.{2})(.*)(@.*)/, '$1***$3') : 'Registered'}
+                      </p>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-[11px] shrink-0">
+                      +5% OFF
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <section id="profile-card-tour" className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-6 shadow-premium lg:col-span-2 space-y-8">
