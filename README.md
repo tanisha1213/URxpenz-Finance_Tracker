@@ -1,4 +1,4 @@
-# Xpenz - Advanced Personal Finance & Welfare Tracker
+# URxpenz - Advanced Personal Finance & Welfare Tracker
 
 An industry-grade personal finance application that tracks daily transactions, maps custom category budgets with progress visualization, manages investments, loans, and insurance portfolios, and provides an interactive AI Financial Welfare & Coaching Hub.
 
@@ -32,56 +32,56 @@ Built with a modern stack featuring a Node/Express backend connected to a **Supa
 ## Folder Structure
 
 ```text
-xpenz/
+urxpenz/
 +-- README.md
 +-- server/
-¦   +-- config/
-¦   +-- controllers/
-¦   ¦   +-- aiController.js
-¦   ¦   +-- authController.js
-¦   ¦   +-- budgetController.js
-¦   ¦   +-- dashboardController.js
-¦   ¦   +-- reportController.js
-¦   ¦   +-- transactionController.js
-¦   ¦   +-- loanController.js
-¦   ¦   +-- investmentController.js
-¦   ¦   +-- insuranceController.js
-¦   +-- models/
-¦   ¦   +-- adapter.js
-¦   ¦   +-- User.js
-¦   ¦   +-- Transaction.js
-¦   ¦   +-- Budget.js
-¦   ¦   +-- Account.js
-¦   ¦   +-- Loan.js
-¦   ¦   +-- Investment.js
-¦   ¦   +-- Insurance.js
-¦   +-- routes/
-¦   +-- services/
-¦   ¦   +-- aiService.js
-¦   ¦   +-- financeAnalyzer.js
-¦   +-- app.js
-¦   +-- server.js
+ï¿½   +-- config/
+ï¿½   +-- controllers/
+ï¿½   ï¿½   +-- aiController.js
+ï¿½   ï¿½   +-- authController.js
+ï¿½   ï¿½   +-- budgetController.js
+ï¿½   ï¿½   +-- dashboardController.js
+ï¿½   ï¿½   +-- reportController.js
+ï¿½   ï¿½   +-- transactionController.js
+ï¿½   ï¿½   +-- loanController.js
+ï¿½   ï¿½   +-- investmentController.js
+ï¿½   ï¿½   +-- insuranceController.js
+ï¿½   +-- models/
+ï¿½   ï¿½   +-- adapter.js
+ï¿½   ï¿½   +-- User.js
+ï¿½   ï¿½   +-- Transaction.js
+ï¿½   ï¿½   +-- Budget.js
+ï¿½   ï¿½   +-- Account.js
+ï¿½   ï¿½   +-- Loan.js
+ï¿½   ï¿½   +-- Investment.js
+ï¿½   ï¿½   +-- Insurance.js
+ï¿½   +-- routes/
+ï¿½   +-- services/
+ï¿½   ï¿½   +-- aiService.js
+ï¿½   ï¿½   +-- financeAnalyzer.js
+ï¿½   +-- app.js
+ï¿½   +-- server.js
 +-- client/
     +-- src/
-    ¦   +-- components/
-    ¦   +-- pages/
-    ¦   ¦   +-- Dashboard.jsx
-    ¦   ¦   +-- Transactions.jsx
-    ¦   ¦   +-- Loans.jsx
-    ¦   ¦   +-- Investments.jsx
-    ¦   ¦   +-- Insurance.jsx
-    ¦   ¦   +-- InsightsReports.jsx
-    ¦   ¦   +-- Budget.jsx
-    ¦   ¦   +-- Profile.jsx
-    ¦   ¦   +-- Login.jsx
-    ¦   ¦   +-- Signup.jsx
-    ¦   +-- redux/
-    ¦   +-- services/
-    ¦   +-- utils/
-    ¦   ¦   +-- format.js
-    ¦   ¦   +-- welfareData.js
-    ¦   +-- App.jsx
-    ¦   +-- main.jsx
+    ï¿½   +-- components/
+    ï¿½   +-- pages/
+    ï¿½   ï¿½   +-- Dashboard.jsx
+    ï¿½   ï¿½   +-- Transactions.jsx
+    ï¿½   ï¿½   +-- Loans.jsx
+    ï¿½   ï¿½   +-- Investments.jsx
+    ï¿½   ï¿½   +-- Insurance.jsx
+    ï¿½   ï¿½   +-- InsightsReports.jsx
+    ï¿½   ï¿½   +-- Budget.jsx
+    ï¿½   ï¿½   +-- Profile.jsx
+    ï¿½   ï¿½   +-- Login.jsx
+    ï¿½   ï¿½   +-- Signup.jsx
+    ï¿½   +-- redux/
+    ï¿½   +-- services/
+    ï¿½   +-- utils/
+    ï¿½   ï¿½   +-- format.js
+    ï¿½   ï¿½   +-- welfareData.js
+    ï¿½   +-- App.jsx
+    ï¿½   +-- main.jsx
 ```
 
 ---

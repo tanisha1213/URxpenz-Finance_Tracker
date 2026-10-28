@@ -1,7 +1,7 @@
 {
-  "name": "ai-finance-tracker-server",
+  "name": "urxpenz-server",
   "version": "1.0.0",
-  "description": "AI Personal Finance Tracker Backend",
+  "description": "URxpenz - Personal Finance & Budget Manager Backend",
   "main": "server.js",
   "type": "module",
   "scripts": {

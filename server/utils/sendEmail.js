@@ -48,7 +48,7 @@ export const sendEmail = async ({ to, subject, html, text }) => {
     throw error;
   }
 
-  const fromAddress = process.env.EMAIL_FROM || `"Xpenz Finance" <${process.env.EMAIL_USER}>`;
+  const fromAddress = process.env.EMAIL_FROM || `"URxpenz Finance" <${process.env.EMAIL_USER}>`;
 
   const info = await transporter.sendMail({
     from: fromAddress,
@@ -68,9 +68,9 @@ export const sendEmail = async ({ to, subject, html, text }) => {
  * @param {string} resetUrl - Frontend reset URL with token
  */
 export const sendPasswordResetEmail = async (to, name, resetUrl) => {
-  const subject = '🔐 Reset Your Xpenz Password';
+  const subject = '🔐 Reset Your URxpenz Password';
 
-  const plainText = `Hi ${name || 'there'},\n\nYou requested a password reset for your Xpenz Finance account.\n\nPlease click the following link or copy it into your browser to reset your password:\n${resetUrl}\n\nThis link will expire in 10 minutes.\nIf you did not request this, you can safely ignore this email.\n\n— The Xpenz Team`;
+  const plainText = `Hi ${name || 'there'},\n\nYou requested a password reset for your URxpenz Finance account.\n\nPlease click the following link or copy it into your browser to reset your password:\n${resetUrl}\n\nThis link will expire in 10 minutes.\nIf you did not request this, you can safely ignore this email.\n\n— The URxpenz Team`;
 
   const html = `
 <!DOCTYPE html>
@@ -189,13 +189,13 @@ export const sendPasswordResetEmail = async (to, name, resetUrl) => {
   <div class="wrapper">
     <div class="container">
       <div class="header">
-        <h1>Xpenz</h1>
+        <h1>URxpenz</h1>
         <p>Smart AI Personal Finance</p>
       </div>
       <div class="content">
         <p class="greeting">Hi ${name || 'there'},</p>
         <p class="message">
-          We received a request to reset the password for your <strong>Xpenz</strong> account. Click the secure button below to choose a new password:
+          We received a request to reset the password for your <strong>URxpenz</strong> account. Click the secure button below to choose a new password:
         </p>
 
         <div class="btn-container">
@@ -212,7 +212,7 @@ export const sendPasswordResetEmail = async (to, name, resetUrl) => {
         </div>
       </div>
       <div class="footer">
-        &copy; ${new Date().getFullYear()} Xpenz Finance Tracker. All rights reserved.<br>
+        &copy; ${new Date().getFullYear()} URxpenz Finance Tracker. All rights reserved.<br>
         This is an automated security transmission. Please do not reply directly to this email.
       </div>
     </div>

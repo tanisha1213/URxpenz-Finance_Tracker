@@ -24,11 +24,11 @@ export default function PrivacyPolicy() {
           <div className="flex items-center gap-2.5">
             <img
               src={theme === 'light' ? logoLight : logoDark}
-              alt="Xpenz Logo"
+              alt="URxpenz Logo"
               className="w-7 h-7 rounded-lg object-contain shadow-sm"
             />
             <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">
-              Xpenz Finance Tracker
+              URxpenz Finance Tracker
             </span>
           </div>
         </div>
@@ -46,7 +46,7 @@ export default function PrivacyPolicy() {
             Effective: October 27, 2026 • Last reviewed: October 2026
           </p>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
-            Welcome to <strong>Xpenz</strong> (&quot;we&quot;, &quot;our&quot;, or &quot;the Service&quot;). Your privacy and data security are our highest priorities. This Privacy Policy discloses how your personal and financial information is collected, stored, encrypted, and deleted in full compliance with the Google Play Store Developer Policy and international data protection standards.
+            Welcome to <strong>URxpenz</strong> (&quot;we&quot;, &quot;our&quot;, or &quot;the Service&quot;). Your privacy and data security are our highest priorities. This Privacy Policy discloses how your personal and financial information is collected, stored, encrypted, and deleted in full compliance with the Google Play Store Developer Policy and international data protection standards.
           </p>
         </div>
 
@@ -101,7 +101,7 @@ export default function PrivacyPolicy() {
                 <li><strong>Offline Local Storage Data:</strong> When adding transactions without network connectivity, records are temporarily queued in your device&apos;s sandboxed browser storage (`localStorage`) and automatically synced when reconnected.</li>
               </ul>
               <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-800 dark:text-amber-300 text-xs font-medium">
-                <strong>Important:</strong> Xpenz DOES NOT collect, request, or store your bank account passwords, net-banking credentials, credit card numbers, CVVs, or SMS OTPs.
+                <strong>Important:</strong> URxpenz DOES NOT collect, request, or store your bank account passwords, net-banking credentials, credit card numbers, CVVs, or SMS OTPs.
               </div>
             </div>
           </section>
@@ -156,7 +156,7 @@ export default function PrivacyPolicy() {
                   How to delete your account in the application:
                 </p>
                 <ol className="list-decimal pl-5 space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  <li>Open the Xpenz app and sign in.</li>
+                  <li>Open the URxpenz app and sign in.</li>
                   <li>Click on your name or avatar in the top navigation bar to go to <strong>Profile</strong>.</li>
                   <li>Scroll to the <strong>Danger Zone</strong> section on the right.</li>
                   <li>Click <strong>&quot;Delete Account & All Data&quot;</strong> and type <strong>DELETE</strong> in the confirmation box.</li>
@@ -220,9 +220,9 @@ export default function PrivacyPolicy() {
             <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 leading-relaxed">
               <p>If you have any questions, feedback, or data requests regarding this Privacy Policy, please contact our Data Protection Officer:</p>
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-dark-border text-xs space-y-1">
-                <p><strong>Entity:</strong> Xpenz Personal Finance</p>
-                <p><strong>Email:</strong> support@xpenz.app / privacy@xpenz.app</p>
-                <p><strong>Website:</strong> https://xpenz-finance.web.app</p>
+                <p><strong>Entity:</strong> URxpenz Personal Finance</p>
+                <p><strong>Email:</strong> support@urxpenz.app / privacy@urxpenz.app</p>
+                <p><strong>Website:</strong> https://urxpenz.vercel.app</p>
                 <p><strong>Response SLA:</strong> Within 48 hours for data requests</p>
               </div>
             </div>
@@ -232,7 +232,7 @@ export default function PrivacyPolicy() {
 
         {/* Footer */}
         <div className="text-center pt-4 text-xs text-slate-400 dark:text-slate-500">
-          <p>© 2026 Xpenz. All rights reserved. Google Play is a trademark of Google LLC.</p>
+          <p>© 2026 URxpenz. All rights reserved. Google Play is a trademark of Google LLC.</p>
         </div>
 
       </div>

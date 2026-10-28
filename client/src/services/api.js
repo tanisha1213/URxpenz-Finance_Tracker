@@ -12,7 +12,7 @@ const getBaseURL = () => {
     (window.location.hostname === 'localhost' && window.location.port !== '5173' && window.location.port !== '4173');
 
   if (isNativeApp) {
-    return 'https://xpenz-finance-tracker-advance.vercel.app/api';
+    return 'https://urxpenz.vercel.app/api';
   }
 
   // If running in browser locally (Vite dev server)
@@ -23,7 +23,7 @@ const getBaseURL = () => {
     return '/api';
   }
   // Default to live Vercel production backend URL
-  return 'https://xpenz-finance-tracker-advance.vercel.app/api';
+  return 'https://urxpenz.vercel.app/api';
 };
 
 const API = axios.create({

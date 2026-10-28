@@ -58,7 +58,7 @@ export const generateCode = (userId = '', name = '') => {
 export const getUserReferralData = (userId, userName = '') => {
   if (!userId) {
     return {
-      referralCode: 'XPENZ-PROMO',
+      referralCode: 'URXPENZ-PROMO',
       referralCount: 0,
       discountPercent: 0,
       maxReferrals: 5,
@@ -140,7 +140,7 @@ export const recordReferralSignup = ({ referrerId, newUserId, newUserName, newUs
       ...(referrer.friendsReferred || []),
       {
         userId: newUserId,
-        name: newUserName || 'Xpenz Member',
+        name: newUserName || 'URxpenz Member',
         emailMasked: maskedEmail,
         joinedAt: new Date().toISOString()
       }

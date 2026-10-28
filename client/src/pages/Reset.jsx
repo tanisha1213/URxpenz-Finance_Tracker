@@ -51,7 +51,7 @@ function Reset() {
     <div className="min-h-screen bg-slate-50 dark:bg-[#0c0d12] flex items-center justify-center p-4 transition-colors">
       <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl p-8 w-full max-w-md">
         <div className="flex flex-col items-center mb-6">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-12 h-12 rounded-lg object-contain mb-3" />
+          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-12 h-12 rounded-lg object-contain mb-3" />
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Reset password</h1>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 uppercase font-mono tracking-wider">Expense & budget manager</p>
         </div>

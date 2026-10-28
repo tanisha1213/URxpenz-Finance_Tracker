@@ -131,7 +131,7 @@ export default function UpgradeModal() {
         key: keyId,
         amount: order.amount,
         currency: 'INR',
-        name: 'Xpenz Finance',
+        name: 'URxpenz Finance',
         description: `Upgrade to ${orderRes.data.plan?.name || 'Pro Plan'}`,
         order_id: order.id,
         handler: async (response) => {
@@ -226,7 +226,7 @@ export default function UpgradeModal() {
             <FiZap className="w-3.5 h-3.5 text-amber-500" />
             {isTrial
               ? `${user?.hasReferralBonus ? '70-day referral trial' : '60-day trial'} (${trialDaysRemaining}d remaining)`
-              : 'Xpenz membership'}
+              : 'URxpenz membership'}
           </span>
           {discountPercent > 0 && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">

@@ -1,13 +1,13 @@
-# Xpenz System Architecture & Security Specification
+# URxpenz System Architecture & Security Specification
 
-This document provides a comprehensive overview of the architecture, folder structure, security mechanisms, customizable notification scheduler, and subscription/payment flow for the **Xpenz** Personal Finance application.
+This document provides a comprehensive overview of the architecture, folder structure, security mechanisms, customizable notification scheduler, and subscription/payment flow for the **URxpenz** Personal Finance application.
 
 ---
 
 ## 1. Project Directory Structure
 
 ```text
-xpenz/
+urxpenz/
 ├── .gitignore                          # Comprehensive secrets and build exclusion rules
 ├── README.md                           # User manual and deployment instructions
 ├── ARCHITECTURE.md                     # Technical architecture & security specification
@@ -137,7 +137,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS "subscriptionExpiresAt" TIMESTAMPTZ;
 CREATE INDEX IF NOT EXISTS idx_users_subscription ON users ("subscriptionTier", "subscriptionExpiresAt");
 ```
 
-*(Note: Even before running this SQL, Xpenz includes automated fallback persistence in `server/data/user_subscriptions.json` so subscriptions never crash or fail to persist).*
+*(Note: Even before running this SQL, URxpenz includes automated fallback persistence in `server/data/user_subscriptions.json` so subscriptions never crash or fail to persist).*
 
 ### Step 2: Configure Razorpay for Web / UPI Payments
 1. Create a free account at [https://razorpay.com](https://razorpay.com).
@@ -152,7 +152,7 @@ CREATE INDEX IF NOT EXISTS idx_users_subscription ON users ("subscriptionTier", 
 6. The backend cryptographically verifies the payment signature using HMAC SHA256 before granting Pro status.
 
 ### Step 3: Google Play Store In-App Purchases (for Mobile Release)
-When packaging Xpenz using Capacitor or Android Studio:
+When packaging URxpenz using Capacitor or Android Studio:
 1. In the Google Play Console, create In-App Subscriptions matching your plan IDs:
    - `xpenz_kickstart_1m` (Kickstart 1 Month - ₹45)
    - `xpenz_pro_3m` (Quarterly 3 Months - ₹119)

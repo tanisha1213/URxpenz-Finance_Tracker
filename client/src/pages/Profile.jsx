@@ -148,10 +148,10 @@ function Profile() {
     }
   }
 
-  const referralCode = referralData?.referralCode || user?.referral?.referralCode || 'XPENZ'
+  const referralCode = referralData?.referralCode || user?.referral?.referralCode || 'URXPENZ'
   const referralCount = referralData?.referralCount ?? user?.referral?.referralCount ?? 0
   const discountPercent = referralData?.discountPercent ?? user?.referral?.discountPercent ?? 0
-  const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}/signup?ref=${referralCode}` : `https://xpenz.app/signup?ref=${referralCode}`
+  const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}/signup?ref=${referralCode}` : `https://urxpenz.vercel.app/signup?ref=${referralCode}`
 
   const handleCopyCode = async () => {
     try {
@@ -192,7 +192,7 @@ function Profile() {
   }
 
   const handleShareWhatsApp = () => {
-    const text = `Hey! Track your daily budgets, expenses, and bank accounts on Xpenz. Use my invite code "${referralCode}" to get 10 DAYS EXTRA FREE TRIAL (70 Days Total)! Sign up here: ${inviteLink}`
+    const text = `Hey! Track your daily budgets, expenses, and bank accounts on URxpenz. Use my invite code "${referralCode}" to get 10 DAYS EXTRA FREE TRIAL (70 Days Total)! Sign up here: ${inviteLink}`
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`
     window.open(url, '_blank')
   }

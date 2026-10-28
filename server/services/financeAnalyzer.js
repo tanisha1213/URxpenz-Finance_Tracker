@@ -79,7 +79,7 @@ export const analyzeFinance = ({ transactions = [], budget = null }) => {
       ...summary,
       insights: [
         'Add your first income and expense entries to unlock personalized finance insights.',
-        'Set a monthly budget so Xpenz can flag overspending before it becomes a problem.'
+        'Set a monthly budget so URxpenz can flag overspending before it becomes a problem.'
       ],
       recommendations: ['Start with recurring expenses like rent, subscriptions, groceries, and transport.'],
       predictedExpense: 0,
