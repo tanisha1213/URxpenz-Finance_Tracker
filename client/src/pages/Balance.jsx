@@ -175,7 +175,7 @@ function Balance() {
         <button
           id="add-account-btn-tour"
           onClick={handleOpenAdd}
-          className="btn-primary flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium cursor-pointer"
+          className="flex items-center gap-1.5 rounded-xl bg-secondary dark:bg-purple-600 px-4 py-2.5 font-bold text-white text-sm hover:bg-indigo-700 dark:hover:bg-purple-700 transition-colors shadow-md shadow-secondary/15 cursor-pointer"
         >
           <FiPlus className="w-4 h-4" />
           {t('addAccount')}
@@ -184,35 +184,38 @@ function Balance() {
 
       {/* Messages */}
       {message && (
-        <div className="rounded-lg border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-950/20 p-3 text-xs text-emerald-700 dark:text-emerald-300 flex items-center gap-2 font-medium">
-          <FiCheck className="w-4 h-4 shrink-0" />
+        <div className="rounded-xl border border-emerald-100 dark:border-emerald-950/20 bg-emerald-50/50 dark:bg-emerald-950/5 p-3 text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+          <FiCheck className="w-4 h-4 flex-shrink-0" />
           <span>{message}</span>
         </div>
       )}
       {error && (
-        <div className="rounded-lg border border-rose-200 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/20 p-3 text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2 font-medium">
-          <FiX className="w-4 h-4 shrink-0" />
+        <div className="rounded-xl border border-rose-100 dark:border-rose-950/20 bg-rose-50/50 dark:bg-rose-950/5 p-3 text-sm text-rose-700 dark:text-rose-400 flex items-center gap-2">
+          <FiX className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Total Balance Card */}
-      <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 sm:p-6 text-slate-900 dark:text-white">
-        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-          <div className="space-y-0.5">
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('totalFunds')}</span>
-            <h3 className="text-3xl sm:text-4xl font-bold font-mono tracking-tight text-slate-900 dark:text-white">{formatCurrency(totalBalance)}</h3>
+      <div className="relative overflow-hidden rounded-2xl border border-slate-100 dark:border-dark-border bg-gradient-to-br from-slate-900 to-indigo-950 p-6 sm:p-8 text-white shadow-premium">
+        <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-40 h-40 rounded-full bg-indigo-500/10 blur-2xl"></div>
+        <div className="absolute left-1/3 bottom-0 w-32 h-32 rounded-full bg-purple-500/10 blur-2xl"></div>
+        
+        <div className="relative z-10 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div className="space-y-1">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('totalFunds')}</span>
+            <h3 className="text-3xl sm:text-4xl font-black tracking-tight">{formatCurrency(totalBalance)}</h3>
           </div>
-          <div className="flex gap-2.5 sm:gap-3 w-full sm:w-auto">
-            <div className="px-3 py-2 bg-slate-50 dark:bg-[#191c26] rounded-lg border border-slate-200 dark:border-[#222634] flex-1 sm:flex-initial min-w-0">
-              <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">{t('cashBalance')}</span>
-              <span className="text-sm sm:text-base font-semibold font-mono text-slate-800 dark:text-slate-200 block truncate mt-0.5">
+          <div className="flex gap-3 sm:gap-4 w-full sm:w-auto">
+            <div className="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 flex-1 sm:flex-initial min-w-0">
+              <span className="block text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('cashBalance')}</span>
+              <span className="text-sm sm:text-base font-extrabold text-slate-200 block truncate">
                 {formatCurrency(cashAccounts.reduce((acc, curr) => acc + curr.balance, 0))}
               </span>
             </div>
-            <div className="px-3 py-2 bg-slate-50 dark:bg-[#191c26] rounded-lg border border-slate-200 dark:border-[#222634] flex-1 sm:flex-initial min-w-0">
-              <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">{t('bankBalance')}</span>
-              <span className="text-sm sm:text-base font-semibold font-mono text-slate-800 dark:text-slate-200 block truncate mt-0.5">
+            <div className="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 flex-1 sm:flex-initial min-w-0">
+              <span className="block text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('bankBalance')}</span>
+              <span className="text-sm sm:text-base font-extrabold text-slate-200 block truncate">
                 {formatCurrency(bankAccounts.reduce((acc, curr) => acc + curr.balance, 0))}
               </span>
             </div>
@@ -222,29 +225,29 @@ function Balance() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Cash Account Card */}
-        <section id="cash-wallet-card-tour" className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 flex flex-col justify-between min-h-[160px]">
+        <section id="cash-wallet-card-tour" className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-6 shadow-premium flex flex-col justify-between min-h-[180px]">
           <div>
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400">
-                  <FiDollarSign className="w-4 h-4" />
+                <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400">
+                  <FiDollarSign className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900 dark:text-white text-sm">{t('cashBalance')}</h3>
-                  <span className="text-xs text-slate-400">Physical cash wallet</span>
+                  <h3 className="font-bold text-slate-800 dark:text-white text-base">{t('cashBalance')}</h3>
+                  <span className="text-xs text-slate-400 dark:text-dark-text-muted">Physical cash wallet</span>
                 </div>
               </div>
               <button
                 onClick={() => handleOpenEdit(cashAccounts[0])}
-                className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-purple-400 rounded-lg hover:bg-slate-50 dark:hover:bg-dark-border transition-all cursor-pointer"
                 title="Adjust Balance"
               >
-                <FiEdit2 className="w-3.5 h-3.5" />
+                <FiEdit2 className="w-4 h-4" />
               </button>
             </div>
-            <div className="mt-5">
-              <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-medium">{t('totalBalance')}</span>
-              <span className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-0.5 block">
+            <div className="mt-6">
+              <span className="block text-[10px] text-slate-400 dark:text-dark-text-muted font-bold uppercase tracking-wider">{t('totalBalance')}</span>
+              <span className="text-2xl font-black text-slate-800 dark:text-white">
                 {formatCurrency(cashAccounts[0]?.balance || 0)}
               </span>
             </div>
@@ -252,36 +255,36 @@ function Balance() {
         </section>
 
         {/* Bank Accounts Grid */}
-        <div className="space-y-4 md:col-span-2">
+        <div className="space-y-6 md:col-span-2">
           <div>
-            <h3 className="font-semibold text-slate-900 dark:text-white text-base">{t('accounts')}</h3>
-            <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Manage bank account balances and linked card transactions.</p>
+            <h3 className="font-extrabold text-slate-800 dark:text-white text-lg">{t('accounts')}</h3>
+            <p className="text-slate-400 dark:text-dark-text-muted text-xs mt-0.5">Manage bank account balances and linked card transactions.</p>
           </div>
           
-          <div id="bank-accounts-grid-tour" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div id="bank-accounts-grid-tour" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {bankAccounts.map((account) => (
               <div
                 key={account._id}
-                className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 flex flex-col justify-between min-h-[160px] hover:border-slate-300 dark:hover:border-slate-700 transition-colors group"
+                className="rounded-2xl border border-slate-100 dark:border-dark-border bg-white dark:bg-dark-card p-6 shadow-premium flex flex-col justify-between min-h-[180px] hover:border-indigo-100 dark:hover:border-purple-950/40 transition-all duration-200 group"
               >
                 <div>
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400">
-                        <FiCreditCard className="w-4 h-4" />
+                      <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-purple-400">
+                        <FiCreditCard className="w-5 h-5" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-slate-900 dark:text-white text-sm line-clamp-1">{account.name}</h4>
-                        <span className="text-xs text-slate-400">Saving/Current Account</span>
+                        <h4 className="font-bold text-slate-800 dark:text-white text-base line-clamp-1">{account.name}</h4>
+                        <span className="text-xs text-slate-400 dark:text-dark-text-muted">Saving/Current Account</span>
                       </div>
                     </div>
                     <div className="flex gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => handleOpenEdit(account)}
-                        className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                        className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-purple-400 rounded-lg hover:bg-slate-50 dark:hover:bg-dark-border transition-all cursor-pointer"
                         title="Edit Account"
                       >
-                        <FiEdit2 className="w-3.5 h-3.5" />
+                        <FiEdit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleOpenDelete(account)}
@@ -369,17 +372,17 @@ function Balance() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-end gap-3 pt-2">
+                <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="btn-ghost px-4 py-2.5 rounded-xl font-medium text-sm cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border text-slate-500 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-dark-border transition-colors cursor-pointer"
                   >
                     {t('cancel')}
                   </button>
                   <button
                     type="submit"
-                    className="btn-primary flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium cursor-pointer"
+                    className="flex items-center gap-1 px-4 py-2.5 rounded-xl bg-secondary dark:bg-purple-650 font-bold text-white text-sm hover:bg-indigo-700 dark:hover:bg-purple-750 transition-colors shadow-md shadow-secondary/15 cursor-pointer"
                   >
                     <FiCheck className="w-4 h-4" />
                     {t('addAccount')}
@@ -452,17 +455,17 @@ function Balance() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-end gap-3 pt-2">
+                <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="btn-ghost px-4 py-2.5 rounded-xl font-medium text-sm cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border text-slate-500 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-dark-border transition-colors cursor-pointer"
                   >
                     {t('cancel')}
                   </button>
                   <button
                     type="submit"
-                    className="btn-primary flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-medium cursor-pointer"
+                    className="flex items-center gap-1 px-4 py-2.5 rounded-xl bg-secondary dark:bg-purple-650 font-bold text-white text-sm hover:bg-indigo-700 dark:hover:bg-purple-750 transition-colors shadow-md shadow-secondary/15 cursor-pointer"
                   >
                     <FiCheck className="w-4 h-4" />
                     {t('saveChanges')}
@@ -489,11 +492,11 @@ function Balance() {
                   <strong>Warning:</strong> Deleting this bank account will perform a cascade delete. All transactions associated with this account will also be permanently removed.
                 </div>
 
-                <div className="flex justify-end gap-3 pt-2">
+                <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="btn-ghost px-4 py-2.5 rounded-xl font-medium text-sm cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border text-slate-500 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-dark-border transition-colors cursor-pointer"
                   >
                     {t('cancel')}
                   </button>

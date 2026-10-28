@@ -165,39 +165,39 @@ function InsightsReports() {
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex bg-slate-100 dark:bg-[#10121a] p-1 rounded-lg border border-slate-200 dark:border-[#222634] w-fit">
+        <div className="flex bg-slate-100 dark:bg-slate-dark p-1 rounded-xl w-fit">
           <button
             onClick={() => setActiveTab('reports')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-lg transition-all cursor-pointer ${
               activeTab === 'reports'
-                ? 'bg-white dark:bg-[#181a24] text-slate-900 dark:text-white border border-slate-200 dark:border-[#2b3042] font-semibold shadow-sm'
-                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                ? 'bg-white dark:bg-dark-card text-secondary dark:text-purple-400 shadow-sm'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <FiLayers className="w-3.5 h-3.5" />
+            <FiLayers className="w-4 h-4" />
             <span>Reports & statements (Free)</span>
           </button>
           <button
             onClick={() => setActiveTab('insights')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-lg transition-all cursor-pointer ${
               activeTab === 'insights'
-                ? 'bg-white dark:bg-[#181a24] text-slate-900 dark:text-white border border-slate-200 dark:border-[#2b3042] font-semibold shadow-sm'
-                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                ? 'bg-white dark:bg-dark-card text-secondary dark:text-purple-400 shadow-sm'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <FiCpu className="w-3.5 h-3.5" />
+            <FiCpu className="w-4 h-4" />
             <span>AI forecasts {!isPro && '(Pro)'}</span>
           </button>
           <button
             onClick={() => setActiveTab('welfare')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-lg transition-all cursor-pointer ${
               activeTab === 'welfare'
-                ? 'bg-white dark:bg-[#181a24] text-slate-900 dark:text-white border border-slate-200 dark:border-[#2b3042] font-semibold shadow-sm'
-                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                ? 'bg-white dark:bg-dark-card text-secondary dark:text-purple-400 shadow-sm'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <FiUsers className="w-3.5 h-3.5" />
-            <span>Welfare schemes</span>
+            <FiUsers className="w-4 h-4" />
+            <span>Government Schemes & Welfare</span>
           </button>
         </div>
       </div>
@@ -205,23 +205,23 @@ function InsightsReports() {
       {/* AI INSIGHTS VIEW */}
       {activeTab === 'insights' && (
         !isPro ? (
-          <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-8 sm:p-10 text-center flex flex-col items-center justify-center">
-            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-[#1a1d29] border border-slate-200 dark:border-[#2b3042] flex items-center justify-center text-slate-700 dark:text-slate-300 mb-4">
-              <FiCpu className="w-6 h-6" />
+          <div className="rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/20 via-slate-900 to-indigo-950/20 p-8 sm:p-12 text-center flex flex-col items-center justify-center shadow-xl animate-fadeIn">
+            <div className="w-16 h-16 rounded-3xl bg-secondary/20 dark:bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-secondary dark:text-purple-400 mb-5">
+              <FiCpu className="w-8 h-8" />
             </div>
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
-              Pro plan feature
+            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-3">
+              Xpenz Pro Feature
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Financial forecasts & runway intelligence</h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-lg mt-2 leading-relaxed">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">AI Financial Intelligence & Forecasts</h2>
+            <p className="text-sm text-slate-300 max-w-lg mt-2 leading-relaxed">
               Analyze projected month-end outlays, cashflow runway, burn rate alerts, and category reduction opportunities.
             </p>
             <button
               onClick={() => openUpgradeModal('ai')}
-              className="mt-6 flex items-center gap-2 py-2.5 px-6 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs transition-colors cursor-pointer"
+              className="mt-6 flex items-center gap-2 py-3 px-7 rounded-2xl btn-primary text-white font-bold text-sm shadow-xl shadow-secondary/30 transition-all hover:scale-105 cursor-pointer"
             >
-              <FiZap className="w-3.5 h-3.5" />
-              <span>Upgrade to Pro (from ₹45)</span>
+              <FiZap className="w-4 h-4 fill-current" />
+              <span>Unlock AI Insights (Starts at ₹45)</span>
             </button>
           </div>
         ) : (
@@ -348,7 +348,7 @@ function InsightsReports() {
           {reportError && <div className="rounded-lg border border-rose-200 dark:border-rose-950/40 bg-rose-50 dark:bg-rose-950/20 p-3 text-xs text-rose-700 dark:text-rose-400">{reportError}</div>}
 
           {/* Period Filter Card */}
-          <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
+          <section className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-gradient-to-b dark:from-[#131522] dark:to-[#0d0f17] p-5 sm:p-6 shadow-premium flex flex-col md:flex-row gap-4 justify-between items-center">
             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
               <FiCalendar className="text-indigo-500 w-4 h-4 flex-shrink-0" />
               
@@ -439,7 +439,7 @@ function InsightsReports() {
             <button
               onClick={exportPdf}
               disabled={reportLoading || !report}
-              className="flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 font-medium text-white text-xs hover:bg-indigo-700 transition-colors disabled:opacity-50 w-full md:w-auto cursor-pointer"
+              className="flex items-center justify-center gap-2 rounded-2xl btn-primary px-5 py-2.5 font-bold text-white text-xs transition-all disabled:opacity-50 w-full md:w-auto cursor-pointer shadow-md shadow-secondary/20"
             >
               <FiDownload className="w-3.5 h-3.5" />
               <span>{!isPro ? '🔒 Download PDF (Pro)' : 'Download PDF statement'}</span>
@@ -477,31 +477,30 @@ function InsightsReports() {
 
               <div className="grid gap-6 lg:grid-cols-3 w-full overflow-hidden">
                 {/* Category Spend Chart */}
-                <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 lg:col-span-2 min-w-0 overflow-hidden">
-                  <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-4">Category analysis</h3>
+                <section className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-gradient-to-b dark:from-[#131522] dark:to-[#0d0f17] p-6 shadow-premium lg:col-span-2 min-w-0 overflow-hidden">
+                  <h3 className="font-bold text-slate-800 dark:text-white text-base mb-4">Category Analysis</h3>
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={report.categoryBreakdown} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
-                          <linearGradient id="urxpenzBarGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#AD5CFF" />
-                            <stop offset="70%" stopColor="#7A00FF" />
-                            <stop offset="100%" stopColor="#3A0A9A" />
+                          <linearGradient id="xpenzBarGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#818cf8" />
+                            <stop offset="100%" stopColor="#4f46e5" />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "rgba(196,139,255,0.1)" : "rgba(58,10,154,0.08)"} />
-                        <XAxis dataKey="category" tickLine={false} stroke={isDark ? "#A99BC4" : "#5E5078"} fontSize={11} />
-                        <YAxis tickLine={false} stroke={isDark ? "#A99BC4" : "#5E5078"} fontSize={11} />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "#222533" : "#f1f5f9"} />
+                        <XAxis dataKey="category" tickLine={false} stroke={isDark ? "#94a3b8" : "#64748b"} fontSize={11} />
+                        <YAxis tickLine={false} stroke={isDark ? "#94a3b8" : "#64748b"} fontSize={11} />
                         <Tooltip
                           contentStyle={isDark
-                            ? { backgroundColor: '#140727', borderRadius: '12px', border: '1px solid rgba(196,139,255,0.14)', color: '#F4EEFF' }
-                            : { backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid rgba(58,10,154,0.12)', boxShadow: '0 4px 12px rgba(14, 4, 32, 0.08)' }
+                            ? { backgroundColor: '#13141f', borderRadius: '16px', border: '1px solid #222533', color: '#ffffff' }
+                            : { backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }
                           }
-                          itemStyle={{ color: isDark ? '#F4EEFF' : '#170A2E' }}
-                          labelStyle={{ color: isDark ? '#A99BC4' : '#5E5078' }}
+                          itemStyle={{ color: isDark ? '#ffffff' : '#0f172a' }}
+                          labelStyle={{ color: isDark ? '#94a3b8' : '#64748b' }}
                           formatter={(value) => formatCurrency(value)}
                         />
-                        <Bar dataKey="amount" fill="url(#urxpenzBarGradient)" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="amount" fill="url(#xpenzBarGradient)" radius={[8, 8, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>

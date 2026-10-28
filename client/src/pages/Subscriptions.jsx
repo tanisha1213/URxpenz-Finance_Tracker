@@ -222,95 +222,103 @@ export default function Subscriptions() {
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
-            <FiRepeat className="w-5 h-5 text-indigo-500" />
-            <span>Recurring subscriptions</span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
+            <div className="p-2.5 rounded-2xl bg-indigo-500/10 text-indigo-500 dark:bg-purple-500/10 dark:text-purple-400">
+              <FiRepeat className="w-6 h-6" />
+            </div>
+            Subscriptions & Annual Plans
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Track monthly and annual commitments with automated balance deduction.
+          <p className="text-sm text-slate-500 dark:text-dark-text-muted mt-1 font-medium">
+            Manage recurring monthly & annual subscriptions with automatic money deduction.
           </p>
         </div>
 
         <button
           id="add-subscription-btn-tour"
           onClick={handleOpenAdd}
-          className="btn-primary flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium cursor-pointer"
+          className="flex items-center justify-center gap-2 px-5 py-3 bg-secondary hover:bg-indigo-700 dark:bg-purple-650 dark:hover:bg-purple-755 text-white rounded-2xl font-bold text-sm shadow-lg shadow-indigo-500/20 dark:shadow-purple-500/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
         >
-          <FiPlus className="w-4 h-4" />
-          <span>Add subscription</span>
+          <FiPlus className="w-5 h-5" />
+          <span>Add Subscription</span>
         </button>
       </div>
 
       {/* Hero Stats Section */}
-      <div id="subscriptions-stats-grid-tour" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] p-4 rounded-xl space-y-2">
+      <div id="subscriptions-stats-grid-tour" className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white/80 dark:bg-dark-card/80 backdrop-blur-xl border border-slate-200/80 dark:border-dark-border p-5 rounded-3xl shadow-sm space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono uppercase text-slate-400 dark:text-slate-500">
-              Monthly commitment
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              Monthly Commitment
             </span>
-            <FiRepeat className="w-4 h-4 text-slate-400" />
+            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-purple-950/30 text-indigo-500 dark:text-purple-400">
+              <FiRepeat className="w-4 h-4" />
+            </div>
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900 dark:text-white tracking-tight">
-            {formatCurrency(stats.totalMonthlyCommitment || 0)} <span className="text-xs font-normal text-slate-400">/ mo</span>
+          <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+            {formatCurrency(stats.totalMonthlyCommitment || 0)} <span className="text-xs font-semibold text-slate-400">/ mo</span>
           </p>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">
-            Across active recurring plans
+          <p className="text-xs text-slate-500 dark:text-dark-text-muted font-medium">
+            Calculated across active recurring plans
           </p>
         </div>
 
-        <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] p-4 rounded-xl space-y-2">
+        <div className="bg-white/80 dark:bg-dark-card/80 backdrop-blur-xl border border-slate-200/80 dark:border-dark-border p-5 rounded-3xl shadow-sm space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono uppercase text-slate-400 dark:text-slate-500">
-              Active plans
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              Active Plans
             </span>
-            <FiPlay className="w-4 h-4 text-emerald-500" />
+            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-500">
+              <FiPlay className="w-4 h-4" />
+            </div>
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900 dark:text-white tracking-tight">
-            {stats.activeCount || 0} <span className="text-xs font-normal text-slate-400">/ {stats.totalCount || 0} total</span>
+          <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+            {stats.activeCount || 0} <span className="text-xs font-semibold text-slate-400">/ {stats.totalCount || 0} Total</span>
           </p>
-          <p className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-            <FiZap className="w-3 h-3" /> Auto-deductions enabled
+          <p className="text-xs text-emerald-500 font-medium flex items-center gap-1">
+            <FiZap className="w-3.5 h-3.5" /> Auto-Deductions Active
           </p>
         </div>
 
-        <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] p-4 rounded-xl space-y-2">
+        <div className="bg-white/80 dark:bg-dark-card/80 backdrop-blur-xl border border-slate-200/80 dark:border-dark-border p-5 rounded-3xl shadow-sm space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono uppercase text-slate-400 dark:text-slate-500">
-              Yearly commitment
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              Yearly Commitment
             </span>
-            <FiCalendar className="w-4 h-4 text-amber-500" />
+            <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-500">
+              <FiCalendar className="w-4 h-4" />
+            </div>
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900 dark:text-white tracking-tight">
-            {formatCurrency(stats.totalYearlyCommitment || 0)} <span className="text-xs font-normal text-slate-400">/ yr</span>
+          <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+            {formatCurrency(stats.totalYearlyCommitment || 0)} <span className="text-xs font-semibold text-slate-400">/ yr</span>
           </p>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">
-            Annual commitment total
+          <p className="text-xs text-slate-500 dark:text-dark-text-muted font-medium">
+            Annual subscription outflow
           </p>
         </div>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] p-3 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="bg-white/80 dark:bg-dark-card/80 backdrop-blur-xl border border-slate-200/80 dark:border-dark-border p-4 rounded-3xl shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="relative w-full sm:w-80">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
+          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
           <input
             type="text"
-            placeholder="Search subscriptions..."
+            placeholder="Search subscriptions or category..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-[#181a24] border border-slate-200 dark:border-[#222634] rounded-lg text-xs focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100"
+            className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-secondary/50 text-slate-800 dark:text-slate-100"
           />
         </div>
 
-        <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
           {['all', 'monthly', 'quarterly', 'yearly'].map((cycle) => (
             <button
               key={cycle}
               onClick={() => setFilterCycle(cycle)}
-              className={`px-3 py-1 rounded text-xs font-medium capitalize transition-colors cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold capitalize transition-all cursor-pointer ${
                 filterCycle === cycle
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-slate-100 dark:bg-[#181a24] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-secondary text-white shadow-md shadow-secondary/20 dark:bg-purple-650'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
               {cycle}
@@ -321,29 +329,29 @@ export default function Subscriptions() {
 
       {/* Content Area */}
       {loading ? (
-        <div className="flex items-center justify-center min-h-[240px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-indigo-500 border-t-transparent"></div>
+        <div className="flex items-center justify-center min-h-[300px]">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary"></div>
         </div>
       ) : error ? (
-        <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-950/40 p-4 rounded-xl text-rose-600 dark:text-rose-400 text-xs text-center">
+        <div className="bg-rose-500/10 border border-rose-500/20 p-6 rounded-3xl text-rose-500 font-semibold text-center">
           {error}
         </div>
       ) : filteredSubs.length === 0 ? (
-        <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl p-10 text-center space-y-3">
-          <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-[#181a24] border border-slate-200 dark:border-[#222634] text-slate-400 flex items-center justify-center mx-auto text-xl">
+        <div className="bg-white/80 dark:bg-dark-card/80 border border-slate-200/80 dark:border-dark-border rounded-3xl p-12 text-center space-y-4">
+          <div className="w-16 h-16 rounded-3xl bg-indigo-50 dark:bg-purple-950/40 text-indigo-500 dark:text-purple-400 flex items-center justify-center mx-auto text-2xl">
             <FiRepeat />
           </div>
           <div className="space-y-1">
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">No recurring subscriptions</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Add monthly memberships or annual software plans to track and automate bill deductions.
+            <h3 className="text-lg font-extrabold text-slate-800 dark:text-white">No Subscription Plans Found</h3>
+            <p className="text-xs text-slate-500 dark:text-dark-text-muted">
+              Add your monthly memberships or annual plans (Netflix, Amazon Prime, Gym, Spotify) to auto-deduct and track expenses.
             </p>
           </div>
           <button
             onClick={handleOpenAdd}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-xs transition-colors cursor-pointer"
+            className="px-6 py-2.5 bg-secondary hover:bg-indigo-700 text-white rounded-xl font-bold text-xs shadow-md transition-all cursor-pointer"
           >
-            + Add subscription
+            + Add First Subscription
           </button>
         </div>
       ) : (
@@ -359,15 +367,15 @@ export default function Subscriptions() {
             return (
               <div
                 key={sub._id || sub.id}
-                className={`bg-white dark:bg-[#14161f] border rounded-xl p-4 space-y-3 transition-colors ${
+                className={`bg-white/90 dark:bg-dark-card/90 backdrop-blur-xl border rounded-3xl p-5 shadow-sm space-y-4 transition-all hover:shadow-md ${
                   isPaused
-                    ? 'border-slate-200/60 dark:border-[#222634]/60 opacity-70'
-                    : 'border-slate-200 dark:border-[#222634]'
+                    ? 'border-slate-200/60 dark:border-slate-800 opacity-75'
+                    : 'border-slate-200/80 dark:border-dark-border'
                 }`}
               >
                 {/* Top Row: Category & Status */}
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-[#181a24] px-2 py-0.5 rounded border border-slate-200 dark:border-[#222634]">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-500 dark:text-purple-400 bg-indigo-50 dark:bg-purple-950/40 px-2.5 py-1 rounded-xl">
                     {sub.category || 'Subscriptions'}
                   </span>
 
@@ -620,18 +628,18 @@ export default function Subscriptions() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="btn-ghost rounded-xl px-4 py-2 text-sm font-medium cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="btn-primary rounded-xl px-5 py-2 text-sm font-medium cursor-pointer"
+                  className="px-5 py-2 bg-secondary hover:bg-indigo-700 dark:bg-purple-650 text-white font-bold rounded-xl shadow-md transition-all cursor-pointer"
                 >
                   {formLoading ? 'Saving...' : editingId ? 'Update Subscription' : 'Create Subscription'}
                 </button>

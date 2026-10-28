@@ -5,7 +5,7 @@ dotenv.config();
 
 export const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || '';
 export const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || '';
-export const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:admin@urxpenz.app';
+export const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:admin@xpenz.app';
 
 if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
   try {
@@ -25,7 +25,7 @@ if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
  */
 export const sendPushNotification = async (subscription, payload) => {
   const formattedPayload = JSON.stringify({
-    title: payload.title || 'URxpenz Notification',
+    title: payload.title || 'Xpenz Notification',
     body: payload.body || payload.message || 'You have an important update.',
     icon: payload.icon || '/pwa-192x192.png',
     badge: '/pwa-192x192.png',

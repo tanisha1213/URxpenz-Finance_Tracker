@@ -143,46 +143,46 @@ function Navbar() {
   }, [user, triggerPopup])
 
   return (
-    <nav className="bg-white dark:bg-[#14161f] border-b border-slate-200 dark:border-[#222634] sticky top-0 z-30 transition-colors">
+    <nav className="bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-slate-100 dark:border-dark-border sticky top-0 z-30 transition-colors duration-200">
       <div className="px-3 sm:px-6 py-3 flex justify-between items-center gap-2 max-w-full overflow-hidden">
         {/* Brand Logo & Title */}
-        <div className="flex items-center gap-2.5 shrink-0">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-11 h-11 rounded-lg object-contain" />
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-            URxpenz
+        <div className="flex items-center gap-2 shrink-0">
+          <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-7 h-7 rounded-md object-contain shadow-sm" />
+          <h2 className="text-base sm:text-lg md:text-xl font-bold text-slate-800 dark:text-white tracking-tight">
+            Xpenz
           </h2>
         </div>
         
         {/* Right Header Actions */}
-        <div className="flex items-center gap-1 sm:gap-2 md:gap-2.5 shrink-0 flex-nowrap">
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0 flex-nowrap">
           {/* Automatic Offline & Sync Status Indicator */}
           {(!isOnline || pendingOfflineCount > 0 || isSyncing || recentlySynced) && (
             <div
               title={
                 !isOnline
-                  ? 'Offline: Transactions are saved locally and will auto-sync when reconnected'
+                  ? 'Offline Mode: Transactions are safely queued and will automatically sync the moment connection returns'
                   : isSyncing
-                  ? 'Auto-syncing offline transactions...'
+                  ? 'Auto-syncing offline transactions with cloud database...'
                   : recentlySynced
-                  ? 'All offline transactions synced'
+                  ? 'All offline transactions synced successfully!'
                   : 'Auto-sync active'
               }
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${
+              className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold border transition-all ${
                 !isOnline
                   ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                   : isSyncing
                   ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
-                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 shadow-sm animate-fadeIn'
               }`}
             >
               {isSyncing ? (
                 <>
                   <span className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  <span className="hidden sm:inline">Syncing...</span>
+                  <span className="hidden sm:inline">Auto-Syncing...</span>
                 </>
               ) : !isOnline ? (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   <span>Offline{pendingOfflineCount > 0 ? ` (${pendingOfflineCount})` : ''}</span>
                 </>
               ) : recentlySynced ? (
@@ -204,7 +204,7 @@ function Navbar() {
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="appearance-none bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-[#232736] text-slate-700 dark:text-slate-300 rounded-md pl-2.5 pr-6 py-1 sm:py-1.5 text-xs font-medium focus:outline-none cursor-pointer hover:bg-slate-100 dark:hover:bg-[#1c202e] transition-colors"
+              className="appearance-none bg-slate-50 dark:bg-dark-border border border-slate-200 dark:border-dark-border text-slate-650 dark:text-slate-300 rounded-xl pl-2.5 pr-6 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold focus:outline-none cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all font-sans"
             >
               <option value="en">EN</option>
               <option value="hi">हिन्दी</option>
@@ -218,33 +218,33 @@ function Navbar() {
             </div>
           </div>
 
-          {/* Refer & Earn Quick Link */}
+          {/* Refer & Earn Quick Button */}
           <Link
-            to="/profile#referral-section"
-            className="flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1 rounded-md border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-medium transition-colors cursor-pointer"
-            title="Referral program — up to 25% off"
+            to="/profile"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-extrabold shadow-sm transition-all cursor-pointer"
+            title="Refer & Earn Rewards - Get up to 25% OFF"
           >
-            <FiGift className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-amber-500 shrink-0" />
-            <span className="hidden sm:inline">Refer & earn</span>
-            <span className="hidden md:inline text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-white font-semibold leading-none">25% off</span>
+            <FiGift className="w-3.5 h-3.5 text-amber-500" />
+            <span className="hidden sm:inline">Refer & Earn</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-500 text-white font-black leading-none">25% OFF</span>
           </Link>
 
           {/* Theme Switcher Button */}
           <button
             onClick={toggleTheme}
-            className="p-1.5 sm:p-2 rounded-md text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            className="p-1.5 sm:p-2 rounded-full text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
+            title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
           >
-            {theme === 'light' ? <FiMoon className="w-4 h-4" /> : <FiSun className="w-4 h-4 text-amber-400" />}
+            {theme === 'light' ? <FiMoon className="w-4.5 h-4.5 sm:w-5 sm:h-5" /> : <FiSun className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-amber-400" />}
           </button>
 
           {/* Tour Guide Button */}
           <button
             onClick={() => window.dispatchEvent(new Event('xpenz_trigger_tour'))}
-            className="p-1.5 sm:p-2 rounded-md text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Restart tour guide"
+            className="p-1.5 sm:p-2 rounded-full text-secondary dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-all cursor-pointer"
+            title="Restart Tour Guide"
           >
-            <FiHelpCircle className="w-4 h-4" />
+            <FiHelpCircle className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
           </button>
 
           <div className="relative">
@@ -253,36 +253,36 @@ function Navbar() {
                 setShowNotifications(!showNotifications)
                 setHasUnread(false)
               }}
-              className="p-1.5 sm:p-2 rounded-md text-slate-400 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative cursor-pointer"
+              className="p-2 rounded-full text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors relative cursor-pointer"
             >
-              <FiBell className="w-4 h-4" />
+              <FiBell className="w-5 h-5" />
               {hasUnread && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-indigo-500 rounded-full" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#8B5CF6] rounded-full" />
               )}
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl shadow-lg p-3.5 space-y-2.5 z-50 text-slate-800 dark:text-slate-100">
-                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-[#222634]">
-                  <h4 className="font-semibold text-xs text-slate-900 dark:text-white">Notifications</h4>
+              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[#131522] border border-slate-100 dark:border-slate-800/80 rounded-2xl shadow-xl p-4 space-y-3 z-50 animate-fadeIn text-slate-800 dark:text-slate-100">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-dark-border">
+                  <h4 className="font-bold text-sm">Notifications</h4>
                   <button 
                     onClick={() => setNotifications([])} 
-                    className="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium cursor-pointer"
+                    className="text-[10px] text-slate-400 hover:text-slate-600 font-bold uppercase tracking-wider cursor-pointer"
                   >
-                    Clear all
+                    Clear All
                   </button>
                 </div>
-                <div className="space-y-2 max-h-60 overflow-y-auto">
+                <div className="space-y-3 max-h-60 overflow-y-auto">
                   {notifications.length ? notifications.map((n) => (
-                    <div key={n.id} className="text-xs p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <div className="flex justify-between font-medium text-slate-800 dark:text-slate-200">
+                    <div key={n.id} className="text-xs p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                      <div className="flex justify-between font-bold text-slate-800 dark:text-slate-200">
                         <span>{n.title}</span>
-                        <span className="text-[10px] text-slate-400 font-normal">{n.time}</span>
+                        <span className="text-[10px] text-slate-400 font-medium">{n.time}</span>
                       </div>
-                      <p className="text-slate-500 dark:text-slate-400 mt-0.5 leading-normal text-[11px]">{n.message}</p>
+                      <p className="text-slate-500 dark:text-dark-text-muted mt-1 leading-normal font-medium">{n.message}</p>
                     </div>
                   )) : (
-                    <div className="py-6 text-center text-slate-400 text-xs">
+                    <div className="py-8 text-center text-slate-400 dark:text-slate-500 text-xs">
                       No notifications yet
                     </div>
                   )}
@@ -295,14 +295,14 @@ function Navbar() {
             <Link
               id="user-profile-tour"
               to="/profile"
-              className="flex items-center gap-2.5 pl-2 border-l border-slate-200 dark:border-[#222634] cursor-pointer group hover:opacity-90 transition-opacity"
-              title="Account settings"
+              className="flex items-center gap-3 pl-2 border-l border-slate-100 dark:border-dark-border cursor-pointer group hover:opacity-90 transition-all"
+              title="View & Edit Profile"
             >
               <div className="text-right hidden sm:block">
-                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 leading-tight">{user.name}</p>
-                <p className="text-[11px] text-slate-400">{user.email}</p>
+                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-secondary dark:group-hover:text-purple-400 transition-colors">{user.name}</p>
+                <p className="text-xs text-slate-400 dark:text-dark-text-muted">{user.email}</p>
               </div>
-              <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#1a1d28] border border-slate-200 dark:border-[#2b3042] flex items-center justify-center text-slate-700 dark:text-slate-200 font-semibold text-xs">
+              <div className="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-purple-950/20 dark:border-purple-900/30 flex items-center justify-center text-secondary dark:text-purple-400 font-bold text-base shadow-sm group-hover:scale-105 group-hover:shadow-md transition-all">
                 {user.name.charAt(0).toUpperCase()}
               </div>
             </Link>

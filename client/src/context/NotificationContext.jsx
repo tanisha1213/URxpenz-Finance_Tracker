@@ -166,7 +166,7 @@ export function NotificationProvider({ children }) {
         try {
           const reg = await navigator.serviceWorker.ready
           if (reg && reg.showNotification) {
-            reg.showNotification('URxpenz Desktop & Mobile Alert 🚀', {
+            reg.showNotification('Xpenz Desktop & Mobile Alert 🚀', {
               body: 'Native OS notifications are active! You will now receive loan due and EMI alerts even when the app is completely closed.',
               icon: '/pwa-192x192.png',
               badge: '/pwa-192x192.png',

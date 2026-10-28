@@ -24,59 +24,59 @@ export default function PrivacyPolicy() {
           <div className="flex items-center gap-2.5">
             <img
               src={theme === 'light' ? logoLight : logoDark}
-              alt="URxpenz Logo"
-              className="w-11 h-11 rounded-xl object-contain shadow-sm"
+              alt="Xpenz Logo"
+              className="w-7 h-7 rounded-lg object-contain shadow-sm"
             />
             <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">
-              URxpenz Finance Tracker
+              Xpenz Finance Tracker
             </span>
           </div>
         </div>
 
         {/* Hero Section */}
-        <div className="rounded-xl bg-white dark:bg-[#14161f] p-6 sm:p-8 border border-slate-200 dark:border-[#222634]">
-          <div className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">
+        <div className="rounded-3xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent dark:from-purple-900/20 dark:via-indigo-950/10 p-6 sm:p-10 border border-indigo-100 dark:border-purple-900/30">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black uppercase tracking-wider mb-3">
             <FiShield className="w-3.5 h-3.5" />
-            <span>Data safety & privacy policy</span>
+            Google Play Data Safety & Privacy Policy
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Privacy policy & data retention
+          <h1 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            Privacy Policy & User Data Retention
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
-            Effective: October 27, 2026 • Last reviewed: October 2026
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">
+            Effective Date: October 27, 2026 • Last Reviewed: October 2026
           </p>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
-            Welcome to <strong>URxpenz</strong> (&quot;we&quot;, &quot;our&quot;, or &quot;the Service&quot;). Your privacy and data security are our highest priorities. This Privacy Policy discloses how your personal and financial information is collected, stored, encrypted, and deleted in full compliance with the Google Play Store Developer Policy and international data protection standards.
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mt-4 leading-relaxed">
+            Welcome to <strong>Xpenz</strong> (&quot;we&quot;, &quot;our&quot;, or &quot;the Service&quot;). Your privacy and data security are our highest priorities. This Privacy Policy discloses how your personal and financial information is collected, stored, encrypted, and deleted in full compliance with the Google Play Store Developer Policy and international data protection standards.
           </p>
         </div>
 
         {/* Key Guarantees */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="p-4 rounded-xl bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] space-y-2">
-            <div className="flex items-center gap-2">
-              <FiLock className="w-4 h-4 text-emerald-500" />
-              <h2 className="font-semibold text-xs text-slate-900 dark:text-white">Zero data selling</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-5 rounded-2xl bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-sm space-y-2">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+              <FiLock className="w-4 h-4" />
             </div>
+            <h2 className="font-extrabold text-sm text-slate-900 dark:text-white">Zero Data Selling</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               We never sell, rent, or share your financial data or personal identity with advertisers, third-party data brokers, or marketing networks.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] space-y-2">
-            <div className="flex items-center gap-2">
-              <FiDatabase className="w-4 h-4 text-indigo-500" />
-              <h2 className="font-semibold text-xs text-slate-900 dark:text-white">Encrypted cloud & offline</h2>
+          <div className="p-5 rounded-2xl bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-sm space-y-2">
+            <div className="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-purple-950/40 text-indigo-600 dark:text-purple-400 flex items-center justify-center font-bold">
+              <FiDatabase className="w-4 h-4" />
             </div>
+            <h2 className="font-extrabold text-sm text-slate-900 dark:text-white">Encrypted Cloud & Offline</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               All cloud data is hosted on enterprise-grade Supabase infrastructure with multi-tenant row security and TLS 1.3 transport encryption.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] space-y-2">
-            <div className="flex items-center gap-2">
-              <FiTrash2 className="w-4 h-4 text-rose-500" />
-              <h2 className="font-semibold text-xs text-slate-900 dark:text-white">Permanent account deletion</h2>
+          <div className="p-5 rounded-2xl bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-sm space-y-2">
+            <div className="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
+              <FiTrash2 className="w-4 h-4" />
             </div>
+            <h2 className="font-extrabold text-sm text-slate-900 dark:text-white">Instant Account Deletion</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               Self-serve permanent data erasure is available directly inside the app under Profile Settings with immediate cascading deletion.
             </p>
@@ -84,7 +84,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Detailed Sections */}
-        <div className="bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] rounded-xl p-6 sm:p-8 space-y-8">
+        <div className="bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border rounded-3xl p-6 sm:p-9 space-y-8 shadow-sm">
           
           {/* Section 1 */}
           <section className="space-y-3">
@@ -101,7 +101,7 @@ export default function PrivacyPolicy() {
                 <li><strong>Offline Local Storage Data:</strong> When adding transactions without network connectivity, records are temporarily queued in your device&apos;s sandboxed browser storage (`localStorage`) and automatically synced when reconnected.</li>
               </ul>
               <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-800 dark:text-amber-300 text-xs font-medium">
-                <strong>Important:</strong> URxpenz DOES NOT collect, request, or store your bank account passwords, net-banking credentials, credit card numbers, CVVs, or SMS OTPs.
+                <strong>Important:</strong> Xpenz DOES NOT collect, request, or store your bank account passwords, net-banking credentials, credit card numbers, CVVs, or SMS OTPs.
               </div>
             </div>
           </section>
@@ -156,7 +156,7 @@ export default function PrivacyPolicy() {
                   How to delete your account in the application:
                 </p>
                 <ol className="list-decimal pl-5 space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  <li>Open the URxpenz app and sign in.</li>
+                  <li>Open the Xpenz app and sign in.</li>
                   <li>Click on your name or avatar in the top navigation bar to go to <strong>Profile</strong>.</li>
                   <li>Scroll to the <strong>Danger Zone</strong> section on the right.</li>
                   <li>Click <strong>&quot;Delete Account & All Data&quot;</strong> and type <strong>DELETE</strong> in the confirmation box.</li>
@@ -220,9 +220,9 @@ export default function PrivacyPolicy() {
             <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 leading-relaxed">
               <p>If you have any questions, feedback, or data requests regarding this Privacy Policy, please contact our Data Protection Officer:</p>
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-dark-border text-xs space-y-1">
-                <p><strong>Entity:</strong> URxpenz Personal Finance</p>
-                <p><strong>Email:</strong> support@urxpenz.app / privacy@urxpenz.app</p>
-                <p><strong>Website:</strong> https://urxpenz.vercel.app</p>
+                <p><strong>Entity:</strong> Xpenz Personal Finance</p>
+                <p><strong>Email:</strong> support@xpenz.app / privacy@xpenz.app</p>
+                <p><strong>Website:</strong> https://xpenz-finance.web.app</p>
                 <p><strong>Response SLA:</strong> Within 48 hours for data requests</p>
               </div>
             </div>
@@ -232,7 +232,7 @@ export default function PrivacyPolicy() {
 
         {/* Footer */}
         <div className="text-center pt-4 text-xs text-slate-400 dark:text-slate-500">
-          <p>© 2026 URxpenz. All rights reserved. Google Play is a trademark of Google LLC.</p>
+          <p>© 2026 Xpenz. All rights reserved. Google Play is a trademark of Google LLC.</p>
         </div>
 
       </div>

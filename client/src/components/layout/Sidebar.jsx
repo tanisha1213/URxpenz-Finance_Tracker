@@ -5,6 +5,7 @@ import { FiLayout, FiDollarSign, FiPieChart, FiTrendingUp, FiUser, FiLogOut, FiC
 import { useTheme } from '../../context/ThemeContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSubscription } from '../../context/SubscriptionContext'
+import logoLight from '../../assets/logo-light.png'
 import logoDark from '../../assets/logo-dark.png'
 
 function Sidebar() {
@@ -42,18 +43,20 @@ function Sidebar() {
   }
 
   return (
-    <aside className="w-60 bg-[#0E0420] text-[#F4EEFF] flex flex-col border-r border-[rgba(196,139,255,0.14)] h-screen shrink-0 select-none">
-      <div className="p-5 border-b border-[rgba(196,139,255,0.14)] flex items-center justify-between">
+    <aside className="w-64 bg-slate-900 dark:bg-dark-card text-white flex flex-col transition-all duration-200 border-r border-slate-800 dark:border-dark-border shadow-premium h-screen">
+      {/* Header */}
+      <div className="p-6 border-b border-slate-800 dark:border-dark-border flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold tracking-tight text-[#F4EEFF] flex items-center gap-2.5">
-            <img src={logoDark} alt="URxpenz" className="w-11 h-11 rounded-lg object-contain" />
-            URxpenz
+          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+            <img src={theme === 'light' ? logoLight : logoDark} alt="Xpenz Logo" className="w-8 h-8 rounded-lg object-contain shadow-md" />
+            Xpenz
           </h1>
-          <p className="text-[11px] text-[#A99BC4] mt-0.5">Expense & budget manager</p>
+          <p className="text-[10px] text-slate-400 dark:text-dark-text-muted mt-1 font-bold uppercase tracking-wider">AI Personal Finance</p>
         </div>
       </div>
 
-      <nav id="sidebar-navigation-tour" className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+      {/* Navigation */}
+      <nav id="sidebar-navigation-tour" className="flex-1 p-4 space-y-1 bg-slate-900 dark:bg-dark-card overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon
           const active = isActive(item.path)
@@ -61,18 +64,18 @@ function Sidebar() {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm transition-colors duration-150 group ${
+              className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${
                 active
                   ? 'sidebar-active'
                   : 'sidebar-inactive'
               }`}
             >
-              <div className="flex items-center gap-2.5">
-                <Icon className={`w-4 h-4 shrink-0 transition-colors ${active ? 'text-[#F4EEFF]' : 'text-[#A99BC4] group-hover:text-[#F4EEFF]'}`} />
-                <span className="font-medium">{t(item.labelKey)}</span>
+              <div className="flex items-center gap-3">
+                <Icon className="w-5 h-5 transition-transform duration-200 group-hover:scale-105" />
+                <span className="font-semibold text-sm">{t(item.labelKey)}</span>
               </div>
               {item.badge && (
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#D93CF5]/15 border border-[#D93CF5]/30 text-[#F25CFF]">
+                <span className="px-1.5 py-0.5 rounded-md text-[10px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-sm">
                   {item.badge}
                 </span>
               )}
@@ -81,56 +84,57 @@ function Sidebar() {
         })}
       </nav>
 
-      <div className="p-3 border-t border-[rgba(196,139,255,0.14)]">
+      {/* Subscription Status Card */}
+      <div className="px-4 pb-2">
         {isTrial ? (
-          <div className="p-3 rounded-xl bg-[#140727] border border-[rgba(196,139,255,0.14)] text-[#F4EEFF]">
-            <div className="flex items-center justify-between text-xs font-semibold text-[#F4EEFF]">
-              <span className="flex items-center gap-1.5"><FiZap className="w-3.5 h-3.5 text-amber-400" /> Free trial</span>
-              <span className="text-[11px] text-[#A99BC4]">{trialDaysRemaining}d remaining</span>
+          <div className="p-3 rounded-2xl bg-gradient-to-br from-purple-950/50 to-indigo-950/50 border border-purple-500/30 text-white shadow-sm">
+            <div className="flex items-center justify-between text-xs font-bold text-purple-300">
+              <span className="flex items-center gap-1.5"><FiZap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" /> Free Trial</span>
+              <span className="px-1.5 py-0.5 rounded-md bg-purple-500/20 text-[10px] text-purple-200">{trialDaysRemaining}d left</span>
             </div>
-            <p className="text-[11px] text-[#A99BC4] mt-1 leading-normal">Full access trial active</p>
+            <p className="text-[11px] text-slate-300 mt-1 leading-tight">All Pro features unlocked</p>
             <button
               onClick={() => openUpgradeModal()}
-              className="mt-2.5 w-full py-1.5 px-3 rounded-lg btn-primary text-[#F4EEFF] text-xs font-semibold cursor-pointer"
+              className="mt-2.5 w-full py-1.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-md shadow-purple-900/30 cursor-pointer"
             >
-              View plans
+              View Pro Plans
             </button>
           </div>
         ) : tier === 'basic' ? (
-          <div className="p-3 rounded-xl bg-[#140727] border border-[rgba(196,139,255,0.14)] text-[#F4EEFF]">
-            <div className="flex items-center justify-between text-xs font-semibold text-[#F4EEFF]">
-              <span>Basic tier</span>
-              <span className="text-[10px] text-[#A99BC4] px-1.5 py-0.5 rounded bg-[#1C0B36] border border-[rgba(196,139,255,0.1)]">Free</span>
+          <div className="p-3 rounded-2xl bg-slate-800/60 border border-slate-700/60 text-white">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-200">
+              <span>Basic Plan</span>
+              <span className="text-[10px] uppercase tracking-wider text-amber-400 font-bold px-1.5 py-0.5 rounded bg-amber-500/10">Free</span>
             </div>
-            <p className="text-[11px] text-[#A99BC4] mt-1 leading-normal">1 bank, 1 loan, 2 subscriptions</p>
+            <p className="text-[11px] text-slate-400 mt-1 leading-tight">1 Bank, 1 Loan, 2 Subs</p>
             <button
               onClick={() => openUpgradeModal()}
-              className="mt-2.5 w-full py-1.5 px-3 rounded-lg btn-primary text-[#F4EEFF] text-xs font-semibold cursor-pointer"
+              className="mt-2.5 w-full py-1.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold transition-all shadow-md shadow-purple-900/30 cursor-pointer"
             >
-              Upgrade plan (₹45)
+              Upgrade to Pro (₹45)
             </button>
           </div>
         ) : (
-          <div className="p-2.5 rounded-xl bg-[#140727] border border-[rgba(196,139,255,0.14)] text-[#F4EEFF] flex items-center justify-between text-xs font-medium">
-            <span className="flex items-center gap-1.5 text-emerald-400"><FiAward className="w-4 h-4" /> Pro member</span>
-            <button onClick={() => openUpgradeModal()} className="text-[11px] text-[#A99BC4] hover:text-[#F4EEFF] cursor-pointer transition-colors">Manage</button>
+          <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/20 text-emerald-300 flex items-center justify-between text-xs font-bold">
+            <span className="flex items-center gap-1.5"><FiAward className="w-4 h-4 text-emerald-400" /> Pro Member</span>
+            <button onClick={() => openUpgradeModal()} className="text-[10px] text-emerald-400 hover:underline cursor-pointer">Manage</button>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-[rgba(196,139,255,0.14)] bg-[#0B0316]/60">
+      <div className="p-4 border-t border-slate-800 dark:border-dark-border bg-slate-950/20 dark:bg-dark-card/50">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-500/15 text-rose-300 hover:text-white hover:bg-rose-600 rounded-xl transition-all duration-150 font-semibold text-xs border border-rose-500/20 cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-rose-500/10 text-rose-400 hover:text-white hover:bg-rose-600 rounded-xl transition-all duration-200 font-semibold text-sm shadow-sm"
         >
-          <FiLogOut className="w-4 h-4" />
+          <FiLogOut className="w-5 h-5" />
           {t('logout')}
         </button>
         <div className="pt-2 text-center">
           <Link
             to="/privacy"
-            className="text-[10px] text-[#A99BC4] hover:text-[#F4EEFF] transition-colors underline font-medium"
+            className="text-[10px] text-slate-500 hover:text-purple-400 transition-colors underline font-medium"
           >
             Privacy Policy & Data Safety
           </Link>

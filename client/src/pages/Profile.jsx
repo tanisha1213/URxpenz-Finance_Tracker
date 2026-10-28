@@ -148,10 +148,10 @@ function Profile() {
     }
   }
 
-  const referralCode = referralData?.referralCode || user?.referral?.referralCode || 'URXPENZ'
+  const referralCode = referralData?.referralCode || user?.referral?.referralCode || 'XPENZ'
   const referralCount = referralData?.referralCount ?? user?.referral?.referralCount ?? 0
   const discountPercent = referralData?.discountPercent ?? user?.referral?.discountPercent ?? 0
-  const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}/signup?ref=${referralCode}` : `https://urxpenz.vercel.app/signup?ref=${referralCode}`
+  const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}/signup?ref=${referralCode}` : `https://xpenz-finance-tracker-advance.vercel.app/signup?ref=${referralCode}`
 
   const handleCopyCode = async () => {
     try {
@@ -192,7 +192,7 @@ function Profile() {
   }
 
   const handleShareWhatsApp = () => {
-    const text = `Hey! Track your daily budgets, expenses, and bank accounts on URxpenz. Use my invite code "${referralCode}" to get 10 DAYS EXTRA FREE TRIAL (70 Days Total)! Sign up here: ${inviteLink}`
+    const text = `Hey! Track your daily budgets, expenses, and bank accounts on Xpenz. Use my invite code "${referralCode}" to get 10 DAYS EXTRA FREE TRIAL (70 Days Total)! Sign up here: ${inviteLink}`
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`
     window.open(url, '_blank')
   }
@@ -208,7 +208,7 @@ function Profile() {
       {error && <div className="rounded-lg border border-rose-200 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/20 p-3 text-xs text-rose-800 dark:text-rose-300 font-medium">{error}</div>}
 
       {/* Subscription & Membership Plan Card */}
-      <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 sm:p-6">
+      <section className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-gradient-to-b dark:from-[#131522] dark:to-[#0d0f17] p-5 sm:p-6 shadow-premium">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${
@@ -258,7 +258,7 @@ function Profile() {
             <button
               type="button"
               onClick={() => openUpgradeModal()}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl btn-primary text-white text-xs font-semibold cursor-pointer"
             >
               <FiAward className="w-3.5 h-3.5" />
               {tier === 'basic' ? 'Upgrade to Pro (from ₹45)' : isTrial ? 'View subscription plans' : 'Manage plan'}

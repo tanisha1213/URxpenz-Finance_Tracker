@@ -25,7 +25,7 @@ import { useTheme } from '../context/ThemeContext'
 import { useLanguage } from '../context/LanguageContext'
 import { getLoans, addLoan } from '../services/loanService'
 
-const COLORS = ['#8F2BFF', '#D93CF5', '#5A00D6', '#AD5CFF', '#F25CFF', '#3A0A9A']
+const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
 
 const emptyForm = {
   type: 'expense',
@@ -61,19 +61,19 @@ const emptyForm = {
 
 const checklistTranslations = {
   en: {
-    setupGuide: 'Setup checklist',
-    setupGuideSubtitle: 'Recommended initial steps to configure your personal ledger:',
-    step1Budget: '1. Set up monthly budget',
-    step1BudgetDesc: 'Define spending limits and target savings before recording expenses.',
-    step2Accounts: '2. Configure accounts & balances',
-    step2AccountsDesc: 'Set starting balances for cash and bank accounts.',
-    step3Tx: '3. Log your first transaction',
-    step3TxDesc: 'Record an income or expense entry to populate your ledgers.',
-    goToBudget: 'Set budget',
-    goToAccounts: 'Set balances',
-    addFirstTx: 'Add entry',
-    dismissGuide: 'Hide checklist',
-    setupComplete: 'Setup complete. You are ready to manage your accounts.',
+    setupGuide: '🚀 Quick Start Checklist',
+    setupGuideSubtitle: 'Follow these recommended steps to set up your finance tracker workspace:',
+    step1Budget: '1. Set up Monthly Budget (Do this first!)',
+    step1BudgetDesc: 'Plan your spending limits and target savings before recording expenses.',
+    step2Accounts: '2. Configure Balances & Accounts',
+    step2AccountsDesc: 'Set starting balances for Cash and Bank Accounts to reflect correct totals.',
+    step3Tx: '3. Log Your First Transaction',
+    step3TxDesc: 'Record an income or expense entry to populate your real-time charts.',
+    goToBudget: 'Set Budget',
+    goToAccounts: 'Set Balances',
+    addFirstTx: 'Add Transaction',
+    dismissGuide: 'Hide Checklist',
+    setupComplete: '🎉 Setup completed! You are ready to manage your finances.',
   },
   hi: {
     setupGuide: '🚀 त्वरित शुरुआत चेकलिस्ट',
@@ -339,13 +339,13 @@ function Dashboard() {
   }))
 
   const isDark = theme === 'dark'
-  const gridStroke = isDark ? 'rgba(196,139,255,0.1)' : 'rgba(58,10,154,0.08)'
-  const textStroke = isDark ? '#A99BC4' : '#5E5078'
+  const gridStroke = isDark ? '#222533' : '#f1f5f9'
+  const textStroke = isDark ? '#475569' : '#94a3b8'
   const tooltipStyle = isDark
-    ? { backgroundColor: '#140727', borderRadius: '12px', border: '1px solid rgba(196,139,255,0.14)', color: '#F4EEFF' }
-    : { backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid rgba(58,10,154,0.12)', boxShadow: '0 4px 12px rgba(14, 4, 32, 0.08)' }
-  const tooltipItemStyle = { color: isDark ? '#F4EEFF' : '#170A2E' }
-  const tooltipLabelStyle = { color: isDark ? '#A99BC4' : '#5E5078' }
+    ? { backgroundColor: '#13141f', borderRadius: '12px', border: '1px solid #222533', color: '#fff' }
+    : { backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }
+  const tooltipItemStyle = { color: isDark ? '#f8fafc' : '#0f172a' }
+  const tooltipLabelStyle = { color: isDark ? '#94a3b8' : '#64748b' }
 
   const isBudgetDone = Number(summary?.monthlyBudget || 0) > 0
   const isAccountsDone = summary?.totalBalance > 0
@@ -357,16 +357,16 @@ function Dashboard() {
   const checklistLabels = checklistTranslations[language] || checklistTranslations['en']
 
   return (
-    <div className="space-y-6 text-slate-800 dark:text-slate-100">
+    <div className="space-y-8 text-slate-800 dark:text-slate-100">
       {/* Setup Guide / Checklist Card */}
       {showChecklist && (
-        <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-slate-50/50 dark:bg-[#14161f] p-4 sm:p-5 space-y-4">
-          <div className="flex justify-between items-start gap-4">
-            <div className="space-y-0.5">
-              <h3 className="font-semibold text-slate-900 dark:text-white text-sm">
+        <section className="rounded-3xl border border-indigo-100 dark:border-purple-950/20 bg-indigo-50/10 dark:bg-purple-950/5 p-6 shadow-premium space-y-6">
+          <div className="flex justify-between items-start">
+            <div className="space-y-1">
+              <h3 className="font-extrabold text-indigo-650 dark:text-purple-400 text-lg flex items-center gap-2">
                 {checklistLabels.setupGuide}
               </h3>
-              <p className="text-slate-500 dark:text-slate-400 text-xs">
+              <p className="text-slate-500 dark:text-dark-text-muted text-xs">
                 {checklistLabels.setupGuideSubtitle}
               </p>
             </div>
@@ -375,48 +375,48 @@ function Dashboard() {
                 localStorage.setItem('xpenz_dismissed_checklist', 'true')
                 setDismissedChecklist(true)
               }}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-medium px-2.5 py-1 border border-slate-200 dark:border-[#222634] rounded-md cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
+              className="text-slate-400 hover:text-slate-650 dark:hover:text-white text-xs font-bold px-3 py-1 border border-slate-200 dark:border-dark-border rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               {checklistLabels.dismissGuide}
             </button>
           </div>
 
           {/* Progress Bar */}
-          <div className="space-y-1.5">
-            <div className="flex justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-bold text-slate-400 dark:text-dark-text-muted uppercase tracking-wider">
               <span>{t('progress') || 'Progress'}</span>
               <span>{completedCount} / 3 {t('completed') || 'Completed'} ({progressPct}%)</span>
             </div>
-            <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full bg-indigo-600 rounded-full transition-all duration-300" style={{ width: `${progressPct}%` }}></div>
+            <div className="w-full h-2 bg-slate-200 dark:bg-dark-border rounded-full overflow-hidden">
+              <div className="h-full bg-indigo-600 dark:bg-purple-500 transition-all duration-500" style={{ width: `${progressPct}%` }}></div>
             </div>
           </div>
 
           {/* Checklist Items */}
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-3">
             {/* Step 1: Budget */}
-            <div className={`p-3.5 rounded-lg border transition-colors ${
+            <div className={`p-4 rounded-2xl border transition-all ${
               isBudgetDone 
-                ? 'border-emerald-200 dark:border-emerald-950/40 bg-emerald-50/20 dark:bg-emerald-950/10' 
-                : 'border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26]'
+                ? 'border-emerald-100 dark:border-emerald-950/20 bg-emerald-50/20 dark:bg-emerald-950/5' 
+                : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-dark-card shadow-sm'
             }`}>
-              <div className="flex items-start gap-2.5">
-                <div className={`p-1 rounded-md shrink-0 ${
-                  isBudgetDone ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40' : 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
+              <div className="flex items-start gap-3">
+                <div className={`p-1.5 rounded-full ${
+                  isBudgetDone ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30' : 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
                 }`}>
-                  <FiCheck className="w-3.5 h-3.5" />
+                  <FiCheck className="w-4 h-4" />
                 </div>
-                <div className="space-y-1.5 flex-1 min-w-0">
-                  <h4 className={`text-xs font-semibold ${isBudgetDone ? 'text-slate-400 dark:text-slate-500 line-through font-normal' : 'text-slate-900 dark:text-white'}`}>
+                <div className="space-y-2 flex-1">
+                  <h4 className={`font-bold text-sm ${isBudgetDone ? 'text-slate-400 dark:text-slate-500 line-through font-normal' : 'text-slate-800 dark:text-white'}`}>
                     {checklistLabels.step1Budget}
                   </h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
+                  <p className="text-[11px] text-slate-400 dark:text-dark-text-muted leading-relaxed">
                     {checklistLabels.step1BudgetDesc}
                   </p>
                   {!isBudgetDone && (
                     <Link
                       to="/budget"
-                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-medium transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-650 dark:bg-purple-650 text-white rounded-xl text-xs font-bold shadow-md hover:bg-indigo-750 dark:hover:bg-purple-750 transition-colors"
                     >
                       {checklistLabels.goToBudget}
                     </Link>
@@ -426,28 +426,28 @@ function Dashboard() {
             </div>
 
             {/* Step 2: Accounts */}
-            <div className={`p-3.5 rounded-lg border transition-colors ${
+            <div className={`p-4 rounded-2xl border transition-all ${
               isAccountsDone 
-                ? 'border-emerald-200 dark:border-emerald-950/40 bg-emerald-50/20 dark:bg-emerald-950/10' 
-                : 'border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26]'
+                ? 'border-emerald-100 dark:border-emerald-950/20 bg-emerald-50/20 dark:bg-emerald-950/5' 
+                : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-dark-card shadow-sm'
             }`}>
-              <div className="flex items-start gap-2.5">
-                <div className={`p-1 rounded-md shrink-0 ${
-                  isAccountsDone ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40' : 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
+              <div className="flex items-start gap-3">
+                <div className={`p-1.5 rounded-full ${
+                  isAccountsDone ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30' : 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
                 }`}>
-                  <FiCheck className="w-3.5 h-3.5" />
+                  <FiCheck className="w-4 h-4" />
                 </div>
-                <div className="space-y-1.5 flex-1 min-w-0">
-                  <h4 className={`text-xs font-semibold ${isAccountsDone ? 'text-slate-400 dark:text-slate-500 line-through font-normal' : 'text-slate-900 dark:text-white'}`}>
+                <div className="space-y-2 flex-1">
+                  <h4 className={`font-bold text-sm ${isAccountsDone ? 'text-slate-400 dark:text-slate-500 line-through font-normal' : 'text-slate-800 dark:text-white'}`}>
                     {checklistLabels.step2Accounts}
                   </h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
+                  <p className="text-[11px] text-slate-400 dark:text-dark-text-muted leading-relaxed">
                     {checklistLabels.step2AccountsDesc}
                   </p>
                   {!isAccountsDone && (
                     <Link
                       to="/balance"
-                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-medium transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-650 dark:bg-purple-650 text-white rounded-xl text-xs font-bold shadow-md hover:bg-indigo-750 dark:hover:bg-purple-750 transition-colors"
                     >
                       {checklistLabels.goToAccounts}
                     </Link>
@@ -457,28 +457,28 @@ function Dashboard() {
             </div>
 
             {/* Step 3: Transaction */}
-            <div className={`p-3.5 rounded-lg border transition-colors ${
+            <div className={`p-4 rounded-2xl border transition-all ${
               isTxDone 
-                ? 'border-emerald-200 dark:border-emerald-950/40 bg-emerald-50/20 dark:bg-emerald-950/10' 
-                : 'border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26]'
+                ? 'border-emerald-100 dark:border-emerald-950/20 bg-emerald-50/20 dark:bg-emerald-950/5' 
+                : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-dark-card shadow-sm'
             }`}>
-              <div className="flex items-start gap-2.5">
-                <div className={`p-1 rounded-md shrink-0 ${
-                  isTxDone ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40' : 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
+              <div className="flex items-start gap-3">
+                <div className={`p-1.5 rounded-full ${
+                  isTxDone ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30' : 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
                 }`}>
-                  <FiCheck className="w-3.5 h-3.5" />
+                  <FiCheck className="w-4 h-4" />
                 </div>
-                <div className="space-y-1.5 flex-1 min-w-0">
-                  <h4 className={`text-xs font-semibold ${isTxDone ? 'text-slate-400 dark:text-slate-500 line-through font-normal' : 'text-slate-900 dark:text-white'}`}>
+                <div className="space-y-2 flex-1">
+                  <h4 className={`font-bold text-sm ${isTxDone ? 'text-slate-400 dark:text-slate-500 line-through font-normal' : 'text-slate-800 dark:text-white'}`}>
                     {checklistLabels.step3Tx}
                   </h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
+                  <p className="text-[11px] text-slate-400 dark:text-dark-text-muted leading-relaxed">
                     {checklistLabels.step3TxDesc}
                   </p>
                   {!isTxDone && (
                     <button
                       onClick={() => openCreate('expense')}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-medium transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-650 dark:bg-purple-650 text-white rounded-xl text-xs font-bold shadow-md hover:bg-indigo-750 dark:hover:bg-purple-750 transition-colors cursor-pointer"
                     >
                       <FiPlus className="w-3.5 h-3.5" />
                       {checklistLabels.addFirstTx}
@@ -491,57 +491,63 @@ function Dashboard() {
         </section>
       )}
 
-      {/* Hero Balance Section */}
-      <div id="total-balance-card-tour" className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-5 sm:p-6 flex flex-col justify-between">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      {/* Premium Hero Balance Section */}
+      <div id="total-balance-card-tour" className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-gradient-to-b dark:from-[#131522] dark:to-[#0d0f17] p-6 md:p-8 shadow-premium relative overflow-hidden flex flex-col justify-between min-h-[200px]">
+        {/* Subtle glow accent */}
+        <div className="absolute -left-12 -top-12 w-32 h-32 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
+        {/* Top/Right glowing light effect matching references */}
+        <div className="absolute right-12 top-0 w-48 h-48 rounded-full bg-purple-600/5 blur-3xl pointer-events-none" />
+
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 z-10">
           <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('totalBalance')}</p>
-            <div className="flex items-baseline gap-1 mt-1.5">
-              <h2 className="text-3xl sm:text-4xl font-bold font-mono text-slate-900 dark:text-white tracking-tight">
+            <p className="text-xs font-bold text-slate-400 dark:text-dark-text-muted uppercase tracking-wider">{t('totalBalance')}</p>
+            <div className="flex items-baseline gap-1 mt-2">
+              <h2 className="text-4xl md:text-5xl font-black text-slate-800 dark:text-white tracking-tight">
                 {summary ? formatCurrency(summary.totalBalance).split('.')[0] : '₹0'}
               </h2>
-              <span className="text-base sm:text-lg font-mono text-slate-400">
+              <span className="text-lg md:text-xl font-bold text-slate-450 dark:text-dark-text-muted">
                 .{summary ? formatCurrency(summary.totalBalance).split('.')[1] || '00' : '00'}
               </span>
-              <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                INR
+              <span className="ml-2.5 inline-flex items-center gap-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200/40 dark:border-slate-800 px-2 py-0.5 text-xs font-bold text-slate-500 dark:text-slate-400">
+                🇮🇳 INR
               </span>
             </div>
+
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-center flex-shrink-0">
             <button
               id="add-transaction-btn-tour"
               onClick={() => openCreate('expense')}
-              className="flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 px-4 py-2.5 font-semibold text-white text-xs transition-colors cursor-pointer"
+              className="flex items-center justify-center gap-2 rounded-full bg-[#743BF7] hover:bg-[#602ee3] dark:bg-[#8B5CF6] dark:hover:bg-[#784ce3] px-8 py-4 font-black text-white text-sm shadow-xl shadow-purple-500/25 dark:shadow-purple-600/30 transition-all hover:scale-[1.03] active:scale-[0.98] cursor-pointer"
             >
-              <FiPlus className="w-4 h-4" />
+              <FiPlus className="w-4 h-4 stroke-[3px]" />
               {t('addTransaction')}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Daily Budget Tracker Banner */}
+      {/* Daily Budget Tracker Banner (Pro & 60-Day Trial) */}
       {summary && !summary.isDailyBudgetLocked && summary.dailyBudget > 0 && (
-        <div className="rounded-xl border border-slate-200 dark:border-[#222634] bg-slate-50/50 dark:bg-[#14161f] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="rounded-2xl border border-purple-100 dark:border-purple-900/30 bg-gradient-to-r from-purple-50/60 via-indigo-50/40 to-white dark:from-slate-900/40 dark:via-purple-950/20 dark:to-slate-900/40 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/40 shrink-0">
-              <FiCalendar className="w-4 h-4" />
+            <div className="p-2.5 rounded-xl bg-purple-600 text-white shadow-md flex-shrink-0">
+              <span className="text-sm">🎯</span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">Today's daily budget</span>
-                <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${
+                <span className="text-xs font-bold text-slate-500 dark:text-dark-text-muted uppercase tracking-wider">Today's Daily Budget</span>
+                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
                   summary.isOverspentToday
-                    ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
-                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                    ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                 }`}>
-                  {summary.isOverspentToday ? 'Overspent' : 'On track'}
+                  {summary.isOverspentToday ? 'Overspent' : 'On Track'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Daily allowance: <strong className="text-slate-700 dark:text-slate-200">{formatCurrency(summary.dailyBudget)}</strong> | Spent today: <strong className="text-slate-700 dark:text-slate-200">{formatCurrency(summary.todaySpent || 0)}</strong>
+              <p className="text-xs text-slate-650 dark:text-slate-350 mt-0.5">
+                Daily Allowance: <strong>{formatCurrency(summary.dailyBudget)}</strong> | Spent today: <strong>{formatCurrency(summary.todaySpent || 0)}</strong>
                 {summary.isOverspentToday
                   ? ` (Overspent by ${formatCurrency(summary.todaySpent - summary.dailyBudget)})`
                   : ` (Saved ${formatCurrency(summary.todaySaved || 0)} today)`}
@@ -550,9 +556,9 @@ function Dashboard() {
           </div>
           <Link
             to="/budget"
-            className="self-start sm:self-center px-3 py-1.5 rounded-lg bg-white dark:bg-[#191c26] border border-slate-200 dark:border-[#2a2f42] text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shrink-0"
+            className="self-start sm:self-center px-3.5 py-1.5 rounded-xl bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm flex-shrink-0"
           >
-            Manage budget
+            Manage Daily Budget →
           </Link>
         </div>
       )}
@@ -590,42 +596,42 @@ function Dashboard() {
       {/* Analytics Charts Grid */}
       <div className="grid gap-6 lg:grid-cols-3 w-full overflow-hidden">
         {/* Monthly Trend Chart */}
-        <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 sm:p-5 lg:col-span-2 min-w-0 overflow-hidden">
+        <section className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-gradient-to-b dark:from-[#131522] dark:to-[#0d0f17] p-4 sm:p-6 shadow-premium lg:col-span-2 min-w-0 overflow-hidden">
           <div className="flex items-center gap-2 mb-4">
-            <FiTrendingUp className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-            <h3 className="font-semibold text-slate-900 dark:text-white text-sm">{t('monthlyTrend')}</h3>
+            <FiTrendingUp className="w-5 h-5 text-secondary dark:text-purple-400" />
+            <h3 className="font-bold text-slate-800 dark:text-white text-lg">{t('monthlyTrend')}</h3>
           </div>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={trend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8F2BFF" stopOpacity={0.25}/>
-                    <stop offset="95%" stopColor="#8F2BFF" stopOpacity={0.0}/>
+                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0.0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridStroke} />
-                <XAxis dataKey="month" tickLine={false} stroke={textStroke} fontSize={11} />
-                <YAxis tickLine={false} stroke={textStroke} fontSize={11} />
+                <XAxis dataKey="month" tickLine={false} stroke={textStroke} fontSize={12} />
+                <YAxis tickLine={false} stroke={textStroke} fontSize={12} />
                 <Tooltip
                   contentStyle={tooltipStyle}
                   itemStyle={tooltipItemStyle}
                   labelStyle={tooltipLabelStyle}
                   formatter={(value) => [formatCurrency(value), 'Spent']}
                 />
-                <Area type="monotone" dataKey="expense" stroke="#8F2BFF" strokeWidth={2.5} fillOpacity={1} fill="url(#colorExpense)" activeDot={{ r: 5, strokeWidth: 1.5, stroke: '#F4EEFF' }} />
+                <Area type="monotone" dataKey="expense" stroke="#a855f7" strokeWidth={3.5} fillOpacity={1} fill="url(#colorExpense)" activeDot={{ r: 7, strokeWidth: 2, stroke: '#fff' }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </section>
 
         {/* Category Share Donut Chart */}
-        <section id="category-distribution-chart-tour" className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 sm:p-5 min-w-0 overflow-hidden">
-          <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-4">{t('spendingByCat')}</h3>
+        <section id="category-distribution-chart-tour" className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-gradient-to-b dark:from-[#131522] dark:to-[#0d0f17] p-4 sm:p-6 shadow-premium min-w-0 overflow-hidden">
+          <h3 className="font-bold text-slate-800 dark:text-white text-lg mb-4">{t('spendingByCat')}</h3>
           <div className="h-72 flex items-center justify-center relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={categoriesList} dataKey="amount" nameKey="category" innerRadius={60} outerRadius={90} paddingAngle={2}>
+                <Pie data={categoriesList} dataKey="amount" nameKey="category" innerRadius={60} outerRadius={90} paddingAngle={3}>
                   {categoriesList.map((entry, index) => (
                     <Cell key={entry.category} fill={COLORS[index % COLORS.length]} />
                   ))}
@@ -639,7 +645,7 @@ function Dashboard() {
               </PieChart>
             </ResponsiveContainer>
             {categoriesList.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-xs">
+              <div className="absolute inset-0 flex items-center justify-center text-slate-400 dark:text-slate-500 text-sm">
                 No data available
               </div>
             )}
@@ -650,14 +656,14 @@ function Dashboard() {
       {/* Comparisons & Recent Listings Grid */}
       <div className="grid gap-6 lg:grid-cols-3 w-full overflow-hidden">
         {/* Income vs Expenses Bar Chart */}
-        <section id="income-expense-chart-tour" className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 sm:p-5 lg:col-span-2 min-w-0 overflow-hidden">
-          <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-4">{t('incomeVsExpense')}</h3>
+        <section id="income-expense-chart-tour" className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-gradient-to-b dark:from-[#131522] dark:to-[#0d0f17] p-4 sm:p-6 shadow-premium lg:col-span-2 min-w-0 overflow-hidden">
+          <h3 className="font-bold text-slate-800 dark:text-white text-lg mb-4">{t('incomeVsExpense')}</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={incomeExpense} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridStroke} />
-                <XAxis dataKey="month" tickLine={false} stroke={textStroke} fontSize={11} />
-                <YAxis tickLine={false} stroke={textStroke} fontSize={11} />
+                <XAxis dataKey="month" tickLine={false} stroke={textStroke} fontSize={12} />
+                <YAxis tickLine={false} stroke={textStroke} fontSize={12} />
                 <Tooltip
                   contentStyle={tooltipStyle}
                   itemStyle={tooltipItemStyle}
@@ -665,8 +671,8 @@ function Dashboard() {
                   formatter={(value) => formatCurrency(value)}
                 />
                 <Legend iconType="circle" />
-                <Bar dataKey="Income" fill="#10b981" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Expense" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Income" fill="#10b981" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="Expense" fill="#ef4444" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -675,44 +681,44 @@ function Dashboard() {
         {/* Right Side Stack: Upcoming Commitments & Recent Transactions */}
         <div className="space-y-6 lg:col-span-1 min-w-0">
           {/* Upcoming Payments Widget */}
-          <section className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 sm:p-5 overflow-hidden">
-            <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-3.5 flex items-center gap-2">
-              <FiCalendar className="w-4 h-4 text-indigo-500" />
-              Upcoming payments
+          <section className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-gradient-to-b dark:from-[#131522] dark:to-[#0d0f17] p-4 sm:p-6 shadow-premium overflow-hidden">
+            <h3 className="font-bold text-slate-800 dark:text-white text-lg mb-4 flex items-center gap-2">
+              <FiCalendar className="w-5 h-5 text-indigo-500" />
+              Upcoming Payments
             </h3>
-            <div className="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
+            <div className="space-y-3.5 max-h-[300px] overflow-y-auto pr-1">
               {summary?.upcomingPayments?.length ? (
                 summary.upcomingPayments.slice(0, 5).map((pay, index) => {
                   const isLoan = pay.type === 'loan_emi'
                   const isSIP = pay.type === 'investment_sip'
                   
                   return (
-                    <div key={`${pay.type}-${pay.id}-${index}`} className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26] hover:bg-slate-50 dark:hover:bg-[#1f2330] transition-colors w-full min-w-0 gap-2">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div className={`px-2 py-0.5 rounded text-[10px] font-semibold shrink-0 ${
+                    <div key={`${pay.type}-${pay.id}-${index}`} className="flex items-center justify-between p-3 rounded-2xl border border-slate-50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors w-full min-w-0 gap-2">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider flex-shrink-0 ${
                           isLoan 
-                            ? 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400' 
+                            ? 'bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-450' 
                             : isSIP 
-                            ? 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400' 
-                            : 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400'
+                            ? 'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-650 dark:text-indigo-400' 
+                            : 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
                         }`}>
                           {isLoan ? 'EMI' : isSIP ? 'SIP' : 'PRM'}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-slate-800 dark:text-slate-200 text-xs truncate">{pay.title}</p>
-                          <p className="text-[10px] text-slate-400 mt-0.5">
+                          <p className="font-bold text-slate-800 dark:text-slate-200 text-sm truncate">{pay.title}</p>
+                          <p className="text-[10px] text-slate-400 dark:text-dark-text-muted font-bold mt-0.5">
                             Due {formatDate(pay.dueDate)}
                           </p>
                         </div>
                       </div>
-                      <p className="font-semibold font-mono text-xs text-slate-800 dark:text-slate-200 shrink-0 ml-1">
+                      <p className="font-black text-sm text-slate-700 dark:text-slate-250 flex-shrink-0 ml-1">
                         {formatCurrency(pay.amount)}
                       </p>
                     </div>
                   )
                 })
               ) : (
-                <div className="py-8 text-center text-slate-400 text-xs">
+                <div className="py-8 text-center text-slate-400 dark:text-slate-555 text-xs">
                   No upcoming payments.
                 </div>
               )}
@@ -720,28 +726,28 @@ function Dashboard() {
           </section>
 
           {/* Recent Transactions List */}
-          <section id="recent-activity-tour" className="rounded-xl border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#14161f] p-4 sm:p-5 flex flex-col justify-between overflow-hidden">
+          <section id="recent-activity-tour" className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-gradient-to-b dark:from-[#131522] dark:to-[#0d0f17] p-4 sm:p-6 shadow-premium flex flex-col justify-between overflow-hidden">
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-3.5">{t('recentTransactions')}</h3>
-              <div className="space-y-2.5">
+              <h3 className="font-bold text-slate-800 dark:text-white text-lg mb-4">{t('recentTransactions')}</h3>
+              <div className="space-y-4">
                 {summary?.recentTransactions?.length ? (
                   summary.recentTransactions.map((item) => (
-                    <div key={item._id} className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26] hover:bg-slate-50 dark:hover:bg-[#1f2330] transition-colors w-full min-w-0 gap-2">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div className={`p-1.5 rounded-md text-[11px] font-semibold shrink-0 ${
-                          item.type === 'income' ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400'
+                    <div key={item._id} className="flex items-center justify-between p-3 rounded-2xl border border-slate-50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors w-full min-w-0 gap-2">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`p-2 rounded-xl text-xs font-semibold flex-shrink-0 ${
+                          item.type === 'income' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-450'
                         }`}>
                           {item.type === 'income' ? 'IN' : 'EX'}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-slate-800 dark:text-slate-200 text-xs truncate">{item.title}</p>
-                          <p className="text-[10px] text-slate-400 truncate">
+                          <p className="font-bold text-slate-800 dark:text-slate-200 text-sm truncate">{item.title}</p>
+                          <p className="text-xs text-slate-400 dark:text-dark-text-muted font-medium truncate">
                             {item.category} • {formatDate(item.transactionDate)}
                           </p>
                         </div>
                       </div>
-                      <p className={`font-semibold font-mono text-xs shrink-0 ml-1 ${
-                        item.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                      <p className={`font-bold text-sm flex-shrink-0 ml-1 ${
+                        item.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-450'
                       }`}>
                         {item.type === 'income' ? '+' : '-'}{formatCurrency(item.amount)}
                       </p>
@@ -944,14 +950,14 @@ function Dashboard() {
                   onClick={() => {
                     setShowForm(false)
                   }}
-                  className="btn-ghost rounded-xl px-4 py-2.5 text-sm font-medium cursor-pointer"
+                  className="rounded-xl border border-slate-200 dark:border-dark-border px-4 py-2.5 text-sm font-bold text-slate-650 dark:text-slate-350 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   {t('cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="btn-primary flex items-center justify-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-medium disabled:opacity-50 cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 rounded-xl bg-secondary dark:bg-purple-650 px-4 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 dark:hover:bg-purple-755 shadow-md disabled:opacity-50 cursor-pointer"
                 >
                   <FiCheck className="w-4 h-4" />
                   {formLoading ? 'Saving...' : form.isLoan && form.loanAction === 'create' ? t('createLoanAndLog') : t('addTransaction')}

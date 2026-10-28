@@ -67,11 +67,6 @@ code {
     monospace;
 }
 
-/* Tabular figures for numbers */
-.font-mono {
-  font-feature-settings: 'tnum' on, 'zero' on;
-}
-
 /* Premium Card and Shadows overriding utility rules */
 .dark .bg-white, .dark .dark\:bg-dark-card {
   background: linear-gradient(180deg, #131522 0%, #0d0f17 100%) !important;
@@ -94,11 +89,11 @@ code {
 }
 
 /* Accent Button Glowing Shadows for Dark theme */
-.dark .bg-secondary, .dark\:bg-purple-600, .dark .btn-primary {
+.dark .bg-secondary, .dark\:bg-purple-600 {
   box-shadow: 0 8px 20px -3px rgba(139, 92, 246, 0.35) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
-.dark .bg-secondary:hover, .dark\:bg-purple-600:hover, .dark .btn-primary:hover {
+.dark .bg-secondary:hover, .dark\:bg-purple-600:hover {
   box-shadow: 0 12px 25px -4px rgba(139, 92, 246, 0.5) !important;
   transform: translateY(-1px) !important;
 }
@@ -108,8 +103,7 @@ code {
 .light button.bg-secondary,
 .light .bg-indigo-600,
 .light button.bg-indigo-600,
-.light .text-white.bg-secondary,
-.light .btn-primary {
+.light .text-white.bg-secondary {
   background: #743BF7 !important;
   color: #ffffff !important;
   box-shadow: 
@@ -123,8 +117,7 @@ code {
 .light .bg-secondary:hover,
 .light button.bg-secondary:hover,
 .light .bg-indigo-600:hover,
-.light button.bg-indigo-600:hover,
-.light .btn-primary:hover {
+.light button.bg-indigo-600:hover {
   background: #602ee3 !important;
   box-shadow: 
     0 14px 35px rgba(116, 59, 247, 0.35), 
@@ -135,8 +128,7 @@ code {
 .light .bg-secondary:active,
 .light button.bg-secondary:active,
 .light .bg-indigo-600:active,
-.light button.bg-indigo-600:active,
-.light .btn-primary:active {
+.light button.bg-indigo-600:active {
   filter: brightness(0.9) !important;
   transform: scale(0.98) !important;
 }
@@ -221,7 +213,7 @@ aside {
     radial-gradient(circle at 50% 120px, rgba(168, 85, 247, 0.12), transparent 350px);
 }
 
-/* Dropdown select options */
+/* Ensure select option dropdowns inherit dark mode styling on all platforms */
 .dark select option,
 .dark select {
   background-color: #131522 !important;
@@ -234,31 +226,51 @@ aside {
   color: #0f172a !important;
 }
 
-/* Helper button aliases for compatibility */
+
+/* Helper button aliases */
 .btn-primary {
-  background-color: #4f46e5;
+  background: #743BF7;
   color: #ffffff;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 20px -3px rgba(139, 92, 246, 0.35);
+}
+.btn-primary:hover {
+  background: #602ee3;
+  box-shadow: 0 12px 25px -4px rgba(139, 92, 246, 0.5);
+  transform: translateY(-1px);
 }
 .dark .btn-primary {
-  background-color: #4f46e5 !important;
+  background: #6366f1 !important;
   color: #ffffff !important;
+}
+.dark .btn-primary:hover {
+  background: #4f46e5 !important;
 }
 
 .btn-ghost {
-  background-color: transparent;
+  background: transparent;
   color: inherit;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 .light .btn-ghost {
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   color: #475569;
 }
 .light .btn-ghost:hover {
-  background-color: #f1f5f9;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 .dark .btn-ghost {
-  border: 1px solid #334155;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #cbd5e1;
 }
 .dark .btn-ghost:hover {
-  background-color: #1e293b;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.font-mono {
+  font-feature-settings: 'tnum' on, 'zero' on;
 }
