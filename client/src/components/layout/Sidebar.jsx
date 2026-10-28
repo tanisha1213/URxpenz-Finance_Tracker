@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { logout } from '../../redux/slices/authSlice'
-import { FiLayout, FiDollarSign, FiPieChart, FiTrendingUp, FiUser, FiLogOut, FiCreditCard, FiRepeat, FiZap, FiAward } from 'react-icons/fi'
+import { FiLayout, FiDollarSign, FiPieChart, FiTrendingUp, FiUser, FiLogOut, FiCreditCard, FiRepeat, FiZap, FiAward, FiGift } from 'react-icons/fi'
 import { useTheme } from '../../context/ThemeContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSubscription } from '../../context/SubscriptionContext'
@@ -23,6 +23,7 @@ function Sidebar() {
     { labelKey: 'budget', path: '/budget', icon: FiPieChart },
     { labelKey: 'subscriptions', path: '/subscriptions', icon: FiRepeat },
     { labelKey: 'analytics', path: '/insights', icon: FiTrendingUp },
+    { labelKey: 'referral', path: '/referral', icon: FiGift, badge: '25% OFF' },
     { labelKey: 'profile', path: '/profile', icon: FiUser }
   ]
 
@@ -63,14 +64,21 @@ function Sidebar() {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+              className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${
                 active
                   ? 'sidebar-active'
                   : 'sidebar-inactive'
               }`}
             >
-              <Icon className="w-5 h-5 transition-transform duration-200 group-hover:scale-105" />
-              <span className="font-semibold text-sm">{t(item.labelKey)}</span>
+              <div className="flex items-center gap-3">
+                <Icon className="w-5 h-5 transition-transform duration-200 group-hover:scale-105" />
+                <span className="font-semibold text-sm">{t(item.labelKey)}</span>
+              </div>
+              {item.badge && (
+                <span className="px-1.5 py-0.5 rounded-md text-[10px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-sm">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           )
         })}

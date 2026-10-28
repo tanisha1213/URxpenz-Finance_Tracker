@@ -88,6 +88,7 @@ function App() {
               <Route path="/insights" element={<InsightsReports />} />
               <Route path="/reports" element={<Navigate to="/insights" replace />} />
               <Route path="/loans" element={<Navigate to="/transactions?tab=loans" replace />} />
+              <Route path="/referral" element={<Profile />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/" element={<Navigate to="/dashboard" />} />
             </Route>

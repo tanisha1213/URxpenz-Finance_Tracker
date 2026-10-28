@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { FiBell, FiSun, FiMoon, FiHelpCircle, FiCheck } from 'react-icons/fi'
+import { FiBell, FiSun, FiMoon, FiHelpCircle, FiCheck, FiGift } from 'react-icons/fi'
 import { useTheme } from '../../context/ThemeContext'
 import logoLight from '../../assets/logo-light.png'
 import logoDark from '../../assets/logo-dark.png'
@@ -217,6 +217,17 @@ function Navbar() {
               </svg>
             </div>
           </div>
+
+          {/* Refer & Earn Quick Button */}
+          <Link
+            to="/profile"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-extrabold shadow-sm transition-all cursor-pointer"
+            title="Refer & Earn Rewards - Get up to 25% OFF"
+          >
+            <FiGift className="w-3.5 h-3.5 text-amber-500" />
+            <span className="hidden sm:inline">Refer & Earn</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-500 text-white font-black leading-none">25% OFF</span>
+          </Link>
 
           {/* Theme Switcher Button */}
           <button
