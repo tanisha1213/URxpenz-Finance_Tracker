@@ -94,6 +94,8 @@ function Loans() {
       const fetchedLoans = loansRes.data.data
       setLoans(fetchedLoans)
       setAccounts(accountsRes.data.data)
+      localStorage.setItem('xpenz_cached_loans', JSON.stringify(fetchedLoans))
+      setError('')
       
       // Load all installments for calendar populating
       const activeLoans = fetchedLoans.filter(l => l.status === 'active')
@@ -101,9 +103,19 @@ function Loans() {
       const installmentsRes = await Promise.all(installmentPromises)
       const allInst = installmentsRes.flatMap(res => res.data.data)
       setInstallments(allInst)
+      localStorage.setItem('xpenz_cached_installments', JSON.stringify(allInst))
     } catch (err) {
-      console.error('Failed to load data:', err)
-      setError('Failed to fetch loans data.')
+      console.warn('Failed to load loans online, trying cached data:', err)
+      const cachedLoans = localStorage.getItem('xpenz_cached_loans')
+      const cachedInst = localStorage.getItem('xpenz_cached_installments')
+      if (cachedLoans) {
+        try { setLoans(JSON.parse(cachedLoans)) } catch (e) {}
+      }
+      if (cachedInst) {
+        try { setInstallments(JSON.parse(cachedInst)) } catch (e) {}
+      }
+      // Suppress blocking error for smooth offline experience
+      setError('')
     }
   }
 

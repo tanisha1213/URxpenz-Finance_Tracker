@@ -1,3 +1,4 @@
+import { cacheTransactions, getCachedTransactions } from '../../services/offlineSyncService'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import * as transactionService from '../../services/transactionService'
 
@@ -33,7 +34,7 @@ export const removeTransactionById = createAsyncThunk('transactions/delete', asy
 })
 
 const initialState = {
-  transactions: [],
+  transactions: typeof window !== 'undefined' ? getCachedTransactions() : [],
   pagination: { page: 1, limit: 10, total: 0, pages: 1 },
   loading: false,
   error: '',
@@ -80,10 +81,17 @@ const transactionSlice = createSlice({
         state.loading = false
         state.transactions = action.payload.data
         state.pagination = action.payload.pagination
+        cacheTransactions(action.payload.data)
       })
       .addCase(fetchTransactions.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload
+        const cached = getCachedTransactions()
+        if (cached && cached.length > 0) {
+          state.transactions = cached
+          state.error = ''
+        } else {
+          state.error = ''
+        }
       })
       .addCase(saveTransaction.pending, (state) => {
         state.loading = true

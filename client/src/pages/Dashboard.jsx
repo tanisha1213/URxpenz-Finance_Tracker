@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import {
@@ -24,6 +24,30 @@ import { FiArrowUpRight, FiArrowDownRight, FiDollarSign, FiActivity, FiTrendingU
 import { useTheme } from '../context/ThemeContext'
 import { useLanguage } from '../context/LanguageContext'
 import { getLoans, addLoan } from '../services/loanService'
+import { getCachedTransactions } from '../services/offlineSyncService'
+
+const DEFAULT_SUMMARY = {
+  totalIncome: 0,
+  totalExpense: 0,
+  savings: 0,
+  totalBalance: 0,
+  cashBalance: 0,
+  bankBalance: 0,
+  accounts: [],
+  monthlyBudget: 0,
+  budgetRemaining: 0,
+  dailyBudget: 0,
+  todaySpent: 0,
+  todayRemaining: 0,
+  todaySaved: 0,
+  isOverspentToday: false,
+  daysInMonth: 30,
+  isDailyBudgetLocked: true,
+  monthlyTrend: [],
+  categoryBreakdown: [],
+  recentTransactions: [],
+  upcomingPayments: []
+}
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
 
@@ -126,13 +150,24 @@ function Dashboard() {
   const dispatch = useDispatch()
   const { theme } = useTheme()
   const { t, language } = useLanguage()
-  const [summary, setSummary] = useState(null)
+  const [summary, setSummary] = useState(() => {
+    try {
+      const cached = localStorage.getItem('xpenz_cached_summary')
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (parsed && typeof parsed === 'object') return { ...DEFAULT_SUMMARY, ...parsed }
+      }
+    } catch (e) {
+      console.warn('Failed to parse cached summary:', e)
+    }
+    return DEFAULT_SUMMARY
+  })
   
   // Setup Checklist state
   const [dismissedChecklist, setDismissedChecklist] = useState(() => {
     return localStorage.getItem('xpenz_dismissed_checklist') === 'true'
   })
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
   // Quick Add Form States
@@ -146,32 +181,28 @@ function Dashboard() {
     try {
       const response = await getLoans()
       setLoans(response.data.data)
+      localStorage.setItem('xpenz_cached_loans', JSON.stringify(response.data.data))
     } catch (err) {
-      console.error('Failed to fetch loans:', err)
+      console.warn('Failed to fetch loans (offline/network):', err)
+      const cached = localStorage.getItem('xpenz_cached_loans')
+      if (cached) {
+        try { setLoans(JSON.parse(cached)) } catch (e) {}
+      }
     }
   }
 
   const loadDashboard = () => {
-    setLoading(true)
-    const cached = localStorage.getItem('xpenz_cached_summary')
-    if (cached) {
-      try {
-        setSummary(JSON.parse(cached))
-      } catch (e) {
-        console.warn('Failed to parse cached summary:', e)
-      }
-    }
-
     getDashboardSummary()
       .then((response) => {
-        setSummary(response.data.data)
-        localStorage.setItem('xpenz_cached_summary', JSON.stringify(response.data.data))
+        if (response?.data?.data) {
+          const freshSummary = { ...DEFAULT_SUMMARY, ...response.data.data }
+          setSummary(freshSummary)
+          localStorage.setItem('xpenz_cached_summary', JSON.stringify(freshSummary))
+        }
         setError('')
       })
       .catch((err) => {
-        if (!cached) {
-          setError(err.response?.data?.message || 'Unable to load dashboard. Please check your internet connection.')
-        }
+        console.warn('Dashboard summary fetch failed (offline/network):', err)
       })
       .finally(() => setLoading(false))
   }
@@ -184,8 +215,15 @@ function Dashboard() {
       loadDashboard()
       fetchLoans()
     }
+    const handleQueueChange = () => {
+      loadDashboard()
+    }
     window.addEventListener('xpenz-offline-synced', handleSyncComplete)
-    return () => window.removeEventListener('xpenz-offline-synced', handleSyncComplete)
+    window.addEventListener('xpenz-offline-queue-updated', handleQueueChange)
+    return () => {
+      window.removeEventListener('xpenz-offline-synced', handleSyncComplete)
+      window.removeEventListener('xpenz-offline-queue-updated', handleQueueChange)
+    }
   }, [])
 
   const openCreate = (type = 'expense') => {
@@ -313,22 +351,43 @@ function Dashboard() {
   const accounts = summary?.accounts || []
   const editingId = null
 
-  if (loading && !summary) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary"></div>
-      </div>
-    )
-  }
+  // Non-blocking loading
 
-  if (error) {
-    return (
-      <div className="rounded-2xl border border-rose-100 bg-rose-50/50 p-6 text-rose-700 shadow-premium">
-        <p className="font-semibold text-lg">Error Loading Dashboard</p>
-        <p className="text-sm mt-1">{error}</p>
-      </div>
-    )
-  }
+  // Gracefully bypassed error screen to allow full offline dashboard view
+
+  // Compute display balance from summary or cached accounts
+  const displayTotalBalance = useMemo(() => {
+    if (summary?.totalBalance && summary.totalBalance > 0) {
+      return summary.totalBalance
+    }
+    try {
+      const cachedAccs = localStorage.getItem('xpenz_cached_accounts')
+      if (cachedAccs) {
+        const parsed = JSON.parse(cachedAccs)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const sum = parsed.reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0)
+          if (sum > 0) return sum
+        }
+      }
+    } catch (e) {}
+    return summary?.totalBalance || 0
+  }, [summary?.totalBalance])
+
+  // Compute recent transactions including offline queued transactions
+  const displayRecentTransactions = useMemo(() => {
+    const cachedTxs = getCachedTransactions()
+    const summaryTxs = summary?.recentTransactions || []
+    if (cachedTxs && cachedTxs.length > 0) {
+      const pendingItems = cachedTxs.filter(t => t.isOfflinePending)
+      if (pendingItems.length > 0) {
+        return [...pendingItems, ...summaryTxs.filter(st => !pendingItems.some(pi => pi._id === st._id))].slice(0, 5)
+      }
+      if (summaryTxs.length === 0) {
+        return cachedTxs.slice(0, 5)
+      }
+    }
+    return summaryTxs.slice(0, 5)
+  }, [summary?.recentTransactions])
 
   const trend = summary?.monthlyTrend || []
   const categoriesList = summary?.categoryBreakdown || []
@@ -349,7 +408,7 @@ function Dashboard() {
 
   const isBudgetDone = Number(summary?.monthlyBudget || 0) > 0
   const isAccountsDone = summary?.totalBalance > 0
-  const isTxDone = summary?.recentTransactions?.length > 0
+  const isTxDone = displayRecentTransactions.length > 0
   
   const completedCount = [isBudgetDone, isAccountsDone, isTxDone].filter(Boolean).length
   const progressPct = Math.round((completedCount / 3) * 100)
@@ -503,10 +562,10 @@ function Dashboard() {
             <p className="text-xs font-bold text-slate-400 dark:text-dark-text-muted uppercase tracking-wider">{t('totalBalance')}</p>
             <div className="flex items-baseline gap-1 mt-2">
               <h2 className="text-4xl md:text-5xl font-black text-slate-800 dark:text-white tracking-tight">
-                {summary ? formatCurrency(summary.totalBalance).split('.')[0] : '₹0'}
+                {formatCurrency(displayTotalBalance).split('.')[0]}
               </h2>
               <span className="text-lg md:text-xl font-bold text-slate-450 dark:text-dark-text-muted">
-                .{summary ? formatCurrency(summary.totalBalance).split('.')[1] || '00' : '00'}
+                .{formatCurrency(displayTotalBalance).split('.')[1] || '00'}
               </span>
               <span className="ml-2.5 inline-flex items-center gap-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200/40 dark:border-slate-800 px-2 py-0.5 text-xs font-bold text-slate-500 dark:text-slate-400">
                 🇮🇳 INR
@@ -730,8 +789,8 @@ function Dashboard() {
             <div>
               <h3 className="font-bold text-slate-800 dark:text-white text-lg mb-4">{t('recentTransactions')}</h3>
               <div className="space-y-4">
-                {summary?.recentTransactions?.length ? (
-                  summary.recentTransactions.map((item) => (
+                {displayRecentTransactions.length ? (
+                  displayRecentTransactions.map((item) => (
                     <div key={item._id} className="flex items-center justify-between p-3 rounded-2xl border border-slate-50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors w-full min-w-0 gap-2">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className={`p-2 rounded-xl text-xs font-semibold flex-shrink-0 ${

@@ -235,8 +235,8 @@ export default function UpgradeModal() {
       paymentMethod === 'upi'
         ? `UPI (${upiId})`
         : paymentMethod === 'card'
-        ? `Card (•••• ${cardNumber.replace(/\s+/g, '').slice(-4) || 'Debit/Credit'})`
-        : `Net Banking (${selectedBank})`;
+          ? `Card (•••• ${cardNumber.replace(/\s+/g, '').slice(-4) || 'Debit/Credit'})`
+          : `Net Banking (${selectedBank})`;
 
     try {
       setProcessingStatus('Connecting...');
@@ -436,11 +436,10 @@ export default function UpgradeModal() {
                   <div
                     key={plan.id}
                     onClick={() => setSelectedPlanId(plan.id)}
-                    className={`relative p-3.5 rounded-lg border transition-colors cursor-pointer flex flex-col justify-between ${
-                      isSelected
+                    className={`relative p-3.5 rounded-lg border transition-colors cursor-pointer flex flex-col justify-between ${isSelected
                         ? 'border-indigo-600 bg-indigo-50/20 dark:bg-indigo-950/20 ring-1 ring-indigo-500/40'
                         : 'border-slate-200 dark:border-[#222634] hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-[#191c26]'
-                    }`}
+                      }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
@@ -603,11 +602,10 @@ export default function UpgradeModal() {
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('upi')}
-                  className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-colors cursor-pointer ${
-                    paymentMethod === 'upi'
+                  className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-colors cursor-pointer ${paymentMethod === 'upi'
                       ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 font-semibold'
                       : 'border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26] text-slate-700 dark:text-slate-300'
-                  }`}
+                    }`}
                 >
                   <FiSmartphone className="w-4 h-4" />
                   <span>UPI / QR</span>
@@ -616,11 +614,10 @@ export default function UpgradeModal() {
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('card')}
-                  className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-colors cursor-pointer ${
-                    paymentMethod === 'card'
+                  className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-colors cursor-pointer ${paymentMethod === 'card'
                       ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 font-semibold'
                       : 'border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26] text-slate-700 dark:text-slate-300'
-                  }`}
+                    }`}
                 >
                   <FiCreditCard className="w-4 h-4" />
                   <span>Card</span>
@@ -629,11 +626,10 @@ export default function UpgradeModal() {
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('netbanking')}
-                  className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-colors cursor-pointer ${
-                    paymentMethod === 'netbanking'
+                  className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-colors cursor-pointer ${paymentMethod === 'netbanking'
                       ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 font-semibold'
                       : 'border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26] text-slate-700 dark:text-slate-300'
-                  }`}
+                    }`}
                 >
                   <FiShield className="w-4 h-4" />
                   <span>Net Banking</span>

@@ -68,7 +68,7 @@ function Balance() {
         setError('')
       }
     } catch (err) {
-      console.warn('Failed to fetch accounts:', err)
+      console.warn('Failed to fetch accounts (offline/network):', err)
       const cached = localStorage.getItem('xpenz_cached_accounts')
       if (cached) {
         try {
@@ -82,7 +82,9 @@ function Balance() {
           // ignore
         }
       }
-      setError(err.response?.data?.message || 'Unable to connect to server. Working with saved balances.')
+      if (!silent) {
+        setError(err.response?.data?.message || 'Unable to connect to server. Working with saved balances.')
+      }
     } finally {
       setLoading(false)
     }

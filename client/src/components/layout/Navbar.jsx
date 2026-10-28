@@ -154,46 +154,23 @@ function Navbar() {
         </div>
         
         {/* Right Header Actions */}
-        <div className="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0 flex-nowrap">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0 flex-nowrap">
           {/* Automatic Offline & Sync Status Indicator */}
-          {(!isOnline || pendingOfflineCount > 0 || isSyncing || recentlySynced) && (
+          {/* Subtle Background Sync Indicator (Only shown during active sync or recently completed) */}
+          {(isSyncing || recentlySynced) && (
             <div
-              title={
-                !isOnline
-                  ? 'Offline Mode: Transactions are safely queued and will automatically sync the moment connection returns'
-                  : isSyncing
-                  ? 'Auto-syncing offline transactions with cloud database...'
-                  : recentlySynced
-                  ? 'All offline transactions synced successfully!'
-                  : 'Auto-sync active'
-              }
-              className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold border transition-all ${
-                !isOnline
-                  ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
-                  : isSyncing
-                  ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
-                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 shadow-sm animate-fadeIn'
-              }`}
+              title={isSyncing ? 'Syncing transactions with cloud...' : 'All synced!'}
+              className="flex items-center gap-1 px-2 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold border transition-all bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 shadow-sm animate-fadeIn shrink-0"
             >
               {isSyncing ? (
                 <>
                   <span className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  <span className="hidden sm:inline">Auto-Syncing...</span>
-                </>
-              ) : !isOnline ? (
-                <>
-                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                  <span>Offline{pendingOfflineCount > 0 ? ` (${pendingOfflineCount})` : ''}</span>
-                </>
-              ) : recentlySynced ? (
-                <>
-                  <FiCheck className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>Synced</span>
+                  <span className="hidden sm:inline">Syncing...</span>
                 </>
               ) : (
                 <>
-                  <span className="w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  <span className="hidden sm:inline">Syncing...</span>
+                  <FiCheck className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="hidden sm:inline">Synced</span>
                 </>
               )}
             </div>
@@ -218,15 +195,15 @@ function Navbar() {
             </div>
           </div>
 
-          {/* Refer & Earn Quick Button */}
+          {/* Refer & Earn Quick Button - Gift Icon Only on Mobile */}
           <Link
             to="/profile"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-extrabold shadow-sm transition-all cursor-pointer"
-            title="Refer & Earn Rewards - Get up to 25% OFF"
+            className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-extrabold shadow-sm transition-all cursor-pointer shrink-0"
+            title="Refer & Earn Rewards - Get 25% OFF"
           >
-            <FiGift className="w-3.5 h-3.5 text-amber-500" />
-            <span className="hidden sm:inline">Refer & Earn</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-500 text-white font-black leading-none">25% OFF</span>
+            <FiGift className="w-4 h-4 text-amber-500 shrink-0" />
+            <span className="hidden md:inline">Refer & Earn</span>
+            <span className="hidden sm:inline text-[10px] px-1.5 py-0.5 rounded-md bg-amber-500 text-white font-black leading-none">25% OFF</span>
           </Link>
 
           {/* Theme Switcher Button */}

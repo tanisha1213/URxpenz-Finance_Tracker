@@ -68,6 +68,9 @@ const budgetSlice = createSlice({
       })
       .addCase(fetchBudget.fulfilled, (state, action) => {
         state.loading = false
+        if (typeof window !== 'undefined' && action.payload) {
+          try { localStorage.setItem('xpenz_cached_budget', JSON.stringify(action.payload)) } catch (e) {}
+        }
         state.monthlyBudget = action.payload.monthlyBudget || 0
         state.dailyBudget = action.payload.dailyBudget || 0
         state.dailyAlertTime = action.payload.dailyAlertTime || '20:00'
@@ -81,7 +84,19 @@ const budgetSlice = createSlice({
       })
       .addCase(fetchBudget.rejected, (state) => {
         state.loading = false
-        state.error = action.payload
+        if (typeof window !== 'undefined') {
+          try {
+            const cached = localStorage.getItem('xpenz_cached_budget')
+            if (cached) {
+              const p = JSON.parse(cached)
+              state.monthlyBudget = p.monthlyBudget || 0
+              state.dailyBudget = p.dailyBudget || 0
+              state.categories = p.categoryBudgets || []
+              state.remaining = p.monthlyBudget || 0
+            }
+          } catch (e) {}
+        }
+        state.error = ''
       })
       .addCase(saveBudget.fulfilled, (state, action) => {
         state.monthlyBudget = action.payload.monthlyBudget || 0

@@ -79,14 +79,22 @@ export default function Subscriptions() {
       if (subRes.data?.data) {
         setSubscriptions(subRes.data.data.subscriptions || [])
         setStats(subRes.data.data.stats || {})
+        localStorage.setItem('xpenz_cached_subscriptions', JSON.stringify(subRes.data.data))
       }
       const fetchedAccounts = Array.isArray(accRes.data?.data) 
         ? accRes.data.data 
         : (Array.isArray(accRes.data) ? accRes.data : [])
       setAccounts(fetchedAccounts)
     } catch (err) {
-      console.error('Failed to load subscriptions:', err)
-      setError(err.response?.data?.message || 'Failed to load subscription plans.')
+      console.warn('Failed to load subscriptions online, attempting cache:', err)
+      const cached = localStorage.getItem('xpenz_cached_subscriptions')
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached)
+          setSubscriptions(parsed.subscriptions || [])
+          setStats(parsed.stats || {})
+        } catch (e) {}
+      }
     } finally {
       setLoading(false)
     }
