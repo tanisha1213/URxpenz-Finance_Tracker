@@ -100,7 +100,12 @@ export function SubscriptionProvider({ children }) {
           }));
         }
       }
-      return { success: true, message: res.data.message };
+      return {
+        success: true,
+        message: res.data.message,
+        receiptId: res.data.receiptId,
+        subscription: res.data.subscription
+      };
     } catch (err) {
       return {
         success: false,

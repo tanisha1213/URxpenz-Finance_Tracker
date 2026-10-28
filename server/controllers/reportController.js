@@ -22,7 +22,7 @@ export const getMonthlyReport = async (req, res) => {
   try {
     const isWeekly = req.query.type === 'weekly';
     const isYearly = req.query.type === 'yearly';
-    // Only flag as custom if explicitly requested with valid date strings and not weekly/monthly
+    // Only flag as custom if explicitly requested with valid date strings and not weekly/yearly/monthly
     const isCustom = !isWeekly && !isYearly && !!(req.query.startDate && req.query.endDate && req.query.startDate !== 'undefined' && req.query.endDate !== 'undefined');
 
     // PDF export, custom date range reports, and yearly reports require Pro subscription

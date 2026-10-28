@@ -86,7 +86,7 @@ function App() {
               <Route path="/budget" element={<Budget />} />
               <Route path="/subscriptions" element={<Subscriptions />} />
               <Route path="/insights" element={<InsightsReports />} />
-              <Route path="/reports" element={<InsightsReports />} />
+              <Route path="/reports" element={<Navigate to="/insights?tab=reports" replace />} />
               <Route path="/loans" element={<Navigate to="/transactions?tab=loans" replace />} />
               <Route path="/referral" element={<Profile />} />
               <Route path="/profile" element={<Profile />} />

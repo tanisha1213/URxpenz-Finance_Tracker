@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { logout } from '../../redux/slices/authSlice'
-import { FiLayout, FiDollarSign, FiPieChart, FiTrendingUp, FiUser, FiLogOut, FiCreditCard, FiRepeat, FiZap, FiAward, FiGift, FiLayers } from 'react-icons/fi'
+import { FiLayout, FiDollarSign, FiPieChart, FiTrendingUp, FiUser, FiLogOut, FiCreditCard, FiRepeat, FiZap, FiAward, FiGift } from 'react-icons/fi'
 import { useTheme } from '../../context/ThemeContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSubscription } from '../../context/SubscriptionContext'
@@ -13,7 +13,7 @@ function Sidebar() {
   const navigate = useNavigate()
   const { theme } = useTheme()
   const { t } = useLanguage()
-  const { tier, isPro, isTrial, trialDaysRemaining, openUpgradeModal } = useSubscription()
+  const { tier, isTrial, trialDaysRemaining, openUpgradeModal } = useSubscription()
 
   const navItems = [
     { labelKey: 'dashboard', path: '/dashboard', icon: FiLayout },
@@ -21,23 +21,14 @@ function Sidebar() {
     { labelKey: 'transactions', path: '/transactions', icon: FiDollarSign },
     { labelKey: 'budget', path: '/budget', icon: FiPieChart },
     { labelKey: 'subscriptions', path: '/subscriptions', icon: FiRepeat },
-    { labelKey: 'reports', labelFallback: 'Reports', path: '/insights?tab=reports', icon: FiLayers },
-    { labelKey: 'analytics', path: '/insights?tab=insights', icon: FiTrendingUp },
+    { labelKey: 'analytics', path: '/insights', icon: FiTrendingUp },
     { labelKey: 'referral', path: '/referral', icon: FiGift, badge: '25% OFF' },
     { labelKey: 'profile', path: '/profile', icon: FiUser }
   ]
 
   const isActive = (path) => {
     if (path.includes('?')) {
-      const [basePath, search] = path.split('?')
-      if (location.pathname === basePath && location.search === `?${search}`) {
-        return true
-      }
-      if (location.pathname === basePath && (!location.search || location.search === '')) {
-        if (!isPro && search.includes('reports')) return true
-        if (isPro && search.includes('insights')) return true
-      }
-      return false
+      return location.pathname + location.search === path
     }
     if (path === '/transactions') {
       return location.pathname === '/transactions' && !location.search.includes('tab=loans')
@@ -78,7 +69,7 @@ function Sidebar() {
             >
               <div className="flex items-center gap-2.5">
                 <Icon className={`w-4 h-4 shrink-0 transition-colors ${active ? 'text-[#F4EEFF]' : 'text-[#A99BC4] group-hover:text-[#F4EEFF]'}`} />
-                <span className="font-medium">{t(item.labelKey) || item.labelFallback || item.labelKey}</span>
+                <span className="font-medium">{t(item.labelKey)}</span>
               </div>
               {item.badge && (
                 <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#D93CF5]/15 border border-[#D93CF5]/30 text-[#F25CFF]">

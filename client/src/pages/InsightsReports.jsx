@@ -165,12 +165,12 @@ function InsightsReports() {
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex bg-slate-100 dark:bg-[#211A33] p-1 rounded-lg border border-slate-200 dark:border-[#3A2F57] w-fit">
+        <div className="flex bg-slate-100 dark:bg-[#10121a] p-1 rounded-lg border border-slate-200 dark:border-[#222634] w-fit">
           <button
             onClick={() => setActiveTab('reports')}
             className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
               activeTab === 'reports'
-                ? 'bg-white dark:bg-[#181226] text-slate-900 dark:text-white border border-slate-200 dark:border-[#3A2F57] font-semibold shadow-sm'
+                ? 'bg-white dark:bg-[#181a24] text-slate-900 dark:text-white border border-slate-200 dark:border-[#2b3042] font-semibold shadow-sm'
                 : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
           >
@@ -181,7 +181,7 @@ function InsightsReports() {
             onClick={() => setActiveTab('insights')}
             className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
               activeTab === 'insights'
-                ? 'bg-white dark:bg-[#181226] text-slate-900 dark:text-white border border-slate-200 dark:border-[#3A2F57] font-semibold shadow-sm'
+                ? 'bg-white dark:bg-[#181a24] text-slate-900 dark:text-white border border-slate-200 dark:border-[#2b3042] font-semibold shadow-sm'
                 : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
           >
@@ -192,7 +192,7 @@ function InsightsReports() {
             onClick={() => setActiveTab('welfare')}
             className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
               activeTab === 'welfare'
-                ? 'bg-white dark:bg-[#181226] text-slate-900 dark:text-white border border-slate-200 dark:border-[#3A2F57] font-semibold shadow-sm'
+                ? 'bg-white dark:bg-[#181a24] text-slate-900 dark:text-white border border-slate-200 dark:border-[#2b3042] font-semibold shadow-sm'
                 : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
           >
@@ -439,7 +439,7 @@ function InsightsReports() {
             <button
               onClick={exportPdf}
               disabled={reportLoading || !report}
-              className="flex items-center justify-center gap-1.5 rounded-lg btn-primary px-3.5 py-2 font-medium text-xs disabled:opacity-50 w-full md:w-auto cursor-pointer"
+              className="flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 font-medium text-white text-xs hover:bg-indigo-700 transition-colors disabled:opacity-50 w-full md:w-auto cursor-pointer"
             >
               <FiDownload className="w-3.5 h-3.5" />
               <span>{!isPro ? '🔒 Download PDF (Pro)' : 'Download PDF statement'}</span>

@@ -340,12 +340,14 @@ export const verifyGooglePlayPurchase = async (req, res) => {
     user.subscriptionExpiresAt = newExpiresAt.toISOString();
 
     const subscription = getUserSubscription(user);
+    const receiptId = orderId || `GPA_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
     return res.status(200).json({
       success: true,
       message: `Google Play purchase verified for ${plan.name}!`,
+      receiptId,
       subscription,
-      orderId
+      orderId: receiptId
     });
   } catch (error) {
     return res.status(500).json({

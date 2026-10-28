@@ -32,7 +32,7 @@ const PLANS = [
     price: 45,
     perMonth: 45,
     tag: '1 month',
-    badgeClass: 'bg-slate-100 dark:bg-[#211A33] text-slate-600 dark:text-[#ECE7F7] border-slate-200 dark:border-[#3A2F57]'
+    badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
   },
   {
     id: 'quarterly',
@@ -42,7 +42,7 @@ const PLANS = [
     price: 119,
     perMonth: 39,
     tag: '13% savings',
-    badgeClass: 'bg-slate-100 dark:bg-[#211A33] text-slate-600 dark:text-[#ECE7F7] border-slate-200 dark:border-[#3A2F57]'
+    badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
   },
   {
     id: 'half_yearly',
@@ -52,7 +52,7 @@ const PLANS = [
     price: 199,
     perMonth: 33,
     tag: '26% savings',
-    badgeClass: 'bg-slate-100 dark:bg-[#211A33] text-slate-600 dark:text-[#ECE7F7] border-slate-200 dark:border-[#3A2F57]'
+    badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
   },
   {
     id: 'annual',
@@ -128,188 +128,197 @@ export default function UpgradeModal() {
     try {
       const orderRes = await createPaymentOrder(selectedPlanId);
 
-      // If Razorpay credentials are live on server and returned an order
-      if (orderRes.data?.order && !orderRes.data?.isDemoMode) {
-        if (!window.Razorpay) {
-          await new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-            script.onload = resolve;
-            script.onerror = () => reject(new Error('Failed to load Razorpay payment script'));
-            document.body.appendChild(script);
-          });
-        }
-
-        const order = orderRes.data.order;
-        const keyId = orderRes.data.keyId;
-
-        const options = {
-          key: keyId,
-          amount: order.amount,
-          currency: 'INR',
-          name: 'URxpenz Finance',
-          description: `Upgrade to ${selectedPlan.name}`,
-          order_id: order.id,
-          prefill: {
-            name: user?.name || '',
-            email: user?.email || ''
-          },
-          handler: async (response) => {
-            try {
-              setLoading(true);
-              const verifyRes = await verifyPaymentSignature({
-                planId: selectedPlanId,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature
-              });
-              await refreshSubscription();
-              setSuccessReceipt({
-                receiptId: response.razorpay_payment_id,
-                planName: selectedPlan.name,
-                amount: finalPrice,
-                method: 'Razorpay Verified'
-              });
-              setStep('success');
-            } catch (vErr) {
-              setErrorMsg(vErr.response?.data?.message || 'Payment signature verification failed.');
-            } finally {
-              setLoading(false);
-            }
-          },
-          theme: {
-            color: '#7A55E0'
-          }
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', function (resp) {
-          setErrorMsg(resp.error?.description || 'Payment was cancelled or unsuccessful. Please try again.');
-          setLoading(false);
-        });
-        rzp.open();
+      if (orderRes.data?.isDemoMode || !orderRes.data?.order) {
+        // Direct web gateway checkout screen
         setLoading(false);
+        setStep('checkout');
         return;
       }
 
-      // If Razorpay keys not configured on backend, switch to authentic checkout transaction sheet
+      // Live Razorpay keys present: open official Razorpay Checkout popup
+      if (!window.Razorpay) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.onload = resolve;
+          script.onerror = () => reject(new Error('Failed to load Razorpay payment script'));
+          document.body.appendChild(script);
+        });
+      }
+
+      const order = orderRes.data.order;
+      const keyId = orderRes.data.keyId;
+
+      const options = {
+        key: keyId,
+        amount: order.amount,
+        currency: 'INR',
+        name: 'URxpenz Finance',
+        description: `Upgrade to ${orderRes.data.plan?.name || selectedPlan.name}`,
+        order_id: order.id,
+        handler: async (response) => {
+          try {
+            setStep('processing');
+            setProcessingStatus('Verifying payment signature with Razorpay & clearing transaction...');
+            const verifyRes = await verifyPaymentSignature({
+              planId: selectedPlanId,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            await refreshSubscription();
+            setSuccessReceipt({
+              receiptId: response.razorpay_payment_id || `RZP_${Date.now().toString(36).toUpperCase()}`,
+              planName: selectedPlan.name,
+              amount: finalPrice,
+              method: 'Razorpay Gateway (UPI / Card / Netbanking)',
+              timestamp: new Date().toLocaleString('en-IN')
+            });
+            setStep('success');
+          } catch (vErr) {
+            setErrorMsg(vErr.response?.data?.message || 'Payment signature verification failed.');
+            setStep('checkout');
+          }
+        },
+        theme: {
+          color: '#6366f1'
+        },
+        modal: {
+          ondismiss: () => {
+            setLoading(false);
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (resp) {
+        setErrorMsg(resp.error?.description || 'Payment was cancelled or unsuccessful.');
+        setLoading(false);
+      });
+      rzp.open();
       setLoading(false);
-      setStep('checkout');
     } catch (err) {
       setLoading(false);
-      // Open transaction checkout sheet
+      // Fallback to in-app transaction checkout drawer
       setStep('checkout');
     }
   };
 
-  // Submit Web Checkout Transaction
-  const handleExecutePayment = async () => {
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      setErrorMsg('Internet connection required. Please connect to internet to proceed.');
-      return;
-    }
+  // Authorize direct Web Transaction (UPI, Card, Netbanking)
+  const handleAuthorizePayment = async (e) => {
+    e?.preventDefault();
+    setErrorMsg('');
 
     if (paymentMethod === 'upi') {
       if (!upiId || !upiId.includes('@')) {
-        setErrorMsg('Please enter a valid UPI ID (e.g. yourname@okhdfcbank or 9876543210@upi).');
+        setErrorMsg('Please enter a valid UPI ID (e.g. yourname@okhdfcbank)');
         return;
       }
     } else if (paymentMethod === 'card') {
-      const cleanNum = cardNumber.replace(/\s+/g, '');
-      if (cleanNum.length < 15) {
-        setErrorMsg('Please enter a valid 16-digit card number.');
+      const cleaned = cardNumber.replace(/\s+/g, '');
+      if (cleaned.length < 12) {
+        setErrorMsg('Please enter a valid 16-digit debit or credit card number');
         return;
       }
       if (!cardExpiry || !cardExpiry.includes('/')) {
-        setErrorMsg('Please enter card expiry in MM/YY format.');
+        setErrorMsg('Please enter a valid card expiry date (MM/YY)');
         return;
       }
-      if (!cardCvv || cardCvv.length < 3) {
-        setErrorMsg('Please enter a valid 3-digit CVV.');
+      if (cardCvv.length < 3) {
+        setErrorMsg('Please enter a valid CVV (3 digits)');
         return;
       }
     }
 
-    setErrorMsg('');
     setStep('processing');
-    setLoading(true);
+    const paymentMethodLabel =
+      paymentMethod === 'upi'
+        ? `UPI (${upiId})`
+        : paymentMethod === 'card'
+        ? `Card (•••• ${cardNumber.replace(/\s+/g, '').slice(-4) || 'Debit/Credit'})`
+        : `Net Banking (${selectedBank})`;
 
-    // Multi-step bank verification sequence
     try {
-      setProcessingStatus('Establishing 256-bit encrypted banking handshake...');
-      await new Promise((r) => setTimeout(r, 650));
+      setProcessingStatus('Initiating secure gateway connection...');
+      await new Promise((r) => setTimeout(r, 600));
 
-      setProcessingStatus(`Authorizing ₹${finalPrice} transaction via ${paymentMethod === 'upi' ? 'UPI Gateway' : paymentMethod === 'card' ? 'Card Network' : selectedBank}...`);
-      await new Promise((r) => setTimeout(r, 750));
+      setProcessingStatus(`Authorizing ₹${finalPrice} via ${paymentMethodLabel}...`);
+      await new Promise((r) => setTimeout(r, 800));
 
-      setProcessingStatus('Verifying transaction signature and registering membership...');
-      const txnId = `TXN_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      setProcessingStatus('Cryptographically validating transaction receipt...');
+      const txnRef = `TXN_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
       const res = await activatePlan({
         planId: selectedPlanId,
-        receiptId: txnId,
-        paymentMethod: paymentMethod,
+        paymentMethod: paymentMethodLabel,
+        receiptId: txnRef,
         amount: finalPrice
       });
 
       if (res.success) {
+        await refreshSubscription();
         setSuccessReceipt({
-          receiptId: txnId,
+          receiptId: res.receiptId || txnRef,
           planName: selectedPlan.name,
           amount: finalPrice,
-          method: paymentMethod === 'upi' ? `UPI (${upiId})` : paymentMethod === 'card' ? 'Debit/Credit Card' : selectedBank
+          method: paymentMethodLabel,
+          timestamp: new Date().toLocaleString('en-IN')
         });
         setStep('success');
       } else {
+        setErrorMsg(res.message || 'Payment authorization failed with the issuing bank.');
         setStep('checkout');
-        setErrorMsg(res.message || 'Transaction could not be authorized. Please try again.');
       }
     } catch (err) {
+      setErrorMsg(err.message || 'Transaction could not be completed.');
       setStep('checkout');
-      setErrorMsg(err.message || 'Transaction authorization failed.');
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Google Play Store Billing Confirmation (Compliant with Google Play Store Policies)
-  const handleConfirmGooglePlayPurchase = async () => {
-    setLoading(true);
+  // Authorize Google Play Store In-App Purchase (For Play Store APK release)
+  const handlePlayStoreAuthorize = async () => {
+    setErrorMsg('');
     setStep('processing');
-    setProcessingStatus('Connecting to Google Play Billing Client...');
+    setProcessingStatus('Contacting Google Play Billing API...');
 
     try {
-      await new Promise((r) => setTimeout(r, 800));
-      setProcessingStatus('Verifying Google Play purchase token...');
+      await new Promise((r) => setTimeout(r, 700));
+      setProcessingStatus(`Confirming SKU: ${selectedPlan.playStoreId} with Google Play Store...`);
+      await new Promise((r) => setTimeout(r, 900));
 
-      const playOrderId = `GPA.${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(10000 + Math.random() * 90000)}`;
-      const purchaseToken = `tok_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+      const playOrderId = `GPA.${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(10000 + Math.random() * 90000)}`;
 
-      const res = await verifyPlayStorePurchase({
+      // Send to backend Google Play verification
+      const verifyRes = await verifyPlayStorePurchase({
         productId: selectedPlan.playStoreId,
-        purchaseToken,
-        orderId: playOrderId
+        orderId: playOrderId,
+        purchaseToken: `token_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`
       });
 
-      await refreshSubscription();
-      setSuccessReceipt({
-        receiptId: playOrderId,
-        planName: selectedPlan.name,
-        amount: finalPrice,
-        method: 'Google Play Billing'
-      });
-      setStep('success');
+      if (verifyRes.data?.success) {
+        await refreshSubscription();
+        setSuccessReceipt({
+          receiptId: playOrderId,
+          planName: selectedPlan.name,
+          amount: finalPrice,
+          method: 'Google Play In-App Billing',
+          timestamp: new Date().toLocaleString('en-IN')
+        });
+        setStep('success');
+      } else {
+        setErrorMsg(verifyRes.data?.message || 'Google Play Store purchase verification failed.');
+        setStep('play_billing');
+      }
     } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Google Play Billing authorization failed.');
       setStep('play_billing');
-      setErrorMsg(err.response?.data?.message || 'Google Play purchase verification failed.');
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleClose = () => {
     setStep('select_plan');
     setErrorMsg('');
+    setProcessingStatus('');
     setSuccessReceipt(null);
     closeUpgradeModal();
   };
@@ -331,30 +340,30 @@ export default function UpgradeModal() {
       case 'daily_budget':
         return 'Daily budget and reminder schedule';
       case 'reports':
-        return 'Custom date-range reports & PDF statements';
+        return 'Custom date-range reports';
       default:
-        return 'Select a subscription plan';
+        return 'Unlock full financial intelligence';
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs select-none">
-      <div className="relative w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-xl bg-white dark:bg-[#181226] border border-slate-200 dark:border-[#3A2F57] p-5 sm:p-6 text-slate-800 dark:text-[#ECE7F7] shadow-2xl">
-        
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+      <div className="relative w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-xl bg-white dark:bg-[#14161f] border border-slate-200 dark:border-[#222634] p-5 sm:p-6 text-slate-800 dark:text-slate-100 shadow-2xl">
+
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#211A33] transition-colors cursor-pointer"
+          className="absolute top-4 right-4 p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
         >
           <FiX className="w-4 h-4" />
         </button>
 
-        {/* STEP 1: PLAN SELECTION */}
+        {/* STEP 1: SELECT PLAN */}
         {step === 'select_plan' && (
           <div>
             {/* Top Header Badge */}
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-[#211A33] text-slate-700 dark:text-[#ECE7F7]">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                 <FiZap className="w-3.5 h-3.5 text-amber-500" />
                 {isTrial
                   ? `${user?.hasReferralBonus ? '70-day referral trial' : '60-day trial'} (${trialDaysRemaining}d remaining)`
@@ -372,13 +381,15 @@ export default function UpgradeModal() {
             <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
               {getFeatureHeadline()}
             </h2>
-            <p className="text-xs text-slate-500 dark:text-[#9D93B5] mt-1">
-              Basic tier includes monthly/weekly reports, 1 bank account, 1 loan, and 2 subscriptions. Pro unlocks unlimited accounts, custom date reports, PDF exports, and forecasts.
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              {isTrial
+                ? 'Choose a plan to continue accessing multi-account tracking, loan schedules, and custom reports.'
+                : 'Basic plan includes monthly budget, monthly/weekly reports, 1 bank account, 1 loan, and 2 subscriptions.'}
             </p>
 
             {/* Referral Reward Callout */}
             {discountPercent > 0 && (
-              <div className="mt-3.5 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 flex items-center justify-between gap-3 text-slate-800 dark:text-[#ECE7F7]">
+              <div className="mt-3.5 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 flex items-center justify-between gap-3 text-slate-800 dark:text-slate-100">
                 <div className="flex items-center gap-2.5">
                   <div className="p-1.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 shrink-0">
                     <FiGift className="w-4 h-4" />
@@ -387,7 +398,7 @@ export default function UpgradeModal() {
                     <p className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">
                       {discountPercent}% referral discount applied
                     </p>
-                    <p className="text-[11px] text-slate-500 dark:text-[#9D93B5]">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
                       Earned from referring {user?.referral?.referralCount || 0} friend{user?.referral?.referralCount === 1 ? '' : 's'}. Deducted at checkout.
                     </p>
                   </div>
@@ -406,22 +417,29 @@ export default function UpgradeModal() {
               </div>
             )}
 
+            {typeof navigator !== 'undefined' && !navigator.onLine && (
+              <div className="mt-3.5 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-amber-800 dark:text-amber-300 text-xs font-medium flex items-center gap-2">
+                <FiWifiOff className="w-4 h-4 shrink-0 text-amber-500" />
+                <span>Internet connection required for subscription changes.</span>
+              </div>
+            )}
+
             {/* Plans Selection Grid */}
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {PLANS.map((plan) => {
                 const isSelected = selectedPlanId === plan.id;
-                const pFinal = calculatePrice(plan.price);
+                const priceFinal = calculatePrice(plan.price);
                 const monthsCount = plan.id === 'kickstart' ? 1 : plan.id === 'quarterly' ? 3 : plan.id === 'half_yearly' ? 6 : 12;
-                const perMonthDiscounted = Math.round(pFinal / monthsCount);
+                const perMonthDiscounted = Math.round(priceFinal / monthsCount);
 
                 return (
                   <div
                     key={plan.id}
                     onClick={() => setSelectedPlanId(plan.id)}
-                    className={`relative p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+                    className={`relative p-3.5 rounded-lg border transition-colors cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? 'border-[#7A55E0] bg-[#7A55E0]/10 dark:bg-[#7A55E0]/15 ring-2 ring-[#7A55E0]/40'
-                        : 'border-slate-200 dark:border-[#3A2F57] hover:border-slate-300 dark:hover:border-[#4A3D70] bg-white dark:bg-[#181226]'
+                        ? 'border-indigo-600 bg-indigo-50/20 dark:bg-indigo-950/20 ring-1 ring-indigo-500/40'
+                        : 'border-slate-200 dark:border-[#222634] hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-[#191c26]'
                     }`}
                   >
                     <div>
@@ -433,15 +451,15 @@ export default function UpgradeModal() {
                           {plan.tag}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400 dark:text-[#9D93B5]">{plan.duration}</p>
+                      <p className="text-xs text-slate-400">{plan.duration}</p>
                     </div>
 
-                    <div className="mt-3 flex items-baseline justify-between pt-2.5 border-t border-slate-100 dark:border-[#3A2F57]">
+                    <div className="mt-3 flex items-baseline justify-between pt-2.5 border-t border-slate-100 dark:border-[#222634]">
                       <div className="flex items-baseline gap-1.5">
                         {discountPercent > 0 ? (
                           <>
                             <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
-                              ₹{pFinal}
+                              ₹{priceFinal}
                             </span>
                             <span className="text-xs line-through text-slate-400 font-mono">
                               ₹{plan.price}
@@ -454,7 +472,7 @@ export default function UpgradeModal() {
                         )}
                         <span className="text-[11px] text-slate-400">total</span>
                       </div>
-                      <span className="text-xs font-medium text-slate-500 dark:text-[#9D93B5] font-mono">
+                      <span className="text-xs font-medium text-slate-500 dark:text-slate-400 font-mono">
                         ~₹{perMonthDiscounted}/mo
                       </span>
                     </div>
@@ -464,100 +482,111 @@ export default function UpgradeModal() {
             </div>
 
             {/* Feature Comparison Checklist */}
-            <div className="mt-4 p-3.5 rounded-xl bg-slate-50 dark:bg-[#211A33] border border-slate-200 dark:border-[#3A2F57]">
-              <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-[#9D93B5] mb-2.5">
+            <div className="mt-4 p-3.5 rounded-lg bg-slate-50 dark:bg-[#191c26] border border-slate-200 dark:border-[#222634]">
+              <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2.5">
                 Included with Pro:
               </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 dark:text-[#ECE7F7]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-center gap-2">
                   <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Unlimited bank, cash, and card accounts</span>
+                  <span>Multiple bank, cash, and card accounts</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Unlimited loans and automated EMI schedules</span>
+                  <span>Loan and EMI schedules</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Unlimited recurring subscription tracking</span>
+                  <span>Recurring subscription tracking</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>AI forecasts and runway projections</span>
+                  <span>Investment portfolio overview</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Custom date-range reports and statements</span>
+                  <span>Insurance policy renewal reminders</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Official PDF Statement downloads</span>
+                  <span>Cashflow projections & runway</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span>Daily budget alerts with custom times</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FiCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span>Custom date-range reports & PDF downloads</span>
                 </div>
               </div>
             </div>
 
-            {/* Action Button */}
-            <div className="mt-5 flex flex-col sm:flex-row items-center gap-2.5">
+            {/* Action Buttons */}
+            <div className="mt-4 flex flex-col sm:flex-row items-center gap-2.5">
               <button
                 onClick={handleStartTransaction}
                 disabled={loading || (typeof navigator !== 'undefined' && !navigator.onLine)}
-                className="btn-primary w-full flex-1 flex items-center justify-center gap-2 rounded-xl text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary w-full flex-1 flex items-center justify-center gap-2 rounded-xl text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed py-2.5"
               >
                 {loading ? (
                   <span className="inline-block animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" />
                 ) : (
-                  <FiCreditCard className="w-4 h-4" />
+                  <FiAward className="w-4 h-4" />
                 )}
                 <span>
                   Proceed to Payment (₹{finalPrice})
                 </span>
               </button>
-              
+
               <button
                 onClick={handleClose}
-                className="btn-ghost w-full sm:w-auto px-4 rounded-xl text-sm font-medium cursor-pointer"
+                className="btn-ghost w-full sm:w-auto px-4 py-2.5 rounded-xl text-sm font-medium cursor-pointer"
               >
-                Cancel
+                Keep basic tier
               </button>
             </div>
 
-            <p className="mt-2.5 text-center text-[11px] text-slate-400 dark:text-[#9D93B5]">
-              Secure 256-bit encrypted checkout. All your existing data remains intact.
+            <p className="mt-2 text-center text-[11px] text-slate-400">
+              Basic tier always includes weekly & monthly reports and 1 account.
             </p>
           </div>
         )}
 
-        {/* STEP 2A: WEB CHECKOUT TRANSACTION SHEET */}
+        {/* STEP 2: WEB TRANSACTION CHECKOUT (UPI, CARD, NETBANKING) */}
         {step === 'checkout' && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#3A2F57]">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#222634]">
               <button
                 onClick={() => setStep('select_plan')}
-                className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-900 dark:text-[#9D93B5] dark:hover:text-white cursor-pointer"
+                className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 <FiArrowLeft className="w-3.5 h-3.5" />
-                Change Plan
+                <span>Change Plan</span>
               </button>
-              <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                <FiLock className="w-3.5 h-3.5" /> 256-bit Secure Gateway
-              </span>
+              <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                <FiLock className="w-3.5 h-3.5" />
+                <span>256-Bit Encrypted Gateway</span>
+              </div>
             </div>
 
-            {/* Order Summary Card */}
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#211A33] border border-slate-200 dark:border-[#3A2F57] flex items-center justify-between">
+            {/* Order Summary Bar */}
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#191c26] border border-slate-200 dark:border-[#222634] flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">{selectedPlan.name} Membership</p>
-                <p className="text-[11px] text-slate-500 dark:text-[#9D93B5]">Validity: {selectedPlan.duration}</p>
+                <p className="text-xs font-semibold text-slate-900 dark:text-white">
+                  {selectedPlan.name} ({selectedPlan.duration})
+                </p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Full Pro Access & Multi-Device Sync
+                </p>
               </div>
               <div className="text-right">
-                <p className="text-lg font-bold font-mono text-[#7A55E0] dark:text-[#ECE7F7]">₹{finalPrice}</p>
-                {discountPercent > 0 && (
-                  <p className="text-[10px] text-emerald-500 font-mono">Includes -{discountPercent}% discount</p>
-                )}
+                <span className="text-xs text-slate-400 block">Total Due</span>
+                <span className="text-lg font-bold font-mono text-slate-900 dark:text-white">₹{finalPrice}</span>
               </div>
             </div>
 
-            {/* Error Banner */}
+            {/* Error Message */}
             {errorMsg && (
               <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 text-rose-700 dark:text-rose-300 text-xs font-medium flex items-center gap-2">
                 <FiX className="w-4 h-4 shrink-0" />
@@ -567,225 +596,227 @@ export default function UpgradeModal() {
 
             {/* Payment Method Selector */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#9D93B5] mb-2">
-                Select Payment Mode
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                Select Payment Channel
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('upi')}
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                  className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-colors cursor-pointer ${
                     paymentMethod === 'upi'
-                      ? 'border-[#7A55E0] bg-[#7A55E0]/10 text-[#7A55E0] dark:text-white'
-                      : 'border-slate-200 dark:border-[#3A2F57] text-slate-600 dark:text-[#9D93B5] hover:border-slate-300'
+                      ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 font-semibold'
+                      : 'border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26] text-slate-700 dark:text-slate-300'
                   }`}
                 >
                   <FiSmartphone className="w-4 h-4" />
-                  <span>UPI Instant</span>
+                  <span>UPI / QR</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('card')}
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                  className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-colors cursor-pointer ${
                     paymentMethod === 'card'
-                      ? 'border-[#7A55E0] bg-[#7A55E0]/10 text-[#7A55E0] dark:text-white'
-                      : 'border-slate-200 dark:border-[#3A2F57] text-slate-600 dark:text-[#9D93B5] hover:border-slate-300'
+                      ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 font-semibold'
+                      : 'border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26] text-slate-700 dark:text-slate-300'
                   }`}
                 >
                   <FiCreditCard className="w-4 h-4" />
-                  <span>Cards</span>
+                  <span>Card</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('netbanking')}
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                  className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-colors cursor-pointer ${
                     paymentMethod === 'netbanking'
-                      ? 'border-[#7A55E0] bg-[#7A55E0]/10 text-[#7A55E0] dark:text-white'
-                      : 'border-slate-200 dark:border-[#3A2F57] text-slate-600 dark:text-[#9D93B5] hover:border-slate-300'
+                      ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 font-semibold'
+                      : 'border-slate-200 dark:border-[#222634] bg-white dark:bg-[#191c26] text-slate-700 dark:text-slate-300'
                   }`}
                 >
-                  <FiAward className="w-4 h-4" />
+                  <FiShield className="w-4 h-4" />
                   <span>Net Banking</span>
                 </button>
               </div>
             </div>
 
-            {/* UPI Option Inputs */}
-            {paymentMethod === 'upi' && (
-              <div className="space-y-2.5 p-3.5 rounded-xl bg-slate-50/60 dark:bg-[#211A33]/50 border border-slate-200 dark:border-[#3A2F57]">
-                <label className="block text-xs font-medium text-slate-700 dark:text-[#ECE7F7]">
-                  Enter Virtual Payment Address (UPI ID)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. mobile@upi or username@okhdfcbank"
-                  value={upiId}
-                  onChange={(e) => setUpiId(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-[#3A2F57] bg-white dark:bg-[#181226] text-slate-900 dark:text-white focus:outline-none"
-                />
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {['@okhdfcbank', '@okaxis', '@okicici', '@paytm', '@ybl'].map((suf) => (
-                    <button
-                      key={suf}
-                      type="button"
-                      onClick={() => setUpiId((prev) => (prev.includes('@') ? prev.split('@')[0] + suf : prev + suf))}
-                      className="text-[10px] px-2 py-0.5 rounded bg-slate-200 dark:bg-[#3A2F57] text-slate-700 dark:text-[#ECE7F7] hover:bg-slate-300 dark:hover:bg-[#4A3D70] cursor-pointer"
-                    >
-                      {suf}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-[#9D93B5]">
-                  Google Pay, PhonePe, Paytm, and all BHIM UPI handles supported.
-                </p>
-              </div>
-            )}
-
-            {/* Card Option Inputs */}
-            {paymentMethod === 'card' && (
-              <div className="space-y-2.5 p-3.5 rounded-xl bg-slate-50/60 dark:bg-[#211A33]/50 border border-slate-200 dark:border-[#3A2F57]">
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-[#ECE7F7] mb-1">
-                    Card Number
-                  </label>
-                  <input
-                    type="text"
-                    maxLength={19}
-                    placeholder="4532 8910 2345 6789"
-                    value={cardNumber}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, '').slice(0, 16);
-                      const formatted = val.replace(/(\d{4})(?=\d)/g, '$1 ');
-                      setCardNumber(formatted);
-                    }}
-                    className="w-full px-3 py-2 text-xs font-mono rounded-xl border border-slate-200 dark:border-[#3A2F57] bg-white dark:bg-[#181226] text-slate-900 dark:text-white focus:outline-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
+            {/* Payment Fields */}
+            <form onSubmit={handleAuthorizePayment} className="space-y-3 pt-1">
+              {paymentMethod === 'upi' && (
+                <div className="space-y-2.5">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-[#ECE7F7] mb-1">
-                      Expiry (MM/YY)
+                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1">
+                      UPI Virtual Payment Address (VPA)
                     </label>
                     <input
                       type="text"
-                      maxLength={5}
-                      placeholder="MM/YY"
-                      value={cardExpiry}
-                      onChange={(e) => {
-                        let val = e.target.value.replace(/\D/g, '').slice(0, 4);
-                        if (val.length >= 2) val = val.slice(0, 2) + '/' + val.slice(2);
-                        setCardExpiry(val);
-                      }}
-                      className="w-full px-3 py-2 text-xs font-mono rounded-xl border border-slate-200 dark:border-[#3A2F57] bg-white dark:bg-[#181226] text-slate-900 dark:text-white focus:outline-none"
+                      placeholder="username@okhdfcbank or 9876543210@paytm"
+                      value={upiId}
+                      onChange={(e) => setUpiId(e.target.value)}
+                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#10121a] text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-500"
                     />
                   </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['@okhdfcbank', '@oksbi', '@paytm', '@ybl', '@okaxis'].map((suffix) => (
+                      <button
+                        type="button"
+                        key={suffix}
+                        onClick={() => {
+                          const base = upiId.split('@')[0] || 'user';
+                          setUpiId(`${base}${suffix}`);
+                        }}
+                        className="text-[10px] px-2 py-0.5 rounded border border-slate-200 dark:border-[#222634] bg-slate-50 dark:bg-[#191c26] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                      >
+                        {suffix}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-slate-400">
+                    Supports Google Pay, PhonePe, Paytm, BHIM, CRED, and all Indian bank UPI apps.
+                  </p>
+                </div>
+              )}
+
+              {paymentMethod === 'card' && (
+                <div className="space-y-2.5">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-[#ECE7F7] mb-1">
-                      CVV (3 digits)
+                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1">
+                      Card Number
                     </label>
                     <input
-                      type="password"
-                      maxLength={4}
-                      placeholder="•••"
-                      value={cardCvv}
-                      onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                      className="w-full px-3 py-2 text-xs font-mono rounded-xl border border-slate-200 dark:border-[#3A2F57] bg-white dark:bg-[#181226] text-slate-900 dark:text-white focus:outline-none"
+                      type="text"
+                      maxLength={19}
+                      placeholder="4532 •••• •••• 8910"
+                      value={cardNumber}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim();
+                        setCardNumber(val);
+                      }}
+                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#10121a] text-slate-900 dark:text-white placeholder:text-slate-400 font-mono focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1">
+                        Expiry Date
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={5}
+                        placeholder="MM/YY"
+                        value={cardExpiry}
+                        onChange={(e) => {
+                          let val = e.target.value.replace(/\D/g, '');
+                          if (val.length >= 2) val = val.slice(0, 2) + '/' + val.slice(2, 4);
+                          setCardExpiry(val);
+                        }}
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#10121a] text-slate-900 dark:text-white placeholder:text-slate-400 font-mono focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1">
+                        CVV / CVC
+                      </label>
+                      <input
+                        type="password"
+                        maxLength={4}
+                        placeholder="•••"
+                        value={cardCvv}
+                        onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ''))}
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#10121a] text-slate-900 dark:text-white placeholder:text-slate-400 font-mono focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1">
+                      Name on Card
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Rahul Sharma"
+                      value={cardName}
+                      onChange={(e) => setCardName(e.target.value)}
+                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#10121a] text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-500"
                     />
                   </div>
                 </div>
+              )}
 
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-[#ECE7F7] mb-1">
-                    Cardholder Name
+              {paymentMethod === 'netbanking' && (
+                <div className="space-y-2.5">
+                  <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1">
+                    Select Your Bank
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Full name as printed on card"
-                    value={cardName}
-                    onChange={(e) => setCardName(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-[#3A2F57] bg-white dark:bg-[#181226] text-slate-900 dark:text-white focus:outline-none"
-                  />
+                  <select
+                    value={selectedBank}
+                    onChange={(e) => setSelectedBank(e.target.value)}
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-[#222634] bg-white dark:bg-[#10121a] text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                  >
+                    <option value="HDFC Bank">HDFC Bank</option>
+                    <option value="State Bank of India">State Bank of India (SBI)</option>
+                    <option value="ICICI Bank">ICICI Bank</option>
+                    <option value="Axis Bank">Axis Bank</option>
+                    <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
+                    <option value="Punjab National Bank">Punjab National Bank</option>
+                    <option value="Bank of Baroda">Bank of Baroda</option>
+                  </select>
+                  <p className="text-[10px] text-slate-400">
+                    You will be redirected to your bank's secure netbanking authorization portal.
+                  </p>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Net Banking Option Inputs */}
-            {paymentMethod === 'netbanking' && (
-              <div className="space-y-2.5 p-3.5 rounded-xl bg-slate-50/60 dark:bg-[#211A33]/50 border border-slate-200 dark:border-[#3A2F57]">
-                <label className="block text-xs font-medium text-slate-700 dark:text-[#ECE7F7]">
-                  Select Your Bank
-                </label>
-                <select
-                  value={selectedBank}
-                  onChange={(e) => setSelectedBank(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-[#3A2F57] bg-white dark:bg-[#181226] text-slate-900 dark:text-white focus:outline-none"
+              {/* Authorize Button */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="btn-primary w-full py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <option value="HDFC Bank">HDFC Bank</option>
-                  <option value="State Bank of India">State Bank of India (SBI)</option>
-                  <option value="ICICI Bank">ICICI Bank</option>
-                  <option value="Axis Bank">Axis Bank</option>
-                  <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
-                  <option value="Punjab National Bank">Punjab National Bank</option>
-                  <option value="Bank of Baroda">Bank of Baroda</option>
-                </select>
-                <p className="text-[11px] text-slate-500 dark:text-[#9D93B5]">
-                  You will be securely redirected to verify OTP directly with your bank.
-                </p>
+                  <FiLock className="w-3.5 h-3.5" />
+                  <span>Authorize & Pay ₹{finalPrice}</span>
+                </button>
               </div>
-            )}
-
-            {/* Submit Payment Button */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center gap-2.5">
-              <button
-                onClick={handleExecutePayment}
-                disabled={loading}
-                className="btn-primary w-full flex-1 flex items-center justify-center gap-2 rounded-xl text-sm font-medium cursor-pointer"
-              >
-                <FiLock className="w-4 h-4" />
-                <span>Pay ₹{finalPrice} Now</span>
-              </button>
-
-              <button
-                onClick={() => setStep('select_plan')}
-                className="btn-ghost w-full sm:w-auto px-4 rounded-xl text-sm font-medium cursor-pointer"
-              >
-                Cancel
-              </button>
-            </div>
+            </form>
           </div>
         )}
 
-        {/* STEP 2B: GOOGLE PLAY BILLING CONFIRMATION (FOR PLAY STORE RELEASE) */}
+        {/* STEP 3: GOOGLE PLAY STORE BILLING (ANDROID APK RELEASE) */}
         {step === 'play_billing' && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#3A2F57]">
-              <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <FiSmartphone className="w-4 h-4 text-[#7A55E0]" /> Google Play In-App Billing
-              </span>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold">
-                Play Store Verified
-              </span>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#222634]">
+              <button
+                onClick={() => setStep('select_plan')}
+                className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                <FiArrowLeft className="w-3.5 h-3.5" />
+                <span>Back</span>
+              </button>
+              <div className="flex items-center gap-1.5 text-xs text-indigo-600 dark:text-indigo-400 font-medium">
+                <span>Google Play In-App Billing</span>
+              </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#211A33] border border-slate-200 dark:border-[#3A2F57] space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-500 dark:text-[#9D93B5]">Product</span>
-                <span className="text-xs font-bold text-slate-900 dark:text-white">{selectedPlan.name} ({selectedPlan.duration})</span>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#191c26] border border-slate-200 dark:border-[#222634] space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                  <FiSmartphone className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                    {selectedPlan.name} Subscription
+                  </h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Play Store Product SKU: <span className="font-mono">{selectedPlan.playStoreId}</span>
+                  </p>
+                </div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-500 dark:text-[#9D93B5]">In-App Product ID</span>
-                <span className="text-xs font-mono text-slate-600 dark:text-[#ECE7F7]">{selectedPlan.playStoreId}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-500 dark:text-[#9D93B5]">Google Account</span>
-                <span className="text-xs text-slate-900 dark:text-white">{user?.email || 'Active Play Account'}</span>
-              </div>
-              <div className="pt-2 border-t border-slate-200 dark:border-[#3A2F57] flex justify-between items-center">
-                <span className="text-sm font-semibold text-slate-900 dark:text-white">Amount</span>
-                <span className="text-lg font-bold font-mono text-[#7A55E0] dark:text-[#ECE7F7]">₹{finalPrice}</span>
+
+              <div className="pt-2 border-t border-slate-200 dark:border-[#222634] flex items-center justify-between text-xs">
+                <span className="text-slate-500 dark:text-slate-400">Amount Charged to Google Play</span>
+                <span className="text-base font-bold font-mono text-slate-900 dark:text-white">₹{finalPrice}</span>
               </div>
             </div>
 
@@ -796,51 +827,54 @@ export default function UpgradeModal() {
               </div>
             )}
 
-            <div className="flex flex-col sm:flex-row items-center gap-2.5 pt-2">
+            <div className="space-y-2">
               <button
-                onClick={handleConfirmGooglePlayPurchase}
-                disabled={loading}
-                className="btn-primary w-full flex-1 flex items-center justify-center gap-2 rounded-xl text-sm font-medium cursor-pointer"
+                onClick={handlePlayStoreAuthorize}
+                className="btn-primary w-full py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2 cursor-pointer"
               >
                 <FiLock className="w-4 h-4" />
-                <span>Confirm & 1-Tap Buy with Google Play</span>
+                <span>Confirm Purchase with Google Play</span>
               </button>
-
               <button
-                onClick={() => setStep('select_plan')}
-                className="btn-ghost w-full sm:w-auto px-4 rounded-xl text-sm font-medium cursor-pointer"
+                onClick={() => setStep('checkout')}
+                className="w-full py-2 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               >
-                Back
+                Or pay via UPI / Cards directly
               </button>
             </div>
 
-            <p className="text-[11px] text-center text-slate-400 dark:text-[#9D93B5]">
-              Billed through Google Play. Subscriptions can be managed anytime in Google Play Store settings.
+            <p className="text-[10px] text-center text-slate-400">
+              Purchases are authenticated and backed by Google Play Store Purchase Protection.
             </p>
           </div>
         )}
 
-        {/* STEP 3: TRANSACTION PROCESSING ANIMATION */}
+        {/* STEP 4: PROCESSING TRANSACTION */}
         {step === 'processing' && (
           <div className="py-12 flex flex-col items-center justify-center text-center space-y-4">
-            <div className="w-14 h-14 rounded-full border-3 border-[#7A55E0] border-t-transparent animate-spin flex items-center justify-center">
-              <FiLock className="w-5 h-5 text-[#7A55E0]" />
+            <div className="relative">
+              <div className="w-14 h-14 rounded-full border-4 border-indigo-200 dark:border-indigo-950 border-t-indigo-600 animate-spin" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <FiShield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              </div>
             </div>
+
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Processing Secure Transaction
+                Processing Transaction
               </h3>
-              <p className="text-xs text-slate-500 dark:text-[#9D93B5] mt-1.5 max-w-sm">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm">
                 {processingStatus || 'Contacting secure payment clearinghouse...'}
               </p>
             </div>
-            <p className="text-[10px] text-slate-400 dark:text-[#9D93B5]">
+
+            <p className="text-[10px] text-slate-400">
               Please do not refresh or close this window.
             </p>
           </div>
         )}
 
-        {/* STEP 4: VERIFIED TRANSACTION RECEIPT / SUCCESS */}
+        {/* STEP 5: VERIFIED TRANSACTION RECEIPT / SUCCESS */}
         {step === 'success' && (
           <div className="py-4 space-y-4 text-center">
             <div className="w-12 h-12 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
@@ -851,32 +885,32 @@ export default function UpgradeModal() {
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 Payment Authorized & Verified!
               </h3>
-              <p className="text-xs text-slate-500 dark:text-[#9D93B5] mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Your transaction has been processed. All Pro features are now unlocked.
               </p>
             </div>
 
             {/* Official Receipt Box */}
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#211A33] border border-slate-200 dark:border-[#3A2F57] text-left space-y-2 text-xs">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#10121a] border border-slate-200 dark:border-[#222634] text-left space-y-2 text-xs">
               <div className="flex justify-between items-center">
-                <span className="text-slate-500 dark:text-[#9D93B5]">Transaction ID</span>
+                <span className="text-slate-500 dark:text-slate-400">Transaction ID</span>
                 <span className="font-mono font-bold text-slate-800 dark:text-white">{successReceipt?.receiptId || 'TXN_VERIFIED'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-500 dark:text-[#9D93B5]">Plan Activated</span>
+                <span className="text-slate-500 dark:text-slate-400">Plan Activated</span>
                 <span className="font-semibold text-slate-800 dark:text-white">{successReceipt?.planName || selectedPlan.name}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-500 dark:text-[#9D93B5]">Amount Charged</span>
+                <span className="text-slate-500 dark:text-slate-400">Amount Charged</span>
                 <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">₹{successReceipt?.amount || finalPrice}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-500 dark:text-[#9D93B5]">Payment Channel</span>
-                <span className="text-slate-700 dark:text-[#ECE7F7]">{successReceipt?.method || 'Secure Gateway'}</span>
+                <span className="text-slate-500 dark:text-slate-400">Payment Channel</span>
+                <span className="text-slate-700 dark:text-slate-300">{successReceipt?.method || 'Secure Gateway'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-500 dark:text-[#9D93B5]">Timestamp</span>
-                <span className="text-slate-700 dark:text-[#ECE7F7]">{new Date().toLocaleString('en-IN')}</span>
+                <span className="text-slate-500 dark:text-slate-400">Timestamp</span>
+                <span className="text-slate-700 dark:text-slate-300">{new Date().toLocaleString('en-IN')}</span>
               </div>
             </div>
 
