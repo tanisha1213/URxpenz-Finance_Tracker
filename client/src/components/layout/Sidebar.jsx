@@ -5,7 +5,6 @@ import { FiLayout, FiDollarSign, FiPieChart, FiTrendingUp, FiUser, FiLogOut, FiC
 import { useTheme } from '../../context/ThemeContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSubscription } from '../../context/SubscriptionContext'
-import logoLight from '../../assets/logo-light.png'
 import logoDark from '../../assets/logo-dark.png'
 
 function Sidebar() {
@@ -46,8 +45,8 @@ function Sidebar() {
     <aside className="w-60 bg-[#0f1117] text-white flex flex-col transition-all duration-150 border-r border-[#1e2230] h-screen">
       <div className="p-5 border-b border-[#1e2230] flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-            <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz" className="w-7 h-7 rounded-md object-contain" />
+          <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-2.5">
+            <img src={logoDark} alt="URxpenz" className="w-9 h-9 rounded-lg object-contain" />
             URxpenz
           </h1>
           <p className="text-[11px] text-slate-400 mt-0.5">Expense & budget manager</p>

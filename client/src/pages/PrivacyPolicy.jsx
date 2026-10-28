@@ -25,7 +25,7 @@ export default function PrivacyPolicy() {
             <img
               src={theme === 'light' ? logoLight : logoDark}
               alt="URxpenz Logo"
-              className="w-7 h-7 rounded-lg object-contain shadow-sm"
+              className="w-10 h-10 rounded-xl object-contain shadow-sm"
             />
             <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">
               URxpenz Finance Tracker
