@@ -345,8 +345,13 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    // Frontend reset password link
-    const frontendResetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
+    // Dynamically compute the frontend reset password link
+    const host = req.get('host');
+    const proto = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+    const origin = req.headers.origin && !req.headers.origin.includes('localhost') ? req.headers.origin : null;
+    const defaultLiveUrl = 'https://urxpenz-finance-tracker.vercel.app';
+    const baseUrl = process.env.FRONTEND_URL || origin || (host && !host.includes('localhost') ? `${proto}://${host}` : defaultLiveUrl);
+    const frontendResetUrl = `${baseUrl.replace(/\/$/, '')}/reset-password/${resetToken}`;
 
     // Attempt to deliver the reset email
     try {
@@ -361,19 +366,28 @@ export const forgotPassword = async (req, res) => {
       console.error(`[Auth Error] Failed to send password reset email:`, mailError.message);
 
       if (mailError.code === 'SMTP_NOT_CONFIGURED') {
+        console.warn(`[SMTP Warning] SMTP is not configured in server environment.`);
+        console.log(`[Dev Reset Link]: ${frontendResetUrl}`);
+
         if (process.env.NODE_ENV === 'development') {
-          console.warn(`[SMTP Warning] SMTP is not configured in server/.env. Add EMAIL_USER and EMAIL_PASS to enable live email delivery.`);
+          return res.status(200).json({
+            success: true,
+            devMode: true,
+            resetUrl: frontendResetUrl,
+            message: `[Dev Mode] SMTP is not configured. For testing, your reset link is: ${frontendResetUrl}`
+          });
         }
 
         return res.status(503).json({
           success: false,
-          message: 'Email service is not yet configured on this server. Please check your server SMTP settings.'
+          code: 'SMTP_NOT_CONFIGURED',
+          message: 'Email service is not yet configured on this server. Please configure EMAIL_USER and EMAIL_PASS in your Vercel or server environment variables.'
         });
       }
 
       return res.status(500).json({
         success: false,
-        message: 'Unable to send password reset email. Please try again later.'
+        message: `Unable to send password reset email (${mailError.message}). Please verify your server SMTP credentials.`
       });
     }
   } catch (error) {

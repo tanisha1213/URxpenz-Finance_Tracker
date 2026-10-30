@@ -13,6 +13,7 @@ function Forgot() {
   const [error, setError] = useState('')
   const [submittedEmail, setSubmittedEmail] = useState('')
   const [isSuccess, setIsSuccess] = useState(false)
+  const [devResetUrl, setDevResetUrl] = useState('')
   
   const { theme } = useTheme()
 
@@ -30,6 +31,9 @@ function Forgot() {
       const response = await forgotPassword({ email: trimmedEmail })
       if (response.data.success) {
         setSubmittedEmail(trimmedEmail)
+        if (response.data.devMode && response.data.resetUrl) {
+          setDevResetUrl(response.data.resetUrl)
+        }
         setIsSuccess(true)
       } else {
         setError(response.data.message || 'Failed to send reset email')
@@ -48,6 +52,7 @@ function Forgot() {
     setIsSuccess(false)
     setEmail('')
     setError('')
+    setDevResetUrl('')
   }
 
   return (
@@ -97,6 +102,19 @@ function Forgot() {
               <FiMail className="text-secondary dark:text-purple-400" />
               <span className="truncate">{submittedEmail}</span>
             </div>
+
+            {devResetUrl && (
+              <div className="w-full bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800/40 p-3.5 rounded-xl text-left text-xs space-y-2">
+                <p className="font-bold text-purple-900 dark:text-purple-300">🧪 Developer Testing Mode:</p>
+                <p className="text-slate-650 dark:text-slate-300">SMTP is not configured on this server. For local testing, click below:</p>
+                <a
+                  href={devResetUrl}
+                  className="block text-center py-2 px-3 bg-secondary dark:bg-purple-600 text-white rounded-lg font-bold text-xs hover:opacity-90 transition-opacity"
+                >
+                  Open Password Reset Page →
+                </a>
+              </div>
+            )}
 
             <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 p-3 rounded-xl text-left text-xs text-amber-800 dark:text-amber-300 leading-relaxed space-y-1">
               <p className="font-semibold">Important:</p>

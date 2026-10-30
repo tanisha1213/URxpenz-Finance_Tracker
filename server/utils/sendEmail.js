@@ -1,14 +1,31 @@
 import nodemailer from 'nodemailer';
 
 /**
+ * Checks whether valid SMTP/Email credentials are present in the environment.
+ */
+export const isEmailConfigured = () => {
+  const host = process.env.EMAIL_HOST;
+  const user = process.env.EMAIL_USER;
+  const pass = process.env.EMAIL_PASS;
+  return Boolean((host && user && pass) || (user && pass));
+};
+
+/**
  * Creates and returns a nodemailer transporter based on environment configuration.
  * Supports Gmail (via Google App Password) or generic SMTP (Brevo, SendGrid, Mailgun, etc.)
  */
 const createTransporter = () => {
   const host = process.env.EMAIL_HOST;
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_PASS;
-  const service = process.env.EMAIL_SERVICE;
+  const user = process.env.EMAIL_USER?.trim();
+  const rawPass = process.env.EMAIL_PASS?.trim();
+  const service = process.env.EMAIL_SERVICE?.trim();
+
+  if (!user || !rawPass) {
+    return null;
+  }
+
+  // Google App Passwords often contain spaces (e.g. "abcd efgh ijkl mnop") - strip spaces automatically
+  const pass = rawPass.replace(/\s+/g, '');
 
   if (host) {
     return nodemailer.createTransport({
@@ -18,21 +35,39 @@ const createTransporter = () => {
       auth: {
         user,
         pass
-      }
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000
     });
   }
 
-  if (user && pass) {
+  const isGmail = !service || service.toLowerCase() === 'gmail';
+  if (isGmail) {
     return nodemailer.createTransport({
-      service: service || 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
         user,
         pass
-      }
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000
     });
   }
 
-  return null;
+  return nodemailer.createTransport({
+    service,
+    auth: {
+      user,
+      pass
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000
+  });
 };
 
 /**
