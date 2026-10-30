@@ -197,8 +197,20 @@ function Profile() {
     }
   }
 
-  const handleShareWhatsApp = () => {
+  const handleShareWhatsApp = async () => {
     const text = `Hey! Track your daily budgets, expenses, and bank accounts on URxpenz. Use my invite code "${referralCode}" to get 10 DAYS EXTRA FREE TRIAL (70 Days Total)! Sign up here: ${inviteLink}`
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Join me on URxpenz',
+          text,
+          url: inviteLink
+        })
+        return
+      } catch (err) {
+        if (err.name === 'AbortError') return
+      }
+    }
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`
     window.open(url, '_blank')
   }
@@ -322,10 +334,10 @@ function Profile() {
               <button
                 type="button"
                 onClick={handleShareWhatsApp}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1da851] hover:bg-[#168840] text-white text-xs font-semibold transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1da851] hover:bg-[#168840] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
               >
                 <FiShare2 className="w-3.5 h-3.5" />
-                Share on WhatsApp
+                Share Invite
               </button>
             </div>
           </div>

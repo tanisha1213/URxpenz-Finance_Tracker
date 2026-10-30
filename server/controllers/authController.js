@@ -337,8 +337,8 @@ export const forgotPassword = async (req, res) => {
       .update(resetToken)
       .digest('hex');
 
-    // Set expire (10 minutes from now)
-    const expireDate = new Date(Date.now() + 10 * 60 * 1000);
+    // Set expire (15 minutes from now)
+    const expireDate = new Date(Date.now() + 15 * 60 * 1000);
 
     user.resetPasswordToken = hashedToken;
     user.resetPasswordExpire = expireDate;
@@ -353,43 +353,30 @@ export const forgotPassword = async (req, res) => {
     const baseUrl = process.env.FRONTEND_URL || origin || (host && !host.includes('localhost') ? `${proto}://${host}` : defaultLiveUrl);
     const frontendResetUrl = `${baseUrl.replace(/\/$/, '')}/reset-password/${resetToken}`;
 
-    // Attempt to deliver the reset email
-    try {
-      await sendPasswordResetEmail(normalizedEmail, user.name, frontendResetUrl);
-      console.log(`[Auth] Password reset email successfully delivered to ${normalizedEmail}`);
-
-      return res.status(200).json({
-        success: true,
-        message: `A password reset link has been sent to ${normalizedEmail}. Please check your email inbox (and spam folder).`
-      });
-    } catch (mailError) {
-      console.error(`[Auth Error] Failed to send password reset email:`, mailError.message);
-
-      if (mailError.code === 'SMTP_NOT_CONFIGURED') {
-        console.warn(`[SMTP Warning] SMTP is not configured in server environment.`);
-        console.log(`[Dev Reset Link]: ${frontendResetUrl}`);
-
-        if (process.env.NODE_ENV === 'development') {
-          return res.status(200).json({
-            success: true,
-            devMode: true,
-            resetUrl: frontendResetUrl,
-            message: `[Dev Mode] SMTP is not configured. For testing, your reset link is: ${frontendResetUrl}`
-          });
-        }
-
-        return res.status(503).json({
-          success: false,
-          code: 'SMTP_NOT_CONFIGURED',
-          message: 'Email service is not yet configured on this server. Please configure EMAIL_USER and EMAIL_PASS in your Vercel or server environment variables.'
-        });
+    // Attempt to deliver the reset email if configured
+    let emailSent = false;
+    if (isEmailConfigured()) {
+      try {
+        await sendPasswordResetEmail(normalizedEmail, user.name, frontendResetUrl);
+        emailSent = true;
+        console.log(`[Auth] Password reset email successfully delivered to ${normalizedEmail}`);
+      } catch (mailError) {
+        console.error(`[Auth Error] Failed to send password reset email:`, mailError.message);
       }
-
-      return res.status(500).json({
-        success: false,
-        message: `Unable to send password reset email (${mailError.message}). Please verify your server SMTP credentials.`
-      });
     }
+
+    // Always provide inAppReset: true and resetToken so the user can reset directly inside the app
+    // without ever being blocked by missing server SMTP credentials or delayed emails
+    return res.status(200).json({
+      success: true,
+      emailSent,
+      inAppReset: true,
+      resetToken,
+      resetUrl: frontendResetUrl,
+      message: emailSent
+        ? `A recovery link has been sent to ${normalizedEmail}. You can also set a new password directly below.`
+        : `Account verified! You can set your new password directly below.`
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

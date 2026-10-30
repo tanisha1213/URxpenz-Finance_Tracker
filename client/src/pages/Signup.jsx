@@ -10,21 +10,21 @@ import logoDark from '../assets/logo-dark.png'
 
 function Signup() {
   const [searchParams] = useSearchParams()
-  const initialRef = searchParams.get('ref') || ''
+  const initialRef = (searchParams.get('ref') || (typeof localStorage !== 'undefined' ? localStorage.getItem('pendingReferral') : '') || '').toUpperCase()
 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    referralCode: initialRef.toUpperCase()
+    referralCode: initialRef
   })
   const [error, setError] = useState('')
   const [referralValidation, setReferralValidation] = useState({
     status: 'idle', // 'idle' | 'valid' | 'invalid'
     message: ''
   })
-  const [showRefInput, setShowRefInput] = useState(!!initialRef)
+  const [showRefInput, setShowRefInput] = useState(true)
   const { theme } = useTheme()
   const { loading } = useSelector(state => state.auth)
   const navigate = useNavigate()
@@ -32,6 +32,9 @@ function Signup() {
 
   useEffect(() => {
     if (initialRef) {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('pendingReferral', initialRef)
+      }
       validateCode(initialRef)
     }
   }, [initialRef])
@@ -181,7 +184,7 @@ function Signup() {
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-slate-750 dark:text-dark-text-muted font-bold text-xs uppercase flex items-center gap-1">
                     <FiGift className="w-3.5 h-3.5 text-secondary dark:text-purple-400" />
-                    Referral Code (+10 Days Bonus)
+                    Referral Code <span className="text-[10px] font-semibold text-secondary dark:text-purple-400 lowercase">(optional — +10 days bonus)</span>
                   </label>
                   {!initialRef && (
                     <button

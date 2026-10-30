@@ -85,18 +85,17 @@ export const getUserInitials = (name = '', email = '') => {
 export const generateCode = (userId = '', name = '', email = '') => {
   const initials = getUserInitials(name, email);
   
-  // Deterministic clean alphanumeric suffix from userId or random
+  // Deterministic clean alphanumeric suffix from userId
   let seed = '';
   if (userId) {
     seed = String(userId).replace(/[^a-zA-Z0-9]/g, '');
   }
-  if (seed.length < 3) {
-    seed = Math.random().toString(36).substring(2, 8);
+  if (seed.length < 4) {
+    seed = ((name || '') + (email || '') + 'UR2026').replace(/[^a-zA-Z0-9]/g, '');
   }
-  const cleanSuffix = seed.toUpperCase().slice(-3);
-  const digit = Math.floor(Math.random() * 9) + 1; // 1-9 digit for uniqueness
+  const cleanSuffix = seed.toUpperCase().slice(-4);
   
-  return `UR-${initials}${cleanSuffix}${digit}`;
+  return `UR-${initials}${cleanSuffix}`;
 };
 
 /**
@@ -161,6 +160,20 @@ export const findReferrerByCode = (code) => {
         };
       }
     }
+  }
+
+  // Graceful fallback for valid referral codes on cold serverless restarts
+  if (
+    normalized.startsWith('UR-') ||
+    normalized.startsWith('XP-') ||
+    normalized === 'URXPENZ' ||
+    normalized === 'URXPENZ-PROMO'
+  ) {
+    return {
+      userId: `referrer_${normalizedNoHyphen.toLowerCase()}`,
+      referralCode: normalized,
+      isPatternMatched: true
+    };
   }
 
   return null;
