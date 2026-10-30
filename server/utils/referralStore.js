@@ -4,8 +4,10 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DATA_DIR = path.join(__dirname, '..', 'data');
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+const DATA_DIR = isServerless ? '/tmp' : path.join(__dirname, '..', 'data');
 const REFERRALS_FILE = path.join(DATA_DIR, 'referrals.json');
+let inMemoryStore = {};
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -16,23 +18,28 @@ if (!fs.existsSync(DATA_DIR)) {
   }
 }
 
-// Read referrals store
+// Read referrals store with memory caching
 const readStore = () => {
   try {
-    if (!fs.existsSync(REFERRALS_FILE)) return {};
-    const content = fs.readFileSync(REFERRALS_FILE, 'utf8');
-    return JSON.parse(content || '{}');
+    if (fs.existsSync(REFERRALS_FILE)) {
+      const content = fs.readFileSync(REFERRALS_FILE, 'utf8');
+      const parsed = JSON.parse(content || '{}');
+      inMemoryStore = { ...inMemoryStore, ...parsed };
+    }
+    return inMemoryStore;
   } catch (err) {
-    return {};
+    return inMemoryStore;
   }
 };
 
 // Write referrals store
 const writeStore = (data) => {
   try {
+    inMemoryStore = { ...inMemoryStore, ...data };
     fs.writeFileSync(REFERRALS_FILE, JSON.stringify(data, null, 2), 'utf8');
   } catch (err) {
-    console.error('[ReferralStore Save Error]:', err.message);
+    // If filesystem write fails on serverless, in-memory store remains active
+    inMemoryStore = { ...inMemoryStore, ...data };
   }
 };
 
@@ -40,22 +47,62 @@ const writeStore = (data) => {
  * Generate a clean, human-readable referral code for a user
  * Example: XP-TANIS7A
  */
-export const generateCode = (userId = '', name = '') => {
-  const cleanName = (name || 'USER')
-    .replace(/[^a-zA-Z0-9]/g, '')
-    .toUpperCase()
-    .slice(0, 5);
-  const cleanId = (userId || Math.random().toString(36).substring(2, 6))
-    .replace(/[^a-zA-Z0-9]/g, '')
-    .toUpperCase()
-    .slice(-3);
-  return `XP-${cleanName}${cleanId}`;
+/**
+ * Extract clean 2-3 uppercase initials from user name or email
+ */
+export const getUserInitials = (name = '', email = '') => {
+  const cleanName = (name || '').trim().replace(/[^a-zA-Z\s]/g, '');
+  if (cleanName) {
+    const parts = cleanName.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      // First letter of each word (e.g., Tanisha Gandhi -> TG, John Doe -> JD)
+      const initials = parts.map(p => p[0]).join('').slice(0, 3).toUpperCase();
+      if (initials.length >= 2) return initials;
+    } else if (parts.length === 1) {
+      // Single name: first two letters (e.g., Tanisha -> TA, Rahul -> RA)
+      if (parts[0].length >= 2) {
+        return parts[0].substring(0, 2).toUpperCase();
+      }
+      return (parts[0][0] + 'X').toUpperCase();
+    }
+  }
+
+  // Fallback to email username if name is not set
+  if (email && typeof email === 'string' && email.includes('@')) {
+    const emailPrefix = email.split('@')[0].replace(/[^a-zA-Z]/g, '');
+    if (emailPrefix.length >= 2) {
+      return emailPrefix.substring(0, 2).toUpperCase();
+    }
+  }
+
+  return 'UR';
+};
+
+/**
+ * Generate a clean, human-readable referral code containing the user's initials
+ * Example: UR-TG7K9, UR-TA8F2, UR-JD91C
+ */
+export const generateCode = (userId = '', name = '', email = '') => {
+  const initials = getUserInitials(name, email);
+  
+  // Deterministic clean alphanumeric suffix from userId or random
+  let seed = '';
+  if (userId) {
+    seed = String(userId).replace(/[^a-zA-Z0-9]/g, '');
+  }
+  if (seed.length < 3) {
+    seed = Math.random().toString(36).substring(2, 8);
+  }
+  const cleanSuffix = seed.toUpperCase().slice(-3);
+  const digit = Math.floor(Math.random() * 9) + 1; // 1-9 digit for uniqueness
+  
+  return `UR-${initials}${cleanSuffix}${digit}`;
 };
 
 /**
  * Get or initialize referral data for a given user
  */
-export const getUserReferralData = (userId, userName = '') => {
+export const getUserReferralData = (userId, userName = '', userEmail = '') => {
   if (!userId) {
     return {
       referralCode: 'URXPENZ-PROMO',
@@ -70,9 +117,11 @@ export const getUserReferralData = (userId, userName = '') => {
   const store = readStore();
   let userRef = store[userId];
 
-  if (!userRef || !userRef.referralCode) {
-    const code = generateCode(userId, userName);
+  // If user has no referral code OR has legacy "XP-" code, regenerate with new initials format
+  if (!userRef || !userRef.referralCode || userRef.referralCode.startsWith('XP-')) {
+    const code = generateCode(userId, userName, userEmail);
     userRef = {
+      ...(userRef || {}),
       referralCode: code,
       referralCount: userRef?.referralCount || 0,
       discountPercent: Math.min((userRef?.referralCount || 0) * 5, 25),
@@ -97,15 +146,20 @@ export const getUserReferralData = (userId, userName = '') => {
  */
 export const findReferrerByCode = (code) => {
   if (!code || typeof code !== 'string') return null;
-  const normalized = code.trim().toUpperCase();
+  const normalized = code.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
+  const normalizedNoHyphen = normalized.replace(/-/g, '');
   const store = readStore();
 
   for (const [userId, record] of Object.entries(store)) {
-    if (record?.referralCode && record.referralCode.toUpperCase() === normalized) {
-      return {
-        userId,
-        ...record
-      };
+    if (record?.referralCode) {
+      const regCode = record.referralCode.toUpperCase();
+      const regNoHyphen = regCode.replace(/-/g, '');
+      if (regCode === normalized || regNoHyphen === normalizedNoHyphen) {
+        return {
+          userId,
+          ...record
+        };
+      }
     }
   }
 

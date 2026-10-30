@@ -203,7 +203,7 @@ function Signup() {
                     name="referralCode"
                     value={formData.referralCode}
                     onChange={handleChange}
-                    placeholder="e.g. XP-TANIS7A"
+                    placeholder="e.g. UR-JD8F2"
                     className="w-full px-4 py-2.5 border border-slate-200 dark:border-dark-border rounded-xl bg-white dark:bg-dark-card text-slate-800 dark:text-slate-200 font-mono uppercase text-xs tracking-wider focus:outline-none focus:border-secondary"
                   />
                   {referralValidation.status === 'valid' && (

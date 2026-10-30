@@ -151,7 +151,13 @@ function Profile() {
   const referralCode = referralData?.referralCode || user?.referral?.referralCode || 'URXPENZ'
   const referralCount = referralData?.referralCount ?? user?.referral?.referralCount ?? 0
   const discountPercent = referralData?.discountPercent ?? user?.referral?.discountPercent ?? 0
-  const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}/signup?ref=${referralCode}` : `https://urxpenz-finance-tracker.vercel.app/signup?ref=${referralCode}`
+
+  // Always use the live production URL for invite links shared with friends
+  const liveDomain = 'https://urxpenz-finance-tracker.vercel.app'
+  const currentOrigin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : ''
+  const isLocalHost = !currentOrigin || currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1') || currentOrigin.includes('capacitor:')
+  const inviteBaseUrl = isLocalHost ? liveDomain : currentOrigin
+  const inviteLink = `${inviteBaseUrl}/signup?ref=${referralCode}`
 
   const handleCopyCode = async () => {
     try {

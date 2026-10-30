@@ -14,7 +14,7 @@ export const getMyReferralStats = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const referralData = getUserReferralData(user._id, user.name);
+    const referralData = getUserReferralData(user._id, user.name, user.email);
 
     return res.status(200).json({
       success: true,
