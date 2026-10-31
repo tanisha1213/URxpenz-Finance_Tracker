@@ -345,13 +345,24 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    // Dynamically compute the frontend reset password link
-    const host = req.get('host');
-    const proto = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
-    const origin = req.headers.origin && !req.headers.origin.includes('localhost') ? req.headers.origin : null;
+    // Compute the public frontend reset password link (NEVER use localhost in emails)
     const defaultLiveUrl = 'https://urxpenz-finance-tracker.vercel.app';
-    const baseUrl = process.env.FRONTEND_URL || origin || (host && !host.includes('localhost') ? `${proto}://${host}` : defaultLiveUrl);
+    const envUrl = process.env.FRONTEND_URL;
+    const reqOrigin = req.headers?.origin;
+    const reqHost = req.get ? req.get('host') : null;
+    const proto = req.headers?.['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+
+    let baseUrl = defaultLiveUrl;
+    if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+      baseUrl = envUrl;
+    } else if (reqOrigin && !reqOrigin.includes('localhost') && !reqOrigin.includes('127.0.0.1') && !reqOrigin.includes('capacitor:')) {
+      baseUrl = reqOrigin;
+    } else if (reqHost && !reqHost.includes('localhost') && !reqHost.includes('127.0.0.1')) {
+      baseUrl = `${proto}://${reqHost}`;
+    }
+
     const frontendResetUrl = `${baseUrl.replace(/\/$/, '')}/reset-password/${resetToken}`;
+    console.log(`[Auth] Generated reset URL for ${normalizedEmail}: ${frontendResetUrl}`);
 
     // Strictly deliver the password reset link to the user's email inbox
     try {
