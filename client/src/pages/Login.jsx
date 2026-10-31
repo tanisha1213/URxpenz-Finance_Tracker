@@ -5,6 +5,7 @@ import { loginUser } from '../redux/slices/authSlice'
 import { useTheme } from '../context/ThemeContext'
 import logoLight from '../assets/logo-light.png'
 import logoDark from '../assets/logo-dark.png'
+import GooglePlayBadge from '../components/common/GooglePlayBadge'
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -93,6 +94,10 @@ function Login() {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+
+        <div className="mt-6 pt-5 border-t border-slate-100 dark:border-dark-border flex flex-col items-center">
+          <GooglePlayBadge variant="button" />
+        </div>
 
         <p className="text-center mt-6 text-sm text-slate-500 dark:text-dark-text-muted">
           Don&apos;t have an account?{' '}

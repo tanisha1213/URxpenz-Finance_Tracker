@@ -7,6 +7,7 @@ import { useTheme } from '../context/ThemeContext'
 import { FiGift, FiCheck, FiX } from 'react-icons/fi'
 import logoLight from '../assets/logo-light.png'
 import logoDark from '../assets/logo-dark.png'
+import GooglePlayBadge from '../components/common/GooglePlayBadge'
 
 function Signup() {
   const [searchParams] = useSearchParams()
@@ -112,6 +113,8 @@ function Signup() {
           <h1 className="text-3xl font-extrabold text-slate-850 dark:text-white tracking-tight">URxpenz</h1>
           <p className="text-[10px] text-slate-400 dark:text-dark-text-muted mt-1 uppercase font-bold tracking-wider">AI Personal Finance</p>
         </div>
+
+        <GooglePlayBadge variant="banner" className="mb-6" />
 
         {error && (
           <div className="bg-red-150 border border-red-400 text-red-700 dark:bg-red-950/20 dark:border-red-900/30 dark:text-red-450 px-4 py-3 rounded-xl mb-4 text-sm font-semibold">
@@ -238,6 +241,10 @@ function Signup() {
             {loading ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
+
+        <div className="mt-6 pt-5 border-t border-slate-100 dark:border-dark-border flex flex-col items-center">
+          <GooglePlayBadge variant="button" />
+        </div>
 
         <p className="text-center mt-6 text-sm text-slate-500 dark:text-dark-text-muted">
           Already have an account?{' '}
