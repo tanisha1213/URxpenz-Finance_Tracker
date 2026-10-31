@@ -198,7 +198,7 @@ function Profile() {
   }
 
   const handleShareWhatsApp = async () => {
-    const playStoreLink = 'https://play.google.com/store/apps/details?id=com.tanisha.fintrack'
+    const playStoreLink = 'https://play.google.com/store/apps/details?id=com.urxpenz.app'
     const text = `Hey! Track your daily budgets & expenses on URxpenz. Use my invite code "${referralCode}" to get 10 DAYS EXTRA FREE TRIAL (70 Days Total)!\n\n📲 Install on Google Play:\n${playStoreLink}\n\n🌐 Or sign up on web:\n${inviteLink}`
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {

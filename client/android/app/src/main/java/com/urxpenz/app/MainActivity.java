@@ -1,4 +1,4 @@
-package com.tanisha.fintrack;
+package com.urxpenz.app;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -49,3 +49,4 @@ public class MainActivity extends BridgeActivity {
         }
     }
 }
+

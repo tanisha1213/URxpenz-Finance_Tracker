@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.tanisha.fintrack'
+export const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.urxpenz.app'
 
 export const isNativeCapacitorApp = () => {
   if (typeof window === 'undefined') return false
@@ -71,3 +71,4 @@ export default function GooglePlayBadge({ variant = 'button', className = '' }) 
     </a>
   )
 }
+
