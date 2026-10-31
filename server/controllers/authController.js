@@ -10,7 +10,7 @@ import Insurance from '../models/Insurance.js';
 import Subscription from '../models/Subscription.js';
 import PushSubscriptionModel from '../models/PushSubscription.js';
 import { summarizeTransactions } from '../services/financeAnalyzer.js';
-import { sendPasswordResetEmail } from '../utils/sendEmail.js';
+import { sendPasswordResetEmail, isEmailConfigured } from '../utils/sendEmail.js';
 import { getUserSubscription } from '../utils/subscriptionHelper.js';
 import { saveUserSettings } from '../utils/userSettings.js';
 import { saveStoredSubscription } from '../utils/subscriptionStore.js';
