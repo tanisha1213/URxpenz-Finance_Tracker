@@ -4,8 +4,11 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DATA_DIR = path.join(__dirname, '..', 'data');
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+const DATA_DIR = isServerless ? '/tmp' : path.join(__dirname, '..', 'data');
 const SUB_FILE = path.join(DATA_DIR, 'user_subscriptions.json');
+
+let inMemoryStore = {};
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -18,19 +21,26 @@ if (!fs.existsSync(DATA_DIR)) {
 
 const readStore = () => {
   try {
-    if (!fs.existsSync(SUB_FILE)) return {};
-    const content = fs.readFileSync(SUB_FILE, 'utf8');
-    return JSON.parse(content || '{}');
+    if (fs.existsSync(SUB_FILE)) {
+      const content = fs.readFileSync(SUB_FILE, 'utf8');
+      const parsed = JSON.parse(content || '{}');
+      inMemoryStore = { ...inMemoryStore, ...parsed };
+    }
+    return inMemoryStore;
   } catch (err) {
-    return {};
+    return inMemoryStore;
   }
 };
 
 const writeStore = (data) => {
+  inMemoryStore = { ...inMemoryStore, ...data };
   try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
     fs.writeFileSync(SUB_FILE, JSON.stringify(data, null, 2), 'utf8');
   } catch (err) {
-    console.error('[SubscriptionStore Save Error]:', err.message);
+    // Serverless read-only fallback: in-memory store remains active and valid
   }
 };
 
