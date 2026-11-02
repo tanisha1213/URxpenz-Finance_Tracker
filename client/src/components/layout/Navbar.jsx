@@ -144,7 +144,7 @@ function Navbar() {
 
   return (
     <nav className="bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-slate-100 dark:border-dark-border sticky top-0 z-30 transition-colors duration-200 pt-safe">
-      <div className="px-2.5 sm:px-6 py-2 sm:py-3 flex justify-between items-center gap-1 sm:gap-2 max-w-full overflow-hidden">
+      <div className="px-2.5 sm:px-6 py-2 sm:py-3 flex justify-between items-center gap-1 sm:gap-2 max-w-full">
         {/* Brand Logo & Title */}
         <div className="flex items-center gap-2 shrink-0">
           <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-7 h-7 sm:w-8 sm:h-8 rounded-md object-contain shadow-sm" />
@@ -177,7 +177,7 @@ function Navbar() {
           )}
 
           {/* Language Switcher */}
-          <div id="language-switcher-tour" className="relative flex items-center shrink-0">
+          <div id="language-switcher-tour" className="relative hidden md:flex items-center shrink-0">
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -218,7 +218,7 @@ function Navbar() {
           {/* Tour Guide Button */}
           <button
             onClick={() => window.dispatchEvent(new Event('xpenz_trigger_tour'))}
-            className="hidden sm:inline-flex p-1.5 sm:p-2 rounded-full text-secondary dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-all cursor-pointer shrink-0"
+            className="hidden md:inline-flex p-1.5 sm:p-2 rounded-full text-secondary dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-all cursor-pointer shrink-0"
             title="Restart Tour Guide"
           >
             <FiHelpCircle className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
@@ -279,8 +279,8 @@ function Navbar() {
                 <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-secondary dark:group-hover:text-purple-400 transition-colors">{user.name}</p>
                 <p className="text-xs text-slate-400 dark:text-dark-text-muted">{user.email}</p>
               </div>
-              <div className="w-7 h-7 min-[380px]:w-8 min-[380px]:h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-purple-950/20 dark:border-purple-900/30 flex items-center justify-center text-secondary dark:text-purple-400 font-bold text-xs sm:text-base shadow-sm group-hover:scale-105 group-hover:shadow-md transition-all shrink-0">
-                {user.name.charAt(0).toUpperCase()}
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs sm:text-base shadow-sm ring-2 ring-purple-400/30 group-hover:scale-105 group-hover:shadow-md transition-all shrink-0">
+                {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
             </Link>
           )}

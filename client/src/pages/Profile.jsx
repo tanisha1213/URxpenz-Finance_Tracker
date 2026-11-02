@@ -5,7 +5,7 @@ import { logout, updateProfileThunk } from '../redux/slices/authSlice'
 import { changePassword, getAccountStats, deleteUserAccount } from '../services/authService'
 import { formatCurrency } from '../utils/format'
 import {
-  FiUser, FiKey, FiCheck, FiPieChart, FiLogOut, FiBell,
+  FiUser, FiKey, FiCheck, FiGlobe, FiPieChart, FiLogOut, FiBell,
   FiSmartphone, FiAlertCircle, FiTrash2, FiAlertTriangle, FiShield,
   FiGift, FiCopy, FiShare2, FiUsers, FiZap, FiAward
 } from 'react-icons/fi'
@@ -17,7 +17,7 @@ import { getReferralStats } from '../services/referralService'
 function Profile() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { t } = useLanguage()
+  const { t, language, setLanguage } = useLanguage()
   const {
     popupEnabled,
     setPopupEnabled,
@@ -539,6 +539,37 @@ function Profile() {
                 Update password
               </button>
             </form>
+          </div>
+
+          {/* App Language & Regional Settings */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-100 dark:border-[#222634] pb-3 mb-4">
+              <FiGlobe className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+              <h3 className="font-semibold text-slate-900 dark:text-white text-sm">App Language & Regional Settings</h3>
+            </div>
+            <div className="p-4 rounded-lg border border-slate-200 dark:border-[#222634] bg-slate-50/50 dark:bg-[#191c26]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h4 className="font-semibold text-sm text-slate-800 dark:text-slate-200">
+                  Select Language
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-normal max-w-md">
+                  Choose your preferred language for menus, accounts, budgets, and transactions across the app.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className="rounded-lg border border-slate-200 dark:border-[#2a2f42] px-3.5 py-2 text-xs sm:text-sm font-semibold bg-white dark:bg-[#191c26] text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-600 cursor-pointer shadow-sm"
+                >
+                  <option value="en">English (English)</option>
+                  <option value="hi">हिन्दी (Hindi)</option>
+                  <option value="mr">मराठी (Marathi)</option>
+                  <option value="ta">தமிழ் (Tamil)</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           {/* Notification settings */}
