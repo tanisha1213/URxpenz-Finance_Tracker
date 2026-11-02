@@ -96,6 +96,13 @@ function InsightsReports() {
   const [schemeIncome, setSchemeIncome] = useState(300000)
   const [schemeCategory, setSchemeCategory] = useState('any')
 
+  // Financial Calculator States (APY Pension & Loan Affordability)
+  const [pensionAge, setPensionAge] = useState(25)
+  const [pensionTarget, setPensionTarget] = useState(1000)
+  const [loanAmount, setLoanAmount] = useState(500000)
+  const [loanInterest, setLoanInterest] = useState(10.5)
+  const [loanTenure, setLoanTenure] = useState(5)
+
   // Fetch financial insights
   useEffect(() => {
     if (activeTab === 'insights') {
