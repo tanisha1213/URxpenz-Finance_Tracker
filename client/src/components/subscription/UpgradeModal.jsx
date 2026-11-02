@@ -72,6 +72,7 @@ export default function UpgradeModal() {
     isUpgradeModalOpen,
     upgradeFeature,
     closeUpgradeModal,
+    updateLocalSubscription,
     activatePlan,
     refreshSubscription,
     tier,
@@ -296,6 +297,9 @@ export default function UpgradeModal() {
       });
 
       if (verifyRes.data?.success) {
+        if (verifyRes.data?.subscription) {
+          updateLocalSubscription(verifyRes.data.subscription);
+        }
         await refreshSubscription();
         setSuccessReceipt({
           receiptId: playOrderId,

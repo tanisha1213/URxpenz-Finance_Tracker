@@ -330,20 +330,32 @@ export const verifyGooglePlayPurchase = async (req, res) => {
 
     const newExpiresAt = new Date(baseDate.getTime() + plan.durationDays * 24 * 60 * 60 * 1000);
 
-    await supabase
-      .from('users')
-      .update({
-        subscriptionTier: 'pro',
-        subscriptionPlan: plan.id,
-        subscriptionExpiresAt: newExpiresAt.toISOString()
-      })
-      .eq('id', req.userId);
+    // Save to local /tmp storage for serverless fallback
+    saveStoredSubscription(req.userId, {
+      subscriptionTier: 'pro',
+      subscriptionPlan: plan.id,
+      subscriptionExpiresAt: newExpiresAt.toISOString()
+    });
+
+    try {
+      await supabase
+        .from('users')
+        .update({
+          subscriptionTier: 'pro',
+          subscriptionPlan: plan.id,
+          subscriptionExpiresAt: newExpiresAt.toISOString()
+        })
+        .eq('id', req.userId);
+    } catch (dbErr) {
+      console.warn('[Billing Notice] Supabase user subscription update:', dbErr.message);
+    }
 
     user.subscriptionTier = 'pro';
     user.subscriptionPlan = plan.id;
     user.subscriptionExpiresAt = newExpiresAt.toISOString();
 
     const subscription = getUserSubscription(user);
+    consumeReferralDiscount(req.userId);
     const receiptId = orderId || `GPA_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
     return res.status(200).json({

@@ -86,6 +86,17 @@ export function SubscriptionProvider({ children }) {
     setUpgradeFeature(null);
   };
 
+  const updateLocalSubscription = (newSub) => {
+    if (!newSub) return;
+    setSubscription(newSub);
+    if (user) {
+      dispatch(updateUser({
+        ...user,
+        subscription: newSub
+      }));
+    }
+  };
+
   const activatePlan = async (planPayload) => {
     try {
       setLoading(true);
@@ -130,6 +141,7 @@ export function SubscriptionProvider({ children }) {
         upgradeFeature,
         openUpgradeModal,
         closeUpgradeModal,
+        updateLocalSubscription,
         activatePlan,
         refreshSubscription
       }}
