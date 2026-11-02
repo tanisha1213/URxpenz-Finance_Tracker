@@ -313,3 +313,28 @@ aside {
 .dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(139, 92, 246, 0.45);
 }
+
+/* Eliminate 300ms tap delay on Android WebViews (OnePlus, Samsung, etc.) */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, a, input, select {
+  touch-action: manipulation;
+}
+
+/* Mobile Safe Areas (Notch, punch-hole cameras, gesture bar, 3-button nav) */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+
+.pt-safe {
+  padding-top: max(env(safe-area-inset-top, 0px), 8px);
+}
+
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
+}

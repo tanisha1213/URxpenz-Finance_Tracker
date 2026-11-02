@@ -18,8 +18,8 @@ function BottomNavigation() {
   const isActive = (path) => location.pathname === path
 
   return (
-    <nav id="bottom-navigation-tour" className="fixed bottom-0 left-0 right-0 z-40 block md:hidden bg-white/95 dark:bg-dark-card/95 border-t border-slate-100 dark:border-dark-border backdrop-blur-lg shadow-lg pb-safe">
-      <div className="flex justify-around items-center h-14 px-1">
+    <nav id="bottom-navigation-tour" className="fixed bottom-0 left-0 right-0 z-40 block md:hidden bg-white/95 dark:bg-[#11131c]/95 border-t border-slate-200/80 dark:border-[#222533] backdrop-blur-xl shadow-2xl pb-safe">
+      <div className="flex justify-around items-center h-13 min-[380px]:h-14 px-0.5 sm:px-1">
         {navItems.map((item) => {
           const Icon = item.icon
           const active = isActive(item.path)
@@ -33,8 +33,8 @@ function BottomNavigation() {
                   : 'text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 font-medium'
               }`}
             >
-              <Icon className="w-4.5 h-4.5 sm:w-5 sm:h-5 shrink-0 transition-transform" />
-              <span className="text-[9px] min-[360px]:text-[10px] font-bold tracking-tight mt-0.5 text-center leading-none whitespace-nowrap overflow-hidden text-ellipsis px-0.5">
+              <Icon className="w-4 h-4 min-[380px]:w-5 min-[380px]:h-5 shrink-0 transition-transform" />
+              <span className="text-[8.5px] min-[360px]:text-[9.5px] min-[400px]:text-[10px] font-bold tracking-tight mt-0.5 text-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis px-0.5 max-w-[58px] min-[380px]:max-w-none">
                 {t(item.labelKey)}
               </span>
               {active && (

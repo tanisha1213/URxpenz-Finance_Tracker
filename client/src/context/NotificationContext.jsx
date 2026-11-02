@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react'
+import { Capacitor } from '@capacitor/core'
+import { LocalNotifications } from '@capacitor/local-notifications'
 import {
   getVapidPublicKey,
   subscribeToPush,
@@ -22,13 +24,15 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 export function NotificationProvider({ children }) {
+  const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform()
+
   const [popupEnabled, setPopupEnabledState] = useState(() => {
     const saved = localStorage.getItem('xpenz_popup_notifications')
     return saved === null ? true : saved === 'true'
   })
 
   const [popups, setPopups] = useState([])
-  const [isPushSupported, setIsPushSupported] = useState(false)
+  const [isPushSupported, setIsPushSupported] = useState(true)
   const [pushPermission, setPushPermission] = useState('default')
   const [isPushSubscribed, setIsPushSubscribed] = useState(false)
   const [pushLoading, setPushLoading] = useState(false)
@@ -36,14 +40,30 @@ export function NotificationProvider({ children }) {
 
   // Check initial push support and permission
   useEffect(() => {
-    const supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
+    if (isNative) {
+      setIsPushSupported(true)
+      LocalNotifications.checkPermissions()
+        .then((perm) => {
+          setPushPermission(perm.display)
+          const isGranted = perm.display === 'granted'
+          const savedPref = localStorage.getItem('xpenz_native_push_enabled') !== 'false'
+          setIsPushSubscribed(isGranted && savedPref)
+        })
+        .catch(() => {
+          const saved = localStorage.getItem('xpenz_native_push_enabled') === 'true'
+          setIsPushSubscribed(saved)
+        })
+      return
+    }
+
+    const supported = typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
     setIsPushSupported(supported)
 
     if (supported) {
       setPushPermission(Notification.permission)
       checkExistingPushSubscription()
     }
-  }, [])
+  }, [isNative])
 
   // Check if browser is already subscribed to push
   const checkExistingPushSubscription = async () => {
@@ -67,16 +87,41 @@ export function NotificationProvider({ children }) {
   }
 
   /**
-   * Subscribe user device to OS-level Web Push notifications (works even when app is closed)
+   * Subscribe user device to OS-level Push / Local notifications
    */
   const enablePushNotifications = async () => {
-    if (!isPushSupported) {
-      throw new Error('Push notifications are not supported by this browser.')
-    }
-
     setPushLoading(true)
     try {
-      // 1. Request notification permission
+      if (isNative) {
+        const permStatus = await LocalNotifications.requestPermissions()
+        setPushPermission(permStatus.display)
+
+        if (permStatus.display === 'granted') {
+          setIsPushSubscribed(true)
+          localStorage.setItem('xpenz_native_push_enabled', 'true')
+
+          // Send an immediate test notification to confirm to the user
+          await LocalNotifications.schedule({
+            notifications: [
+              {
+                id: 1001,
+                title: 'System Screen Notifications Active 🔔',
+                body: 'You will receive reminders for upcoming EMI dates, overdue payments, and bill reminders even when the app is completely closed.',
+                schedule: { at: new Date(Date.now() + 500) }
+              }
+            ]
+          })
+          return true
+        } else {
+          throw new Error('Notification permission was not granted by your device. Please allow notifications for URxpenz in phone Settings.')
+        }
+      }
+
+      if (!isPushSupported) {
+        throw new Error('Push notifications are not supported by this browser.')
+      }
+
+      // 1. Request notification permission on web
       const permission = await Notification.requestPermission()
       setPushPermission(permission)
 
@@ -136,6 +181,13 @@ export function NotificationProvider({ children }) {
   const disablePushNotifications = async () => {
     setPushLoading(true)
     try {
+      if (isNative) {
+        setIsPushSubscribed(false)
+        setPushPermission('denied')
+        localStorage.setItem('xpenz_native_push_enabled', 'false')
+        return
+      }
+
       const registration = await navigator.serviceWorker.ready
       const subscription = await registration.pushManager.getSubscription()
       if (subscription) {
@@ -161,6 +213,20 @@ export function NotificationProvider({ children }) {
   const triggerTestPush = async () => {
     setPushLoading(true)
     try {
+      if (isNative) {
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              id: Math.floor(Date.now() % 100000),
+              title: 'URxpenz EMI & Bill Alert ⏰',
+              body: 'This is a test notification. Screen alerts for upcoming dues are active!',
+              schedule: { at: new Date(Date.now() + 500) }
+            }
+          ]
+        })
+        return { success: true, message: 'Test notification sent! Check your phone notification tray.' }
+      }
+
       // 1. Immediately trigger an OS-level notification via the service worker
       if ('serviceWorker' in navigator && 'Notification' in window && Notification.permission === 'granted') {
         try {
@@ -215,8 +281,22 @@ export function NotificationProvider({ children }) {
       return updated.slice(-2)
     })
 
-    // If ServiceWorker is ready and permission granted, also fire persistent notification
-    if ('Notification' in window && Notification.permission === 'granted') {
+    // If native Android, schedule local notification
+    if (isNative && isPushSubscribed) {
+      LocalNotifications.schedule({
+        notifications: [
+          {
+            id: Math.floor(Date.now() % 100000),
+            title: title || 'URxpenz Alert',
+            body: message || '',
+            schedule: { at: new Date(Date.now() + 100) }
+          }
+        ]
+      }).catch(() => {})
+    }
+
+    // If ServiceWorker is ready and permission granted, also fire persistent notification on web
+    if (!isNative && 'Notification' in window && Notification.permission === 'granted') {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then((reg) => {
           reg.showNotification(title, {
@@ -225,7 +305,6 @@ export function NotificationProvider({ children }) {
             badge: '/pwa-192x192.png',
             vibrate: [200, 100, 200]
           }).catch(() => {
-            // Fallback to window Notification
             new Notification(title, { body: message, icon: '/pwa-192x192.png' })
           })
         }).catch(() => {

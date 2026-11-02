@@ -26,7 +26,8 @@ function Profile() {
     isPushSubscribed,
     pushLoading,
     enablePushNotifications,
-    disablePushNotifications
+    disablePushNotifications,
+    triggerTestPush
   } = useNotification()
   const {
     tier,
@@ -607,12 +608,32 @@ function Profile() {
                 </p>
                 {pushPermission === 'denied' && (
                   <p className="text-[11px] text-rose-500 font-medium">
-                    Notifications are blocked in your browser settings. Allow notifications to enable this.
+                    Notifications are currently blocked. Please allow notifications for URxpenz in your device or browser settings.
                   </p>
                 )}
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
+                {isPushSubscribed && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setPushStatusMsg('')
+                      try {
+                        const res = await triggerTestPush()
+                        setPushSuccess(true)
+                        setPushStatusMsg(res?.message || 'Test notification sent! Check your notification bar.')
+                      } catch (err) {
+                        setPushSuccess(false)
+                        setPushStatusMsg(err.message || 'Failed to trigger test notification.')
+                      }
+                    }}
+                    className="px-2.5 py-1.5 text-xs font-semibold rounded-md border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    Test Alert
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={handleTogglePush}

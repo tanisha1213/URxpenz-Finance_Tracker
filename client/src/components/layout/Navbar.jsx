@@ -143,12 +143,12 @@ function Navbar() {
   }, [user, triggerPopup])
 
   return (
-    <nav className="bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-slate-100 dark:border-dark-border sticky top-0 z-30 transition-colors duration-200">
-      <div className="px-3 sm:px-6 py-3 flex justify-between items-center gap-2 max-w-full overflow-hidden">
+    <nav className="bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-slate-100 dark:border-dark-border sticky top-0 z-30 transition-colors duration-200 pt-safe">
+      <div className="px-2.5 sm:px-6 py-2 sm:py-3 flex justify-between items-center gap-1 sm:gap-2 max-w-full overflow-hidden">
         {/* Brand Logo & Title */}
         <div className="flex items-center gap-2 shrink-0">
-          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-8 h-8 rounded-md object-contain shadow-sm" />
-          <h2 className="text-base sm:text-lg md:text-xl font-bold text-slate-800 dark:text-white tracking-tight">
+          <img src={theme === 'light' ? logoLight : logoDark} alt="URxpenz Logo" className="w-7 h-7 sm:w-8 sm:h-8 rounded-md object-contain shadow-sm" />
+          <h2 className="text-sm sm:text-lg md:text-xl font-bold text-slate-800 dark:text-white tracking-tight">
             URxpenz
           </h2>
         </div>
@@ -177,7 +177,7 @@ function Navbar() {
           )}
 
           {/* Language Switcher */}
-          <div id="language-switcher-tour" className="relative flex items-center">
+          <div id="language-switcher-tour" className="relative flex items-center shrink-0">
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -198,7 +198,7 @@ function Navbar() {
           {/* Refer & Earn Quick Button - Gift Icon Only on Mobile */}
           <Link
             to="/profile"
-            className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-extrabold shadow-sm transition-all cursor-pointer shrink-0"
+            className="flex items-center gap-1.5 p-1.5 sm:px-3 sm:py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-extrabold shadow-sm transition-all cursor-pointer shrink-0"
             title="Refer & Earn Rewards - Get 25% OFF"
           >
             <FiGift className="w-4 h-4 text-amber-500 shrink-0" />
@@ -209,7 +209,7 @@ function Navbar() {
           {/* Theme Switcher Button */}
           <button
             onClick={toggleTheme}
-            className="p-1.5 sm:p-2 rounded-full text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-full text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer shrink-0"
             title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
           >
             {theme === 'light' ? <FiMoon className="w-4.5 h-4.5 sm:w-5 sm:h-5" /> : <FiSun className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-amber-400" />}
@@ -218,19 +218,19 @@ function Navbar() {
           {/* Tour Guide Button */}
           <button
             onClick={() => window.dispatchEvent(new Event('xpenz_trigger_tour'))}
-            className="p-1.5 sm:p-2 rounded-full text-secondary dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-all cursor-pointer"
+            className="hidden sm:inline-flex p-1.5 sm:p-2 rounded-full text-secondary dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-all cursor-pointer shrink-0"
             title="Restart Tour Guide"
           >
             <FiHelpCircle className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
           </button>
 
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               onClick={() => {
                 setShowNotifications(!showNotifications)
                 setHasUnread(false)
               }}
-              className="p-2 rounded-full text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors relative cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-full text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors relative cursor-pointer"
             >
               <FiBell className="w-5 h-5" />
               {hasUnread && (
@@ -272,14 +272,14 @@ function Navbar() {
             <Link
               id="user-profile-tour"
               to="/profile"
-              className="flex items-center gap-3 pl-2 border-l border-slate-100 dark:border-dark-border cursor-pointer group hover:opacity-90 transition-all"
+              className="flex items-center gap-2 pl-1.5 sm:pl-3 border-l border-slate-200 dark:border-dark-border cursor-pointer group hover:opacity-90 transition-all shrink-0"
               title="View & Edit Profile"
             >
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-secondary dark:group-hover:text-purple-400 transition-colors">{user.name}</p>
                 <p className="text-xs text-slate-400 dark:text-dark-text-muted">{user.email}</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-purple-950/20 dark:border-purple-900/30 flex items-center justify-center text-secondary dark:text-purple-400 font-bold text-base shadow-sm group-hover:scale-105 group-hover:shadow-md transition-all">
+              <div className="w-7 h-7 min-[380px]:w-8 min-[380px]:h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-purple-950/20 dark:border-purple-900/30 flex items-center justify-center text-secondary dark:text-purple-400 font-bold text-xs sm:text-base shadow-sm group-hover:scale-105 group-hover:shadow-md transition-all shrink-0">
                 {user.name.charAt(0).toUpperCase()}
               </div>
             </Link>
