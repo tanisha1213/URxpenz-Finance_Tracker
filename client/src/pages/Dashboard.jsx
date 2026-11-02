@@ -226,11 +226,16 @@ function Dashboard() {
     }
   }, [])
 
+  const accounts = summary?.accounts || []
+
   const openCreate = (type = 'expense') => {
+    const firstAcc = accounts[0]
+    const isCashAcc = firstAcc && (firstAcc.type === 'cash' || firstAcc.name?.toLowerCase().includes('cash'))
     setForm({
       ...emptyForm,
       type,
-      accountId: summary?.accounts?.[0]?._id || ''
+      accountId: firstAcc?._id || firstAcc?.id || '',
+      paymentMethod: isCashAcc ? 'cash' : emptyForm.paymentMethod
     })
     setShowForm(true)
     setMessage('')
@@ -241,6 +246,32 @@ function Dashboard() {
     const val = type === 'checkbox' ? checked : value
 
     let extraChanges = {}
+
+    if (name === 'accountId') {
+      const selectedAcc = accounts.find(acc => (acc._id || acc.id) === val)
+      if (selectedAcc && (selectedAcc.type === 'cash' || selectedAcc.name?.toLowerCase().includes('cash'))) {
+        extraChanges.paymentMethod = 'cash'
+      } else if (form.paymentMethod === 'cash') {
+        extraChanges.paymentMethod = 'upi'
+      }
+    }
+
+    if (name === 'paymentMethod') {
+      if (val === 'cash') {
+        const cashAcc = accounts.find(acc => acc.type === 'cash' || acc.name?.toLowerCase().includes('cash'))
+        if (cashAcc) {
+          extraChanges.accountId = cashAcc._id || cashAcc.id
+        }
+      } else if (form.paymentMethod === 'cash') {
+        const currentAcc = accounts.find(acc => (acc._id || acc.id) === form.accountId)
+        if (currentAcc && (currentAcc.type === 'cash' || currentAcc.name?.toLowerCase().includes('cash'))) {
+          const bankAcc = accounts.find(acc => acc.type !== 'cash' && !acc.name?.toLowerCase().includes('cash'))
+          if (bankAcc) {
+            extraChanges.accountId = bankAcc._id || bankAcc.id
+          }
+        }
+      }
+    }
 
     // Compute preview values including this input change
     const currentIsLoan = name === 'isLoan' ? !!val : !!form.isLoan
@@ -348,7 +379,6 @@ function Dashboard() {
     }
   }
 
-  const accounts = summary?.accounts || []
   const editingId = null
 
   // Non-blocking loading

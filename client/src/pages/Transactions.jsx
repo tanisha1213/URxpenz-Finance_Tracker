@@ -318,9 +318,28 @@ function Transactions() {
     let extraChanges = {}
 
     if (name === 'accountId') {
-      const selectedAcc = accounts.find(acc => acc._id === val)
-      if (selectedAcc && (selectedAcc.type === 'cash' || selectedAcc.name.toLowerCase().includes('cash'))) {
+      const selectedAcc = accounts.find(acc => (acc._id || acc.id) === val)
+      if (selectedAcc && (selectedAcc.type === 'cash' || selectedAcc.name?.toLowerCase().includes('cash'))) {
         extraChanges.paymentMethod = 'cash'
+      } else if (form.paymentMethod === 'cash') {
+        extraChanges.paymentMethod = 'upi'
+      }
+    }
+
+    if (name === 'paymentMethod') {
+      if (val === 'cash') {
+        const cashAcc = accounts.find(acc => acc.type === 'cash' || acc.name?.toLowerCase().includes('cash'))
+        if (cashAcc) {
+          extraChanges.accountId = cashAcc._id || cashAcc.id
+        }
+      } else if (form.paymentMethod === 'cash') {
+        const currentAcc = accounts.find(acc => (acc._id || acc.id) === form.accountId)
+        if (currentAcc && (currentAcc.type === 'cash' || currentAcc.name?.toLowerCase().includes('cash'))) {
+          const bankAcc = accounts.find(acc => acc.type !== 'cash' && !acc.name?.toLowerCase().includes('cash'))
+          if (bankAcc) {
+            extraChanges.accountId = bankAcc._id || bankAcc.id
+          }
+        }
       }
     }
 
