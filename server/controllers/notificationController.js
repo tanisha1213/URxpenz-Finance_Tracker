@@ -112,23 +112,13 @@ export const triggerReminderCheck = async (req, res) => {
 
 export const triggerDailyBudgetCheck = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-    const subscription = getUserSubscription(user);
-    if (!subscription.isPro) {
-      return res.status(403).json({
-        success: false,
-        code: 'PRO_REQUIRED',
-        message: 'Daily budget calculation and end-of-day prompts are an exclusive Pro feature. Basic tier includes monthly budgeting.'
-      });
-    }
-
     const userId = req.user.id;
     const dispatched = await checkAndDispatchDailyBudgetSummaries(userId, true);
     res.status(200).json({
       success: true,
       message: dispatched > 0
-        ? `Daily budget notification dispatched to your device!`
-        : `Daily budget checked. Ensure your browser screen alerts are enabled and budget is configured.`
+        ? 'Daily budget notification dispatched to your device!'
+        : 'Daily budget checked. Ensure your device screen alerts are enabled and budget is configured.'
     });
   } catch (error) {
     res.status(500).json({

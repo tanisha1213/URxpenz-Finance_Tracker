@@ -10,4 +10,6 @@ export const unsubscribeFromPush = (endpoint) =>
 
 export const sendTestPush = () => API.post('/notifications/send-test');
 
+export const sendTestDailyBudgetPush = () => API.post('/notifications/test-daily-budget');
+
 export const checkReminders = () => API.post('/notifications/check-reminders');

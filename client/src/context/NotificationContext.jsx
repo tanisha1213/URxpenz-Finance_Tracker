@@ -6,6 +6,7 @@ import {
   subscribeToPush,
   unsubscribeFromPush,
   sendTestPush,
+  sendTestDailyBudgetPush,
   checkReminders
 } from '../services/notificationService'
 
@@ -87,6 +88,105 @@ export function NotificationProvider({ children }) {
   }
 
   /**
+   * Schedule recurring daily budget local notification for Android
+   */
+  const scheduleDailyBudgetLocal = async (alertTime = '20:00', dailyLimit = 0) => {
+    if (!isNative) return
+    try {
+      const perm = await LocalNotifications.checkPermissions()
+      if (perm.display !== 'granted') return
+
+      const [h, m] = (alertTime || '20:00').split(':').map(Number)
+      const hour = isNaN(h) ? 20 : h
+      const minute = isNaN(m) ? 0 : m
+
+      await LocalNotifications.cancel({ notifications: [{ id: 2001 }] }).catch(() => {})
+
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            id: 2001,
+            title: 'Daily Budget Alert 📊',
+            body: dailyLimit > 0
+              ? `Daily Budget Reminder: Check today's spending against your ₹${Number(dailyLimit).toLocaleString('en-IN')} target.`
+              : `Daily Budget Reminder: Tap to review today's expenses and budget on URxpenz.`,
+            schedule: {
+              on: { hour, minute },
+              every: 'day',
+              allowWhileIdle: true
+            }
+          }
+        ]
+      })
+    } catch (err) {
+      console.warn('[NotificationContext] Failed to schedule daily budget local notification:', err)
+    }
+  }
+
+  /**
+   * Dispatch an immediate test push for daily budget
+   */
+  const triggerTestDailyBudgetPush = async (budgetInfo = null) => {
+    setPushLoading(true)
+    try {
+      const limit = budgetInfo?.dailyBudget || 1000
+      const spent = budgetInfo?.todaySpent || 650
+      const saved = Math.max(0, limit - spent)
+      const title = 'Daily Budget Summary 🎯'
+      const body = `Test Alert: Today's budget was ₹${Number(limit).toLocaleString('en-IN')}, and you spent ₹${Number(spent).toLocaleString('en-IN')}. You saved ₹${Number(saved).toLocaleString('en-IN')} today! 🎉`
+
+      if (isNative) {
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              id: 2002,
+              title,
+              body,
+              schedule: { at: new Date(Date.now() + 300) }
+            }
+          ]
+        })
+        return { success: true, message: 'Daily budget test alert sent! Check your notification bar.' }
+      }
+
+      if ('serviceWorker' in navigator && 'Notification' in window && Notification.permission === 'granted') {
+        const reg = await navigator.serviceWorker.ready
+        if (reg && reg.showNotification) {
+          reg.showNotification(title, {
+            body,
+            icon: '/pwa-192x192.png',
+            badge: '/pwa-192x192.png',
+            vibrate: [200, 100, 200],
+            data: { url: '/budget' }
+          }).catch(() => {})
+        }
+      }
+
+      try {
+        await sendTestDailyBudgetPush()
+      } catch (e) {
+        // ignore fallback
+      }
+
+      return { success: true, message: 'Daily budget test alert dispatched to your device!' }
+    } catch (err) {
+      console.error('[Trigger Test Budget Push Error]:', err)
+      throw err
+    } finally {
+      setPushLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    const handleDailyAlertTimeUpdated = (e) => {
+      const { time, dailyLimit } = e.detail || {}
+      scheduleDailyBudgetLocal(time, dailyLimit)
+    }
+    window.addEventListener('xpenz-daily-alert-time-updated', handleDailyAlertTimeUpdated)
+    return () => window.removeEventListener('xpenz-daily-alert-time-updated', handleDailyAlertTimeUpdated)
+  }, [isNative])
+
+  /**
    * Subscribe user device to OS-level Push / Local notifications
    */
   const enablePushNotifications = async () => {
@@ -101,12 +201,13 @@ export function NotificationProvider({ children }) {
           localStorage.setItem('xpenz_native_push_enabled', 'true')
 
           // Send an immediate test notification to confirm to the user
+          scheduleDailyBudgetLocal('20:00', 0)
           await LocalNotifications.schedule({
             notifications: [
               {
                 id: 1001,
                 title: 'System Screen Notifications Active 🔔',
-                body: 'You will receive reminders for upcoming EMI dates, overdue payments, and bill reminders even when the app is completely closed.',
+                body: 'You will receive reminders for daily budget limits, upcoming EMI dates, overdue payments, and bill reminders even when the app is completely closed.',
                 schedule: { at: new Date(Date.now() + 500) }
               }
             ]
@@ -336,6 +437,8 @@ export function NotificationProvider({ children }) {
         enablePushNotifications,
         disablePushNotifications,
         triggerTestPush,
+        triggerTestDailyBudgetPush,
+        scheduleDailyBudgetLocal,
         checkReminders
       }}
     >

@@ -45,6 +45,13 @@ export function useDailyAlertSettings(initialTime = '20:00', isPro = false, onUp
       const msg = res.data?.message || `Daily alert time saved (${timeToSave})`;
       setStatusMessage(msg);
       setTimeout(() => setStatusMessage(''), 4000);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('xpenz-daily-alert-time-updated', {
+          detail: { time: timeToSave }
+        }));
+      }
+
       return { success: true, message: msg };
     } catch (err) {
       setIsError(true);

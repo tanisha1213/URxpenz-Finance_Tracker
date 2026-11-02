@@ -23,6 +23,7 @@ import { formatCurrency, formatDate, categories, paymentMethods } from '../utils
 import { FiArrowUpRight, FiArrowDownRight, FiDollarSign, FiActivity, FiTrendingUp, FiPlus, FiCheck, FiCalendar } from 'react-icons/fi'
 import { useTheme } from '../context/ThemeContext'
 import { useLanguage } from '../context/LanguageContext'
+import { useNotification } from '../context/NotificationContext'
 import { getLoans, addLoan } from '../services/loanService'
 import { getCachedTransactions } from '../services/offlineSyncService'
 
@@ -357,7 +358,17 @@ function Dashboard() {
         setShowForm(false)
         setForm(emptyForm)
         const response = await getDashboardSummary()
-        setSummary(response.data.data)
+        const newSum = response.data.data;
+        setSummary(newSum);
+        if (newSum && Number(newSum.dailyBudget) > 0 && Number(newSum.todaySpent) > Number(newSum.dailyBudget)) {
+          const diff = Number(newSum.todaySpent) - Number(newSum.dailyBudget);
+          triggerPopup({
+            id: `daily-budget-over-${Date.now()}`,
+            title: 'Daily Budget Exceeded! ⚠️',
+            message: `This expense brought today's spending to ₹${Number(newSum.todaySpent).toLocaleString('en-IN')}, exceeding your daily limit of ₹${Number(newSum.dailyBudget).toLocaleString('en-IN')} by ₹${diff.toLocaleString('en-IN')}!`,
+            type: 'overdue'
+          });
+        }
         fetchLoans()
       } else {
         // Standard save (normal transaction or linking existing loan)
@@ -369,7 +380,17 @@ function Dashboard() {
         setShowForm(false)
         setForm(emptyForm)
         const response = await getDashboardSummary()
-        setSummary(response.data.data)
+        const newSum = response.data.data
+        setSummary(newSum)
+        if (newSum && Number(newSum.dailyBudget) > 0 && Number(newSum.todaySpent) > Number(newSum.dailyBudget)) {
+          const diff = Number(newSum.todaySpent) - Number(newSum.dailyBudget)
+          triggerPopup({
+            id: `daily-budget-over-${Date.now()}`,
+            title: 'Daily Budget Exceeded! ⚠️',
+            message: `This expense brought today's spending to ₹${Number(newSum.todaySpent).toLocaleString('en-IN')}, exceeding your daily limit of ₹${Number(newSum.dailyBudget).toLocaleString('en-IN')} by ₹${diff.toLocaleString('en-IN')}!`,
+            type: 'overdue'
+          })
+        }
         fetchLoans()
       }
     } catch (err) {

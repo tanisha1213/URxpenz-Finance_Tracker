@@ -1,5 +1,6 @@
 import { FiBell, FiClock } from 'react-icons/fi';
 import { useDailyAlertSettings } from '../../hooks/useDailyAlertSettings';
+import { useNotification } from '../../context/NotificationContext';
 
 /**
  * Modular Reusable Daily Alert Settings Card
@@ -21,6 +22,8 @@ export default function DailyAlertTimeCard({
     statusMessage,
     isError
   } = useDailyAlertSettings(initialTime, isPro, onUpgradeModal);
+
+  const { triggerTestDailyBudgetPush, pushLoading } = useNotification();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,9 +54,26 @@ export default function DailyAlertTimeCard({
       </p>
 
       <form onSubmit={handleSubmit} className="pt-2 border-t border-slate-100 dark:border-dark-border/40 space-y-2">
-        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-          Customize Notification Time
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+            Customize Notification Time
+          </label>
+          <button
+            type="button"
+            disabled={pushLoading}
+            onClick={async () => {
+              try {
+                await triggerTestDailyBudgetPush({ dailyBudget: dailyLimit, todaySpent, todaySaved });
+              } catch (e) {
+                // handled in context
+              }
+            }}
+            className="text-[10px] font-bold text-purple-600 dark:text-purple-400 hover:underline cursor-pointer flex items-center gap-1"
+            title="Send an immediate test alert to preview on your device screen"
+          >
+            <FiBell className="w-2.5 h-2.5" /> Test Push
+          </button>
+        </div>
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <FiClock className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />

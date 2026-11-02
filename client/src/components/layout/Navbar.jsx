@@ -6,6 +6,7 @@ import { useTheme } from '../../context/ThemeContext'
 import logoLight from '../../assets/logo-light.png'
 import logoDark from '../../assets/logo-dark.png'
 import { getLoans } from '../../services/loanService'
+import { getBudget } from '../../services/budgetService'
 import { useLanguage } from '../../context/LanguageContext'
 import { useNotification } from '../../context/NotificationContext'
 import { getOfflineQueue } from '../../services/offlineSyncService'
@@ -14,7 +15,7 @@ function Navbar() {
   const { user } = useSelector(state => state.auth)
   const { theme, toggleTheme } = useTheme()
   const { language, setLanguage } = useLanguage()
-  const { triggerPopup } = useNotification()
+  const { triggerPopup, scheduleDailyBudgetLocal } = useNotification()
   const [showNotifications, setShowNotifications] = useState(false)
   const [hasUnread, setHasUnread] = useState(false)
   const [notifications, setNotifications] = useState([])
@@ -134,13 +135,52 @@ function Navbar() {
             }
           })
         }
+
+        // Daily Budget Check & Local Alarm Priming
+        try {
+          const budgetRes = await getBudget()
+          const bData = budgetRes.data?.data
+          if (bData && (bData.dailyBudget > 0 || bData.monthlyBudget > 0)) {
+            const todayKey = new Date().toISOString().split('T')[0]
+            const dailyLimit = Number(bData.dailyBudget || (bData.monthlyBudget ? Math.round(bData.monthlyBudget / (bData.daysInMonth || 30)) : 0))
+            const spent = Number(bData.todaySpent || 0)
+            const isOverspent = bData.isOverspentToday || (dailyLimit > 0 && spent > dailyLimit)
+            const diff = Math.abs(spent - dailyLimit)
+
+            if (scheduleDailyBudgetLocal) {
+              scheduleDailyBudgetLocal(bData.dailyAlertTime || '20:00', dailyLimit)
+            }
+
+            if (isOverspent && dailyLimit > 0) {
+              const budgetAlertId = `daily-budget-over-${todayKey}`
+              const title = 'Daily Budget Exceeded! ⚠️'
+              const message = `You have spent ₹${spent.toLocaleString('en-IN')} today, exceeding your daily limit of ₹${dailyLimit.toLocaleString('en-IN')} by ₹${diff.toLocaleString('en-IN')}.`
+
+              setNotifications(prev => {
+                const filtered = prev.filter(n => n.id !== budgetAlertId)
+                return [{ id: budgetAlertId, title, message, time: 'Today' }, ...filtered]
+              })
+              setHasUnread(true)
+
+              triggerPopup({
+                id: budgetAlertId,
+                title,
+                message,
+                time: 'Today',
+                type: 'overdue'
+              })
+            }
+          }
+        } catch (bErr) {
+          // non-critical
+        }
       } catch (err) {
-        console.error('Failed to load loan reminders:', err)
+        console.error('Failed to load loan reminders:', err);
       }
     }
 
     loadReminders()
-  }, [user, triggerPopup])
+  }, [user, triggerPopup, scheduleDailyBudgetLocal])
 
   return (
     <nav className="bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-slate-100 dark:border-dark-border sticky top-0 z-30 transition-colors duration-200 pt-safe">

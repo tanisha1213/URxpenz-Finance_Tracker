@@ -157,11 +157,9 @@ export const checkAndDispatchDailyBudgetSummaries = async (targetUserId = null, 
     const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 
     for (const budget of budgets) {
-      // Daily budget prompts and end-of-day alerts are an exclusive Pro & 60-day trial feature
+      // Daily budget prompts and end-of-day alerts
       const user = await User.findById(budget.userId);
       if (!user) continue;
-      const subscription = getUserSubscription(user);
-      if (!subscription.isPro) continue;
 
       // Check user's preferred alert time
       const settings = getUserSettings(budget.userId);

@@ -72,16 +72,14 @@ export const getBudget = async (req, res) => {
     const now = new Date();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const monthlyLimit = Number(budget?.monthlyBudget || 0);
-    const dailyTarget = isPro
-      ? (Number(budget?.dailyBudget) || (monthlyLimit > 0 ? Math.round(monthlyLimit / daysInMonth) : 0))
-      : 0;
+    const dailyTarget = Number(budget?.dailyBudget) || (monthlyLimit > 0 ? Math.round(monthlyLimit / daysInMonth) : 0);
 
     let todaySpent = 0;
     let todayRemaining = 0;
     let todaySaved = 0;
     let isOverspentToday = false;
 
-    if (isPro && dailyTarget > 0) {
+    if (dailyTarget > 0) {
       const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 

@@ -175,19 +175,17 @@ export const getDashboardSummary = async (req, res) => {
     const subscription = getUserSubscription(user);
     const isPro = !!subscription.isPro;
 
-    // Compute Daily Budget & Today's Outflow (Pro & 60-Day Trial only)
+    // Compute Daily Budget & Today's Outflow
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const monthlyLimit = Number(budget?.monthlyBudget || 0);
-    const dailyBudget = isPro
-      ? (Number(budget?.dailyBudget) || (monthlyLimit > 0 ? Math.round(monthlyLimit / daysInMonth) : 0))
-      : 0;
+    const dailyBudget = Number(budget?.dailyBudget) || (monthlyLimit > 0 ? Math.round(monthlyLimit / daysInMonth) : 0);
 
     let todaySpent = 0;
     let todayRemaining = 0;
     let todaySaved = 0;
     let isOverspentToday = false;
 
-    if (isPro && dailyBudget > 0) {
+    if (dailyBudget > 0) {
       const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
       const todayExpenses = (currentMonthTransactions || []).filter(t => {

@@ -27,7 +27,8 @@ function Profile() {
     pushLoading,
     enablePushNotifications,
     disablePushNotifications,
-    triggerTestPush
+    triggerTestPush,
+    triggerTestDailyBudgetPush
   } = useNotification()
   const {
     tier,
@@ -635,7 +636,7 @@ function Profile() {
                   )}
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-normal max-w-lg">
-                  Receive device alerts for upcoming EMI dates, overdue payments, and bill reminders even when the app is closed.
+                  Receive device alerts for daily budget summaries, budget limit warnings, upcoming EMI dates, overdue payments, and bill reminders even when the app is closed.
                 </p>
                 {pushPermission === 'denied' && (
                   <p className="text-[11px] text-rose-500 font-medium">
@@ -646,23 +647,44 @@ function Profile() {
 
               <div className="flex items-center gap-2 shrink-0">
                 {isPushSubscribed && (
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      setPushStatusMsg('')
-                      try {
-                        const res = await triggerTestPush()
-                        setPushSuccess(true)
-                        setPushStatusMsg(res?.message || 'Test notification sent! Check your notification bar.')
-                      } catch (err) {
-                        setPushSuccess(false)
-                        setPushStatusMsg(err.message || 'Failed to trigger test notification.')
-                      }
-                    }}
-                    className="px-2.5 py-1.5 text-xs font-semibold rounded-md border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                  >
-                    Test Alert
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setPushStatusMsg('')
+                        try {
+                          const res = await triggerTestPush()
+                          setPushSuccess(true)
+                          setPushStatusMsg(res?.message || 'EMI test alert sent! Check your notification bar.')
+                        } catch (err) {
+                          setPushSuccess(false)
+                          setPushStatusMsg(err.message || 'Failed to trigger test notification.')
+                        }
+                      }}
+                      className="px-2.5 py-1.5 text-xs font-semibold rounded-md border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      title="Test loan and EMI bill reminder notification"
+                    >
+                      Test EMI Alert
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setPushStatusMsg('')
+                        try {
+                          const res = await triggerTestDailyBudgetPush()
+                          setPushSuccess(true)
+                          setPushStatusMsg(res?.message || 'Daily budget test alert sent! Check your notification bar.')
+                        } catch (err) {
+                          setPushSuccess(false)
+                          setPushStatusMsg(err.message || 'Failed to trigger test notification.')
+                        }
+                      }}
+                      className="px-2.5 py-1.5 text-xs font-semibold rounded-md border border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/30 transition-colors cursor-pointer"
+                      title="Test daily budget summary and limit notification"
+                    >
+                      Test Budget Alert
+                    </button>
+                  </div>
                 )}
 
                 <button
