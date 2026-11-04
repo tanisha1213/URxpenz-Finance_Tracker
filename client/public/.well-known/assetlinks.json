@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.urxpenz.app",
+      "sha256_cert_fingerprints": [
+        "E6:E4:49:B9:34:02:58:25:48:93:E1:78:75:A0:F8:4B:6D:3C:BF:AE:D2:84:04:67:52:EC:53:7A:E0:92:88:84"
+      ]
+    }
+  }
+]
+

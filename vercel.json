@@ -48,6 +48,10 @@
       "dest": "/client/workbox-$1"
     },
     {
+      "src": "/.well-known/(.*)",
+      "dest": "/client/.well-known/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/client/index.html"
     }
