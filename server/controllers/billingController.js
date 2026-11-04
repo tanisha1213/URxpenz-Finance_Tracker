@@ -68,13 +68,12 @@ export const createRazorpayOrder = async (req, res) => {
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
     if (!keyId || !keySecret) {
-      // In sandbox/direct mode when keys are not configured yet
       return res.status(200).json({
         success: true,
-        isDemoMode: true,
+        isConfigured: false,
         plan,
         pricing,
-        message: 'Razorpay keys not configured. Direct activation available.'
+        message: 'Payment gateway is being initialized. All users currently enjoy 60-70 days of free Pro trial access!'
       });
     }
 
@@ -138,18 +137,23 @@ export const verifyRazorpayPayment = async (req, res) => {
     }
 
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    if (keySecret && razorpay_order_id && razorpay_payment_id && razorpay_signature) {
-      const generatedSignature = crypto
-        .createHmac('sha256', keySecret)
-        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-        .digest('hex');
+    if (!keySecret || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment verification failed: Incomplete payment data or gateway unconfigured.'
+      });
+    }
 
-      if (generatedSignature !== razorpay_signature) {
-        return res.status(400).json({
-          success: false,
-          message: 'Payment verification failed: Invalid signature'
-        });
-      }
+    const generatedSignature = crypto
+      .createHmac('sha256', keySecret)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex');
+
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment verification failed: Invalid cryptographic signature.'
+      });
     }
 
     const user = await User.findById(req.userId);
@@ -209,166 +213,22 @@ export const verifyRazorpayPayment = async (req, res) => {
 };
 
 /**
- * Subscribe or Upgrade to a Pro Membership Plan (Direct / Test Activation)
+ * Direct subscribe is disabled in production to protect subscription integrity.
+ * All plan activations must go through verified payment transactions.
  */
 export const subscribePlan = async (req, res) => {
-  try {
-    const { planId } = req.body;
-
-    const plan = SUBSCRIPTION_PLANS[planId];
-    if (!plan) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid subscription plan selected. Available plans: kickstart, quarterly, half_yearly, annual'
-      });
-    }
-
-    const user = await User.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
-    const now = new Date();
-    let baseDate = now;
-    if (user.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) > now) {
-      baseDate = new Date(user.subscriptionExpiresAt);
-    }
-
-    const newExpiresAt = new Date(baseDate.getTime() + plan.durationDays * 24 * 60 * 60 * 1000);
-
-    // 1. Always save to local fallback store for 100% persistence
-    saveStoredSubscription(req.userId, {
-      subscriptionTier: 'pro',
-      subscriptionPlan: plan.id,
-      subscriptionExpiresAt: newExpiresAt.toISOString()
-    });
-
-    // 2. Attempt to update in Supabase
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update({
-          subscriptionTier: 'pro',
-          subscriptionPlan: plan.id,
-          subscriptionExpiresAt: newExpiresAt.toISOString()
-        })
-        .eq('id', req.userId);
-
-      if (error) {
-        console.warn('[Billing Notice] Remote Supabase columns pending migration:', error.message);
-      }
-    } catch (dbErr) {
-      console.warn('[Billing DB Notice]:', dbErr.message);
-    }
-
-    // Refresh user model
-    user.subscriptionTier = 'pro';
-    user.subscriptionPlan = plan.id;
-    user.subscriptionExpiresAt = newExpiresAt.toISOString();
-
-    const subscription = getUserSubscription(user);
-    // Consume one-time referral discount upon activation
-    consumeReferralDiscount(req.userId);
-    const referral = getUserReferralData(req.userId, user.name);
-
-    const receiptId = req.body.receiptId || `TXN_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-
-    return res.status(200).json({
-      success: true,
-      message: `Transaction verified! ${plan.name} is now active until ${newExpiresAt.toLocaleDateString('en-IN')}.`,
-      receiptId,
-      subscription,
-      referral
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to process subscription'
-    });
-  }
+  return res.status(403).json({
+    success: false,
+    message: 'Direct activation without verified payment is disabled. All users currently receive an automatic 60-day (or 70-day) free trial.'
+  });
 };
 
 /**
  * Verify Google Play Store in-app purchase (for Play Store release)
  */
 export const verifyGooglePlayPurchase = async (req, res) => {
-  try {
-    const { productId, purchaseToken, orderId } = req.body;
-
-    // Map Google Play In-App Product IDs to our internal plan IDs
-    const playStoreProductMap = {
-      'urxpenz_kickstart_1m': 'kickstart',
-      'urxpenz_pro_3m': 'quarterly',
-      'urxpenz_pro_6m': 'half_yearly',
-      'urxpenz_annual_1y': 'annual',
-      'xpenz_kickstart_1m': 'kickstart',
-      'xpenz_pro_3m': 'quarterly',
-      'xpenz_pro_6m': 'half_yearly',
-      'xpenz_annual_1y': 'annual'
-    };
-
-    const planId = playStoreProductMap[productId] || productId;
-    const plan = SUBSCRIPTION_PLANS[planId];
-
-    if (!plan) {
-      return res.status(400).json({
-        success: false,
-        message: 'Unrecognized Play Store product ID: ' + productId
-      });
-    }
-
-    const user = await User.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
-    const now = new Date();
-    let baseDate = now;
-    if (user.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) > now) {
-      baseDate = new Date(user.subscriptionExpiresAt);
-    }
-
-    const newExpiresAt = new Date(baseDate.getTime() + plan.durationDays * 24 * 60 * 60 * 1000);
-
-    // Save to local /tmp storage for serverless fallback
-    saveStoredSubscription(req.userId, {
-      subscriptionTier: 'pro',
-      subscriptionPlan: plan.id,
-      subscriptionExpiresAt: newExpiresAt.toISOString()
-    });
-
-    try {
-      await supabase
-        .from('users')
-        .update({
-          subscriptionTier: 'pro',
-          subscriptionPlan: plan.id,
-          subscriptionExpiresAt: newExpiresAt.toISOString()
-        })
-        .eq('id', req.userId);
-    } catch (dbErr) {
-      console.warn('[Billing Notice] Supabase user subscription update:', dbErr.message);
-    }
-
-    user.subscriptionTier = 'pro';
-    user.subscriptionPlan = plan.id;
-    user.subscriptionExpiresAt = newExpiresAt.toISOString();
-
-    const subscription = getUserSubscription(user);
-    consumeReferralDiscount(req.userId);
-    const receiptId = orderId || `GPA_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-
-    return res.status(200).json({
-      success: true,
-      message: `Google Play purchase verified for ${plan.name}!`,
-      receiptId,
-      subscription,
-      orderId: receiptId
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to verify Google Play purchase'
-    });
-  }
+  return res.status(503).json({
+    success: false,
+    message: 'Google Play In-App Billing is currently being configured in the Play Console. You are currently enjoying your 60-day Free Trial with all features unlocked.'
+  });
 };
