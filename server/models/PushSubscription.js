@@ -83,6 +83,25 @@ export const PushSubscriptionModel = {
     } catch (err) {
       // ignore
     }
+  },
+
+  async deleteMany(query = {}) {
+    if (query.userId) {
+      for (const [endpoint, sub] of fallbackSubscriptions.entries()) {
+        if (sub.userId === query.userId) {
+          fallbackSubscriptions.delete(endpoint);
+        }
+      }
+    } else {
+      fallbackSubscriptions.clear();
+    }
+
+    try {
+      return await PushSubscriptionAdapter.deleteMany(query);
+    } catch (err) {
+      console.warn('[PushSubscriptionModel] deleteMany warning:', err.message);
+      return { deletedCount: 0 };
+    }
   }
 };
 

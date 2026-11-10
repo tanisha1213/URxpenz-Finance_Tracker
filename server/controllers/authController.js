@@ -465,17 +465,27 @@ export const deleteAccount = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Not authorized' });
     }
 
+    const safeDeleteMany = async (model, query) => {
+      try {
+        if (model && typeof model.deleteMany === 'function') {
+          return await model.deleteMany(query);
+        }
+      } catch (e) {
+        console.warn('safeDeleteMany warning:', e.message);
+      }
+    };
+
     // Cascade delete across all tables
     await Promise.allSettled([
-      Transaction.deleteMany({ userId }),
-      Budget.deleteMany({ userId }),
-      Account.deleteMany({ userId }),
-      Loan.deleteMany({ userId }),
-      Investment.deleteMany({ userId }),
-      Insurance.deleteMany({ userId }),
-      Subscription.deleteMany({ userId }),
-      PushSubscriptionModel.deleteMany({ userId }),
-      User.deleteOne({ _id: userId })
+      safeDeleteMany(Transaction, { userId }),
+      safeDeleteMany(Budget, { userId }),
+      safeDeleteMany(Account, { userId }),
+      safeDeleteMany(Loan, { userId }),
+      safeDeleteMany(Investment, { userId }),
+      safeDeleteMany(Insurance, { userId }),
+      safeDeleteMany(Subscription, { userId }),
+      safeDeleteMany(PushSubscriptionModel, { userId }),
+      User.deleteOne({ _id: userId }).catch(e => console.warn('User delete error:', e.message))
     ]);
 
     // Clean up local fallback files
