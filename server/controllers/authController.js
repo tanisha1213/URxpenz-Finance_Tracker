@@ -475,7 +475,7 @@ export const deleteAccount = async (req, res) => {
       }
     };
 
-    // Cascade delete across all tables
+    // 1. Cascade delete across all child tables first
     await Promise.allSettled([
       safeDeleteMany(Transaction, { userId }),
       safeDeleteMany(Budget, { userId }),
@@ -484,9 +484,11 @@ export const deleteAccount = async (req, res) => {
       safeDeleteMany(Investment, { userId }),
       safeDeleteMany(Insurance, { userId }),
       safeDeleteMany(Subscription, { userId }),
-      safeDeleteMany(PushSubscriptionModel, { userId }),
-      User.deleteOne({ _id: userId }).catch(e => console.warn('User delete error:', e.message))
+      safeDeleteMany(PushSubscriptionModel, { userId })
     ]);
+
+    // 2. Explicitly delete the user record
+    await User.deleteOne({ id: userId });
 
     // Clean up local fallback files
     saveUserSettings(userId, null);
