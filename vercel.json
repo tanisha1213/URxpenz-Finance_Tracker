@@ -1,6 +1,7 @@
 {
   "name": "urxpenz",
   "version": 2,
+  "regions": ["bom1"],
   "builds": [
     {
       "src": "server/app.js",

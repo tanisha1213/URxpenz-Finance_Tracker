@@ -12,95 +12,114 @@ import { summarizeTransactions } from '../services/financeAnalyzer.js';
 
 export const getDashboardSummary = async (req, res) => {
   try {
-    // 0. Process auto deductions for recurring subscriptions
-    await processAutoDeductions(req.userId).catch(err => {
-      console.warn('Dashboard: auto-deductions check skipped. Error:', err.message);
+    const userId = req.userId;
+
+    // 0. Fire background auto-deductions asynchronously without blocking page response
+    processAutoDeductions(userId).catch(err => {
+      console.warn('Dashboard: auto-deductions background notice:', err.message);
     });
 
-    // 1. Initialize default accounts if they don't exist
-    let cashAccount = await Account.findOne({ userId: req.userId, type: 'cash' });
-    if (!cashAccount) {
-      cashAccount = await Account.create({
-        userId: req.userId,
-        type: 'cash',
-        name: 'Cash',
-        balance: 0
-      });
-    }
-
-    let bankAccounts = await Account.find({ userId: req.userId, type: 'bank' });
-    if (bankAccounts.length === 0) {
-      const defaultBank = await Account.create({
-        userId: req.userId,
-        type: 'bank',
-        name: 'State Bank of India',
-        balance: 0
-      });
-      bankAccounts = [defaultBank];
-    }
-
-    // 2. Run Migration in background to prevent blocking page load
-    Transaction.updateMany(
-      { userId: req.userId, accountId: { $exists: false } },
-      { $set: { accountId: cashAccount._id } }
-    ).catch(err => console.error('Migration background run failed:', err));
-
-    // 3. Fetch accounts and compute balance sums
-    const accounts = await Account.find({ userId: req.userId }).sort({ type: 1, name: 1 });
-    const totalBalance = accounts.reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0);
-    const cashBalance = accounts.filter(acc => acc.type === 'cash').reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0);
-    const bankBalance = accounts.filter(acc => acc.type === 'bank').reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0);
-
-    // 4. Optimize queries by filtering for current month and limiting recent fetches
     const now = new Date();
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     const sixMonthsAgoStart = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
+    // 1. Fetch Accounts, Transactions (6-mo single scan), Budget, Loans, Investments, Insurances, Subscriptions, and User in ONE parallel burst
     const [
-      currentMonthTransactions,
+      rawAccounts,
       trendTransactions,
-      recentTransactions,
       budget,
       loans,
       investments,
       insurances,
-      subscriptions
+      subscriptions,
+      user
     ] = await Promise.all([
+      Account.find({ userId }).sort({ type: 1, name: 1 }),
       Transaction.find({
-        userId: req.userId,
-        transactionDate: { $gte: currentMonthStart, $lt: currentMonthEnd }
-      }).populate('accountId', 'name type'),
-      
-      Transaction.find({
-        userId: req.userId,
+        userId,
         transactionDate: { $gte: sixMonthsAgoStart, $lt: currentMonthEnd }
       }),
-      
-      Transaction.find({ userId: req.userId })
-        .populate('accountId', 'name type')
-        .sort({ transactionDate: -1 })
-        .limit(5),
-        
-      Budget.findOne({ userId: req.userId }),
-
-      Loan.find({ userId: req.userId, status: 'active' }).catch(err => {
-        console.warn('Dashboard: loans table query failed, using empty array. Error:', err.message);
+      Budget.findOne({ userId }),
+      Loan.find({ userId, status: 'active' }).catch(err => {
+        console.warn('Dashboard: loans query notice:', err.message);
         return [];
       }),
-      Investment.find({ userId: req.userId }).catch(err => {
-        console.warn('Dashboard: investments table query failed, using empty array. Error:', err.message);
+      Investment.find({ userId }).catch(err => {
+        console.warn('Dashboard: investments query notice:', err.message);
         return [];
       }),
-      Insurance.find({ userId: req.userId, status: 'active' }).catch(err => {
-        console.warn('Dashboard: insurances table query failed, using empty array. Error:', err.message);
+      Insurance.find({ userId, status: 'active' }).catch(err => {
+        console.warn('Dashboard: insurances query notice:', err.message);
         return [];
       }),
-      Subscription.find({ userId: req.userId, status: 'active' }).catch(err => {
-        console.warn('Dashboard: subscriptions table query failed, using empty array. Error:', err.message);
+      Subscription.find({ userId, status: 'active' }).catch(err => {
+        console.warn('Dashboard: subscriptions query notice:', err.message);
         return [];
-      })
+      }),
+      User.findById(userId).catch(() => null)
     ]);
+
+    // 2. Ensure default cash & bank accounts exist
+    let accounts = Array.isArray(rawAccounts) ? [...rawAccounts] : [];
+    let cashAccount = accounts.find(acc => acc.type === 'cash');
+    if (!cashAccount) {
+      cashAccount = await Account.create({
+        userId,
+        type: 'cash',
+        name: 'Cash',
+        balance: 0
+      });
+      accounts.push(cashAccount);
+    }
+
+    let bankAccount = accounts.find(acc => acc.type === 'bank');
+    if (!bankAccount) {
+      const defaultBank = await Account.create({
+        userId,
+        type: 'bank',
+        name: 'State Bank of India',
+        balance: 0
+      });
+      accounts.push(defaultBank);
+    }
+
+    // Build quick in-memory account map for instant zero-overhead population
+    const accountMap = new Map();
+    accounts.forEach(acc => {
+      const idKey = String(acc.id || acc._id);
+      accountMap.set(idKey, { name: acc.name, type: acc.type, id: idKey, _id: idKey });
+    });
+
+    // In-memory filter for current month transactions & populate accountId in memory
+    const currentMonthTime = currentMonthStart.getTime();
+    const currentMonthEndTime = currentMonthEnd.getTime();
+
+    const currentMonthTransactions = [];
+    const populatedTrendTransactions = [];
+
+    (trendTransactions || []).forEach(tx => {
+      const txObj = typeof tx.toObject === 'function' ? tx.toObject() : { ...tx };
+      // In-memory account resolution
+      if (txObj.accountId && typeof txObj.accountId === 'string') {
+        txObj.accountId = accountMap.get(String(txObj.accountId)) || { name: 'Account', type: 'bank' };
+      }
+      populatedTrendTransactions.push(txObj);
+
+      const txDate = new Date(tx.transactionDate).getTime();
+      if (txDate >= currentMonthTime && txDate < currentMonthEndTime) {
+        currentMonthTransactions.push(txObj);
+      }
+    });
+
+    // Recent 5 transactions derived directly from populated transactions
+    const recentTransactions = [...populatedTrendTransactions]
+      .sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate))
+      .slice(0, 5);
+
+    const totalBalance = accounts.reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0);
+    const cashBalance = accounts.filter(acc => acc.type === 'cash').reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0);
+    const bankBalance = accounts.filter(acc => acc.type === 'bank').reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0);
 
     // Summarize current month's spending
     const summary = summarizeTransactions(currentMonthTransactions, budget);
@@ -170,8 +189,7 @@ export const getDashboardSummary = async (req, res) => {
     // Sort by due date ascending
     upcomingPayments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
-    // User Subscription verification
-    const user = await User.findById(req.userId);
+    // User Subscription verification (user was fetched in parallel above)
     const subscription = getUserSubscription(user);
     const isPro = !!subscription.isPro;
 
