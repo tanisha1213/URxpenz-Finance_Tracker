@@ -1,13 +1,18 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.urxpenz.app",
       "sha256_cert_fingerprints": [
-        "E6:E4:49:B9:34:02:58:25:48:93:E1:78:75:A0:F8:4B:6D:3C:BF:AE:D2:84:04:67:52:EC:53:7A:E0:92:88:84"
+        "E6:E4:49:B9:34:02:58:25:48:93:E1:78:75:A0:F8:4B:6D:3C:BF:AE:D2:84:04:67:52:EC:53:7A:E0:92:88:84",
+        "4F:DE:4A:6C:33:0C:FA:26:75:02:34:F4:86:C9:A8:75:15:46:53:3B:94:F4:E8:33:19:4D:74:78:DE:CD:6E:13",
+        "36:91:82:9A:D8:D0:52:EF:E5:B9:F5:A2:4B:19:AD:18:56:C0:18:49:F5:29:A8:86:0D:8E:39:30:B8:C6:B2:9F",
+        "D5:EC:59:7C:92:75:BE:85:8D:84:2C:BF:49:AA:C7:D1:B7:5A:86:66:E3:EB:98:85:3E:55:54:49:E5:B2:B6:86"
       ]
     }
   }
 ]
-
